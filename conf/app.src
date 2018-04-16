@@ -1,0 +1,6 @@
+SOURCE_URL=https://code.eliotberriot.com/funkwhale/funkwhale/repository/0.8/archive.tar.bz2
+SOURCE_SUM=c74287d46cd88880292fe5b5f1972a5bc393724e581bea015ff7808f13753bf4
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=tar.bz2
+SOURCE_IN_SUBDIR=true
+SOURCE_FILENAME=

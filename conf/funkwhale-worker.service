@@ -1,0 +1,14 @@
+[Unit]
+Description=Funkwhale (__APP__) celery worker
+After=redis.service postgresql.service
+PartOf=__APP__.target
+
+[Service]
+User=__APP__
+# adapt this depending on the path of your funkwhale installation
+WorkingDirectory=__FINALPATH__/api
+EnvironmentFile=__FINALPATH__/config/.env
+ExecStart=__FINALPATH__/virtualenv/bin/celery -A funkwhale_api.taskapp worker -l INFO
+
+[Install]
+WantedBy=multi-user.target

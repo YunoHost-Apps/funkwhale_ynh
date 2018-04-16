@@ -1,0 +1,200 @@
+
+#!/bin/bash
+
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# MANAGE SCRIPT FAILURE
+#=================================================
+
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
+#=================================================
+
+domain=$YNH_APP_ARG_DOMAIN
+path_url=$YNH_APP_ARG_PATH
+is_public=$YNH_APP_ARG_IS_PUBLIC
+admin=$YNH_APP_ARG_ADMIN
+port=$(ynh_find_port 5000)
+
+app=$YNH_APP_INSTANCE_NAME
+
+
+#=================================================
+# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
+#=================================================
+
+final_path="/var/www/$app"
+test ! -e "$final_path" || ynh_die "This path already contains a folder"
+
+# Normalize the url path syntax
+path_url=$(ynh_normalize_url_path "$path_url")
+
+# Check web path availability
+ynh_webpath_available "$domain" "$path_url"
+# Register (book) web path
+ynh_webpath_register "$app" "$domain" "$path_url"
+
+#=================================================
+# STORE SETTINGS FROM MANIFEST
+#=================================================
+
+ynh_app_setting_set "$app" domain "$domain"
+ynh_app_setting_set "$app" path "$path_url"
+ynh_app_setting_set "$app" is_public "$is_public"
+ynh_app_setting_set "$app" admin "$admin"
+ynh_app_setting_set "$app" port "$port"
+
+#=================================================
+# STANDARD MODIFICATIONS
+#=================================================
+
+# add backports (required to install ffmpeg)
+echo "deb http://httpredir.debian.org/debian jessie-backports main" | tee /etc/apt/sources.list.d/jessie-backports.list
+ynh_package_update
+
+ynh_install_app_dependencies build-essential curl ffmpeg \
+	libjpeg-dev libmagic-dev libpq-dev postgresql python3-dev python3-venv
+
+#=================================================
+# CREATE A PostgreSQL DATABASE
+#=================================================
+
+ynh_psql_test_if_first_run
+
+db_name=$(ynh_sanitize_dbid "$app")
+db_user_pwd=$(ynh_string_random)
+# Initialize database and store postgres password for upgrade
+ynh_psql_create_db "$db_name" "$app" "$db_user_pwd"
+ynh_app_setting_set "$app" db_name "$db_name"
+ynh_app_setting_set "$app" psqlpwd "$db_user_pwd"
+
+systemctl reload postgresql
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+
+ynh_app_setting_set "$app" final_path "$final_path"
+# Download, check integrity, uncompress and patch the source from app.src
+ynh_setup_source "$final_path"
+
+(
+	cd "$final_path"
+	mkdir -p config api data/static data/media data/music front
+)
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+
+# add proxy_cache and connection_upgrade at the beginning of the domain configuration
+echo "
+
+proxy_cache_path /tmp/$app-transcode levels=1:2 keys_zone=transcode:10m max_size=1g inactive=7d;
+
+# required for websocket support
+map \$http_upgrade \$connection_upgrade {
+    default upgrade;
+    ''      close;
+}
+" | cat - "/etc/nginx/conf.d/$domain.conf" > temp && mv temp "/etc/nginx/conf.d/$domain.conf"
+
+# Create a dedicated nginx config
+ynh_add_nginx_config
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+
+# Create a system user
+ynh_system_user_create "$app" "$final_path"
+
+#=================================================
+# SPECIFIC SETUP
+#=================================================
+# PYTHON DEPENDENCIES
+#=================================================
+
+python3 -m venv "$final_path/virtualenv"
+(
+	set +o nounset
+	source "${final_path}/virtualenv/bin/activate"
+	set -o nounset
+	pip install --upgrade pip
+	pip install --upgrade setuptools
+	pip install wheel
+	pip install -r "${final_path}/api/requirements.txt"
+)
+
+#=================================================
+# MODIFY THE CONFIG FILE
+#=================================================
+
+configfile="$final_path/config/.env"
+
+cp ../conf/env.prod "$configfile"
+
+key=$(ynh_string_random 50)
+
+ynh_app_setting_set "$app" key "$key"
+
+ynh_replace_string "__PORT__"      "$port"        "$configfile"
+ynh_replace_string "__DOMAIN__"    "$domain"      "$configfile"
+ynh_replace_string "__DBUSER__"    "$db_name"     "$configfile"
+ynh_replace_string "__DBPWD__"     "$db_user_pwd" "$configfile"
+ynh_replace_string "__DBNAME__"    "$app"         "$configfile"
+ynh_replace_string "__FINALPATH__" "$final_path"  "$configfile"
+ynh_replace_string "__KEY__"       "$key"         "$configfile"
+
+cat > "$final_path/load_env" <<'EOL'
+#!/bin/bash
+export $(cat "$final_path/config/.env" | grep -v ^# | xargs)
+EOL
+
+chmod +x "$final_path/load_env"
+
+#=================================================
+# MODIFY THE CONFIG FILE
+#=================================================
+
+admin_mail=$(ynh_user_get_info "$admin" "mail")
+(
+	set +o nounset
+	source "${final_path}/virtualenv/bin/activate"
+	source "${final_path}/load_env"
+	set -o nounset
+	cd "$final_path"
+	python api/manage.py migrate
+	python api/manage.py createsuperuser \
+		--username "$admin" \
+		--email "$admin_mail"
+	python api/manage.py collectstatic
+)
+
+#=================================================
+# SETUP SYSTEMD
+#=================================================
+
+# Create a dedicated systemd config
+ynh_add_systemd_config "$app-server" "funkwhale-server"
+ynh_add_systemd_config "$app-worker" "funkwhale-worker"
+
+cp ../conf/funkwhale.target "/etc/systemd/system/$app.target"
+
+#=================================================
+# SETUP SYSTEMD
+#=================================================
+
+systemctl daemon-reload
+systemctl start "$app".target

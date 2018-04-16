@@ -1,0 +1,59 @@
+{
+	"name": "Funkwhale",
+	"id": "funkwhale",
+	"packaging_format": 1,
+	"requirements": {
+		"yunohost": ">= 2.7.10"
+	},
+	"description": {
+		"en": "A translation platform using Git and Python"
+	},
+	"version": "0.8.0-1",
+	"url": "https://funkwhale.audio",
+	"license": "BSD-3-Clause",
+	"maintainer": {
+		"name": "Jean-Baptiste Holcroft",
+		"email": "jean-baptiste@holcroft.fr"
+	},
+	"multi_instance": false,
+	"services": [
+		"nginx"
+	],
+	"arguments": {
+		"install" : [
+			{
+				"name": "domain",
+				"type": "domain",
+				"ask": {
+					"en": "Choose a domain for Weblate:"
+				},
+				"example": "domain.org"
+			},
+			{
+				"name": "path",
+				"type": "path",
+				"ask": {
+				    "en": "Choose a path for Weblate:"
+				},
+				"example": "/weblate",
+				"default": "/weblate"
+			},
+			{
+				"name": "is_public",
+				"type": "boolean",
+				"ask": {
+					"en": "Should Weblate be public accessible?"
+				},
+				"default": "0"
+			},
+			{
+				"name": "admin",
+				"type": "user",
+				"ask": {
+					"en": "Choose an admin user for Funkwhale?"
+				},
+				"example": "jean-baptiste"
+			}
+		]
+	}
+}
