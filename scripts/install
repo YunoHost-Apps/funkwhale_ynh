@@ -79,6 +79,8 @@ ynh_psql_create_db "$db_name" "$app" "$db_user_pwd"
 ynh_app_setting_set "$app" db_name "$db_name"
 ynh_app_setting_set "$app" psqlpwd "$db_user_pwd"
 
+ynh_psql_execute_as_root "CREATE EXTENSION IF NOT EXISTS unaccent;"
+
 systemctl reload postgresql
 
 #=================================================
@@ -145,7 +147,7 @@ configfile="$final_path/config/.env"
 
 cp ../conf/env.prod "$configfile"
 
-key=$(ynh_string_random 50)
+key=$(ynh_string_random)
 
 ynh_app_setting_set "$app" key "$key"
 

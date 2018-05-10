@@ -9,7 +9,6 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
-ynh_die "!"
 #=================================================
 # LOAD SETTINGS
 #=================================================
@@ -45,6 +44,7 @@ ynh_remove_app_dependencies
 
 # Remove a database if it exists, along with the associated user
 ynh_psql_remove_db "$db_name" "$app"
+ynh_psql_execute_as_root "DROP EXTENSION IF EXISTS unaccent;"
 
 #=================================================
 # REMOVE DEPENDENCIES
