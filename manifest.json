@@ -25,18 +25,18 @@
 				"name": "domain",
 				"type": "domain",
 				"ask": {
-					"en": "Choose a domain for Weblate:"
+					"en": "Choose a domain"
 				},
-				"example": "domain.org"
+				"example": "domain.fr"
 			},
 			{
 				"name": "path",
 				"type": "path",
 				"ask": {
-				    "en": "Choose a path for Weblate:"
+				    "en": "Choose a path"
 				},
-				"example": "/weblate",
-				"default": "/weblate"
+				"example": "/funkwhale",
+				"default": "/funkwhale"
 			},
 			{
 				"name": "is_public",
@@ -52,7 +52,7 @@
 				"ask": {
 					"en": "Choose an admin user for Funkwhale?"
 				},
-				"example": "jean-baptiste"
+				"example": "jibec"
 			}
 		]
 	}

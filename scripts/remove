@@ -19,6 +19,7 @@ domain=$(ynh_app_setting_get $app domain)
 db_name=$(ynh_app_setting_get $app db_name)
 db_user=$db_name
 final_path=$(ynh_app_setting_get $app final_path)
+port=$(ynh_app_setting_get $app port)
 
 #=================================================
 # STANDARD REMOVE
@@ -30,6 +31,9 @@ final_path=$(ynh_app_setting_get $app final_path)
 ynh_remove_systemd_config "$app-server"
 ynh_remove_systemd_config "$app-worker"
 ynh_remove_systemd_config "$app-beat"
+
+systemctl disable "$app".target
+systemctl stop "$app".target
 ynh_secure_remove "/etc/systemd/system/$app.target"
 
 #=================================================
@@ -66,6 +70,16 @@ ynh_secure_remove "$final_path"
 
 # Remove the dedicated nginx config
 ynh_remove_nginx_config
+
+#=================================================
+# CLOSE A PORT
+#=================================================
+
+if yunohost firewall list | grep -q "\- $port$"
+then
+	echo "Close port $port"
+	yunohost firewall disallow TCP $port 2>&1
+fi
 
 #=================================================
 # GENERIC FINALIZATION

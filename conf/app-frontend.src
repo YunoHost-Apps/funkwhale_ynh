@@ -1,0 +1,6 @@
+SOURCE_URL=https://code.eliotberriot.com/funkwhale/funkwhale/builds/artifacts/0.12/download?job=build_front
+SOURCE_SUM=9c83b90877c6025654c071a87dd60dd69c5548df0fdfa77abcc27a259c846c64
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=zip
+SOURCE_IN_SUBDIR=false
+SOURCE_FILENAME=
