@@ -29,6 +29,7 @@ final_path=$(ynh_app_setting_get $app final_path)
 # Remove the dedicated systemd config
 ynh_remove_systemd_config "$app-server"
 ynh_remove_systemd_config "$app-worker"
+ynh_remove_systemd_config "$app-beat"
 ynh_secure_remove "/etc/systemd/system/$app.target"
 
 #=================================================
@@ -44,7 +45,6 @@ ynh_remove_app_dependencies
 
 # Remove a database if it exists, along with the associated user
 ynh_psql_remove_db "$db_name" "$app"
-ynh_psql_execute_as_root "DROP EXTENSION IF EXISTS unaccent;"
 
 #=================================================
 # REMOVE DEPENDENCIES

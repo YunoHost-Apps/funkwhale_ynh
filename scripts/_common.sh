@@ -217,7 +217,6 @@ ynh_psql_execute_file_as_root() {
 # | arg: pwd - Password of the database. If not given, a password will be generated
 ynh_psql_setup_db () {
 	db_user="$1"
-	app="$1"
 	db_name="$2"
 	new_db_pwd=$(ynh_string_random)	# Generate a random password
 	# If $3 is not given, use new_db_pwd instead for db_pwd.

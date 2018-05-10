@@ -1,5 +1,5 @@
 [Unit]
-Description=Funkwhale (__APP__) application server
+Description=Funkwhale (__APP__) celery beat process
 After=redis.service postgresql.service
 PartOf=__APP__.target
 
@@ -8,7 +8,7 @@ User=__APP__
 # adapt this depending on the path of your funkwhale installation
 WorkingDirectory=__FINALPATH__/api
 EnvironmentFile=__FINALPATH__/config/.env
-ExecStart=__FINALPATH__/virtualenv/bin/daphne -b ${FUNKWHALE_API_IP} -p ${FUNKWHALE_API_PORT} config.asgi:application --proxy-headers
+ExecStart=__FINALPATH__/virtualenv/bin/celery -A funkwhale_api.taskapp beat -l INFO
 
 [Install]
 WantedBy=multi-user.target

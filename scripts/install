@@ -73,13 +73,12 @@ ynh_install_app_dependencies build-essential curl ffmpeg \
 ynh_psql_test_if_first_run
 
 db_name=$(ynh_sanitize_dbid "$app")
+db_user=$db_name
 db_user_pwd=$(ynh_string_random)
 # Initialize database and store postgres password for upgrade
-ynh_psql_create_db "$db_name" "$app" "$db_user_pwd"
+ynh_psql_create_db "$db_name" "$db_user" "$db_user_pwd"
 ynh_app_setting_set "$app" db_name "$db_name"
 ynh_app_setting_set "$app" psqlpwd "$db_user_pwd"
-
-ynh_psql_execute_as_root "CREATE EXTENSION IF NOT EXISTS unaccent;"
 
 systemctl reload postgresql
 
@@ -159,7 +158,7 @@ ynh_replace_string "__DBNAME__"    "$app"         "$configfile"
 ynh_replace_string "__FINALPATH__" "$final_path"  "$configfile"
 ynh_replace_string "__KEY__"       "$key"         "$configfile"
 
-cat > "$final_path/load_env" <<'EOL'
+cat > "$final_path/load_env" <<EOL
 #!/bin/bash
 export $(cat "$final_path/config/.env" | grep -v ^# | xargs)
 EOL
@@ -174,13 +173,19 @@ admin_mail=$(ynh_user_get_info "$admin" "mail")
 (
 	set +o nounset
 	source "${final_path}/virtualenv/bin/activate"
+	cat "${final_path}/load_env"
 	source "${final_path}/load_env"
 	set -o nounset
 	cd "$final_path"
+
+	# needed for enabling the 'unaccent' extension
+	ynh_psql_execute_as_root "ALTER USER $db_user WITH SUPERUSER;"
 	python api/manage.py migrate
+	ynh_psql_execute_as_root "ALTER USER $db_user WITH NOSUPERUSER;"
 	python api/manage.py createsuperuser \
 		--username "$admin" \
-		--email "$admin_mail"
+		--email "$admin_mail" \
+		--noinput
 	python api/manage.py collectstatic
 )
 
@@ -188,15 +193,41 @@ admin_mail=$(ynh_user_get_info "$admin" "mail")
 # SETUP SYSTEMD
 #=================================================
 
-# Create a dedicated systemd config
-ynh_add_systemd_config "$app-server" "funkwhale-server"
-ynh_add_systemd_config "$app-worker" "funkwhale-worker"
-
 cp ../conf/funkwhale.target "/etc/systemd/system/$app.target"
+# Create a dedicated systemd config
+ynh_add_systemd_config "$app-server" "funkwhale-server.service"
+ynh_add_systemd_config "$app-worker" "funkwhale-worker.service"
+ynh_add_systemd_config "$app-beat"   "funkwhale-beat.service"
 
-#=================================================
-# SETUP SYSTEMD
-#=================================================
-
-systemctl daemon-reload
+systemctl enable "$app".target
 systemctl start "$app".target
+
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+# SECURE FILES AND DIRECTORIES
+#=================================================
+
+# Set permissions to app files
+chown -R "$app": "$final_path"
+
+#=================================================
+# SETUP SSOWAT
+#=================================================
+
+if [ "$is_public" -eq 0 ]
+then	# Remove the public access
+	ynh_app_setting_delete "$app" skipped_uris
+fi
+# Make app public if necessary
+if [ "$is_public" -eq 1 ]
+then
+	# unprotected_uris allows SSO credentials to be passed anyway.
+	ynh_app_setting_set "$app" unprotected_uris "/"
+fi
+
+#=================================================
+# RELOAD NGINX
+#=================================================
+
+systemctl reload nginx
