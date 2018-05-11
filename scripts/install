@@ -210,7 +210,7 @@ ynh_add_systemd_config "$app-worker" "funkwhale-worker.service"
 ynh_add_systemd_config "$app-beat"   "funkwhale-beat.service"
 
 systemctl enable "$app".target
-systemctl start "$app".target
+systemctl restart "$app".target
 
 #=================================================
 # GENERIC FINALIZATION
