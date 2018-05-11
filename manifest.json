@@ -42,7 +42,7 @@
 				"name": "is_public",
 				"type": "boolean",
 				"ask": {
-					"en": "Should Weblate be public accessible?"
+					"en": "Should Funkwhale be public accessible?"
 				},
 				"default": "0"
 			},
