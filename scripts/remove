@@ -32,7 +32,6 @@ ynh_remove_systemd_config "$app-server"
 ynh_remove_systemd_config "$app-worker"
 ynh_remove_systemd_config "$app-beat"
 
-systemctl disable "$app".target
 systemctl stop "$app".target
 ynh_secure_remove "/etc/systemd/system/$app.target"
 

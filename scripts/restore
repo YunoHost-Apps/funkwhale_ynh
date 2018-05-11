@@ -1,0 +1,113 @@
+#!/bin/bash
+
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+if [ ! -e _common.sh ]; then
+	# Get the _common.sh file if it's not in the current directory
+	cp ../settings/scripts/_common.sh ./_common.sh
+	chmod a+rx _common.sh
+fi
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# MANAGE SCRIPT FAILURE
+#=================================================
+
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
+# LOAD SETTINGS
+#=================================================
+
+app=$YNH_APP_INSTANCE_NAME
+
+domain=$(ynh_app_setting_get "$app" domain)
+path_url=$(ynh_app_setting_get "$app" path)
+final_path=$(ynh_app_setting_get "$app" final_path)
+db_name=$(ynh_app_setting_get "$app" db_name)
+db_user=$db_name
+db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
+
+
+#=================================================
+# CHECK IF THE APP CAN BE RESTORED
+#=================================================
+
+ynh_webpath_available "$domain" "$path_url" \
+	|| ynh_die "Path not available: ${domain}${path_url}"
+test ! -d "$final_path" \
+	|| ynh_die "There is already a directory: $final_path "
+
+#=================================================
+# STANDARD RESTORATION STEPS
+#=================================================
+# RESTORE THE NGINX CONFIGURATION
+#=================================================
+
+ynh_restore_file "/etc/nginx/conf.d/$domain.d/$app.conf"
+ynh_restore_file "/etc/nginx/conf.d/$domain.conf"
+
+#=================================================
+# RESTORE THE APP MAIN DIR
+#=================================================
+
+ynh_restore_file "$final_path"
+
+#=================================================
+# RECREATE THE DEDICATED USER
+#=================================================
+
+# Create the dedicated user (if not existing)
+ynh_system_user_create "$app"
+
+#=================================================
+# SPECIFIC RESTORATION
+#=================================================
+# REINSTALL DEPENDENCIES
+#=================================================
+
+ynh_install_app_dependencies build-essential curl ffmpeg \
+	libjpeg-dev libmagic-dev libpq-dev postgresql python3-dev python3-venv
+
+#=================================================
+# RESTORE THE PostgreSQL DATABASE
+#=================================================
+
+ynh_psql_test_if_first_run
+ynh_psql_setup_db "$db_user" "$db_name" "$db_pwd"
+ynh_psql_execute_file_as_root ./db.sql "$db_name"
+
+#=================================================
+# RESTORE USER RIGHTS
+#=================================================
+
+# Restore permissions on app files
+chown -R "$app": "$final_path"
+
+#=================================================
+# RESTORE SYSTEMD
+#=================================================
+
+ynh_restore_file "/etc/systemd/system/$app-beat.service"
+ynh_restore_file "/etc/systemd/system/$app-server.service"
+ynh_restore_file "/etc/systemd/system/$app-worker.service"
+ynh_restore_file "/etc/systemd/system/$app.target"
+
+systemctl enable "$app-beat.service"
+systemctl enable "$app-server.service"
+systemctl enable "$app-worker.service"
+systemctl restart "$app.target"
+
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+# RELOAD NGINX AND PHP-FPM
+#=================================================
+
+systemctl reload nginx
