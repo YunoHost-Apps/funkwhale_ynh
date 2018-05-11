@@ -68,6 +68,10 @@ ynh_secure_remove "$final_path"
 # REMOVE NGINX CONFIGURATION
 #=================================================
 
+# remove domain specific configuration
+tail -n +11 "/etc/nginx/conf.d/$domain.conf" > "/etc/nginx/conf.d/$domain.conf.temp"
+mv "/etc/nginx/conf.d/$domain.conf.temp" "/etc/nginx/conf.d/$domain.conf"
+
 # Remove the dedicated nginx config
 ynh_remove_nginx_config
 
