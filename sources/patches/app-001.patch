@@ -33,10 +33,3 @@ index 773d60f38ebec50dd46cda63b05b37ac4659573c..f067a2a8b44b4bfbd61b8f7af8682930
          return self.subsonic_api_token
 
      def set_password(self, raw_password):
-diff --git a/changes/changelog.d/198.bugfix b/changes/changelog.d/198.bugfix
-new file mode 100644
-index 0000000000000000000000000000000000000000..dd2f4e8fc59c36fa232366e10c0723089345889d
---- /dev/null
-+++ b/changes/changelog.d/198.bugfix
-@@ -0,0 +1 @@
-+Removed Python 3.6 dependency (secrets module) (#198)
