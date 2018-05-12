@@ -160,10 +160,12 @@ configfile="$final_path/config/.env"
 cp ../conf/env.prod "$configfile"
 
 key=$(ynh_string_random)
+redis_db=$(ynh_redis_get_free_db)
 
 ynh_app_setting_set "$app" key "$key"
+ynh_app_setting_set "$app" redis_db "$redis_db"
 
-ynh_replace_string "__APP__"       "$app"         "$configfile"
+ynh_replace_string "__REDIS_DB__"  "$redis_db"    "$configfile"
 ynh_replace_string "__PORT__"      "$port"        "$configfile"
 ynh_replace_string "__DOMAIN__"    "$domain"      "$configfile"
 ynh_replace_string "__DBUSER__"    "$db_name"     "$configfile"
