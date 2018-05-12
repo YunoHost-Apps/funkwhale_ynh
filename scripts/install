@@ -38,6 +38,8 @@ test ! -e "$final_path" || ynh_die "This path already contains a folder"
 # Normalize the url path syntax
 path_url=$(ynh_normalize_url_path "$path_url")
 
+test ! "$path_url" != "/" ||  ynh_die 'The path should be "/" for now...'
+
 # Check web path availability
 ynh_webpath_available "$domain" "$path_url"
 # Register (book) web path
