@@ -1,21 +1,43 @@
 #!/bin/bash
 
-# Remove the dedicated uwsgi ini file
+#=================================================
 #
-# usage: ynh_remove_systemd_config
-ynh_remove_uwsgi_service () {
-	finaluwsgiini="/etc/uwsgi/apps-available/$app.ini"
-	if [ -e "$finaluwsgiini" ]; then
-		systemctl stop "uwsgi-app@$app.socket"
-		systemctl disable "uwsgi-app@$app.socket"
-		yunohost service remove "uwsgi-app@$app.socket"
+# Redis HELPERS
+#
+# Point of contact : Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>
+#=================================================
 
-		ynh_secure_remove "$finaluwsgiini"
-		ynh_secure_remove "/var/run/uwsgi/$app.socket"
-		ynh_secure_remove "/var/log/uwsgi/app/$app"
-	fi
+# get the first available redis database
+#
+# usage: ynh_redis_get_free_db
+# | returns: the database number to use
+ynh_redis_get_free_db() {
+	local result
+	result=$(redis-cli INFO keyspace)
+
+	db=0
+	# default Debian setting is 15 databases
+	for i in $(seq 0 15)
+	do
+	 	if ! echo "$result" | grep -q "db$i"
+	 	then
+			db=$i
+	 		break 1
+ 		fi
+	done
+
+	echo "$db"
 }
 
+# Create a master password and set up global settings
+# Please always call this script in install and restore scripts
+#
+# usage: ynh_redis_remove_db database
+# | arg: database - the database to erase
+ynh_redis_remove_db() {
+	local db=$1
+	redis-cli -n "$db" flushall
+}
 
 #=================================================
 #

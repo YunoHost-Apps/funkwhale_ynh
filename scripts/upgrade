@@ -23,12 +23,17 @@ db_name=$(ynh_app_setting_get "$app" db_name)
 db_user=$db_name
 port=$(ynh_app_setting_get "$app" port)
 db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
+redis_db=$(ynh_app_setting_get "$app" redis_db)
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
 
-# Not yet needed
+# If redis_db doesn't exist, create it
+if [ -z "$redis_db" ]; then
+	redis_db=0
+	ynh_app_setting_set "$app" redis_db "$redis_db"
+fi
 
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
@@ -134,7 +139,7 @@ key=$(ynh_string_random)
 
 ynh_app_setting_set "$app" key "$key"
 
-ynh_replace_string "__APP__"       "$app"         "$configfile"
+ynh_replace_string "__REDIS_DB__"  "$redis_db"    "$configfile"
 ynh_replace_string "__PORT__"      "$port"        "$configfile"
 ynh_replace_string "__DOMAIN__"    "$domain"      "$configfile"
 ynh_replace_string "__DBUSER__"    "$db_name"     "$configfile"
