@@ -74,6 +74,9 @@ mv "/etc/nginx/conf.d/$domain.conf.temp" "/etc/nginx/conf.d/$domain.conf"
 # Remove the dedicated nginx config
 ynh_remove_nginx_config
 
+# remove local nginx cache
+ynh_secure_remove "/tmp/$app-transcode"
+
 #=================================================
 # CLOSE A PORT
 #=================================================

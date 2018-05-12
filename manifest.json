@@ -3,7 +3,7 @@
 	"id": "funkwhale",
 	"packaging_format": 1,
 	"requirements": {
-		"yunohost": ">= 2.7.12"
+		"yunohost": ">= 3.0.0~beta1.2"
 	},
 	"description": {
 		"en": "A translation platform using Git and Python"
@@ -15,7 +15,7 @@
 		"name": "Jean-Baptiste Holcroft",
 		"email": "jean-baptiste@holcroft.fr"
 	},
-	"multi_instance": false,
+	"multi_instance": true,
 	"services": [
 		"nginx"
 	],
