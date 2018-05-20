@@ -6,20 +6,20 @@
 ;; Test complet
 	; Manifest
 		domain="domain.tld"	(DOMAIN)
-		path="/path"	(PATH)
+		path="/"	(PATH)
 		admin="john"	(USER)
 		is_public=1	(PUBLIC|public=1|private=0)
 	; Checks
-		pkg_linter=0
+		pkg_linter=1
 		setup_sub_dir=0
-		setup_root=0
+		setup_root=1
 		setup_nourl=0
-		setup_private=0
-		setup_public=0
+		setup_private=1
+		setup_public=1
 		upgrade=1
 		upgrade=1		from_commit=9b30b385673eb4dda1c85a84a9cacf8409cf4ab7
-		backup_restore=0
-		multi_instance=0
+		backup_restore=1
+		multi_instance=1
 		incorrect_path=0
 		port_already_use=0
 		change_url=0
