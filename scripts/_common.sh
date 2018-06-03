@@ -12,19 +12,25 @@
 # usage: ynh_redis_get_free_db
 # | returns: the database number to use
 ynh_redis_get_free_db() {
-	local result
+	local result max db
 	result=$(redis-cli INFO keyspace)
+
+	# get the num
+	max=$(cat /etc/redis/redis.conf | grep ^databases | grep -Eow "[0-9]+")
 
 	db=0
 	# default Debian setting is 15 databases
-	for i in $(seq 0 15)
+	for i in $(seq 0 "$max")
 	do
 	 	if ! echo "$result" | grep -q "db$i"
 	 	then
 			db=$i
 	 		break 1
+	 		db=-1
  		fi
 	done
+
+	test "$db" -eq -1 && ynh_die "No available Redis databases..."
 
 	echo "$db"
 }

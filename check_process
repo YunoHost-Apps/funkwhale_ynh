@@ -6,7 +6,7 @@
 ;; Test complet
 	; Manifest
 		domain="domain.tld"	(DOMAIN)
-		path="/path"	(PATH)
+		path="/"	(PATH)
 		admin="john"	(USER)
 		is_public=1	(PUBLIC|public=1|private=0)
 	; Checks
@@ -17,6 +17,7 @@
 		setup_private=1
 		setup_public=1
 		upgrade=1
+		upgrade=1		from_commit=9b30b385673eb4dda1c85a84a9cacf8409cf4ab7
 		backup_restore=1
 		multi_instance=1
 		incorrect_path=0
@@ -35,3 +36,10 @@
 	Level 8=0
 	Level 9=0
 	Level 10=0
+;;; Options
+Email=jean-baptiste@holcroft.fr
+Notification=all
+;;; Upgrade options
+	; commit=9b30b385673eb4dda1c85a84a9cacf8409cf4ab7
+		name=Upgrade from 0.12
+manifest_arg=domain=DOMAIN&path=PATH&admin=USER&is_public=1
