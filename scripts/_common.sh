@@ -26,8 +26,8 @@ ynh_redis_get_free_db() {
 	 	then
 			db=$i
 	 		break 1
-	 		db=-1
  		fi
+ 		db=-1
 	done
 
 	test "$db" -eq -1 && ynh_die "No available Redis databases..."
