@@ -33,7 +33,8 @@
 				"name": "path",
 				"type": "path",
 				"ask": {
-				    "en": "Choose a path (for now, only / works)"
+				    "en": "Choose a path (for now, only / works)",
+				    "fr": "Choisir un chemin pour (pour l'instant, seul / fonctionne)"	
 				},
 				"example": "/",
 				"default": "/"
@@ -42,7 +43,8 @@
 				"name": "is_public",
 				"type": "boolean",
 				"ask": {
-					"en": "Should Funkwhale be publicly accessible?"
+					"en": "Should Funkwhale be publicly accessible?",
+					"en": "Funkwhale doit-il être publiquement accessible ?"					
 				},
 				"default": "0"
 			},
@@ -50,7 +52,8 @@
 				"name": "admin",
 				"type": "user",
 				"ask": {
-					"en": "Choose an admin user for Funkwhale?"
+					"en": "Choose an admin user for Funkwhale?",
+					"fr": "Choisir l'utilisateur YunoHost administrateur pour FunkWhale"					
 				},
 				"example": "jibec"
 			}
