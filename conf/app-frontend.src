@@ -1,5 +1,5 @@
-SOURCE_URL=https://code.eliotberriot.com/funkwhale/funkwhale/-/jobs/artifacts/0.14/download?job=build_front
-SOURCE_SUM=74bd307956f0c2f7acb3b34e93d7dd6af65b6ec8b4f285906ceb87922d6e11d6
+SOURCE_URL=https://code.eliotberriot.com/funkwhale/funkwhale/-/jobs/artifacts/0.14.2/download?job=build_front
+SOURCE_SUM=6bf6cd1ac5ffaf7cf4770321d2dbeff5e54e8df4ee5b0dc2813ff898569270bf
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip
 SOURCE_IN_SUBDIR=false

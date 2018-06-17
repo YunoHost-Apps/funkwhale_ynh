@@ -6,7 +6,6 @@
 ;; Test complet
 	; Manifest
 		domain="domain.tld"	(DOMAIN)
-		path="/"	(PATH)
 		admin="john"	(USER)
 		is_public=1	(PUBLIC|public=1|private=0)
 	; Checks
@@ -17,7 +16,7 @@
 		setup_private=1
 		setup_public=1
 		upgrade=1
-		upgrade=1		from_commit=5d26c33b91a98c7e9e830edbd7150a3cc9a1e7dd
+		upgrade=1		from_commit=2d2aedf3dac89e47f4c7083c0b9f55988ab3de54
 		backup_restore=1
 		multi_instance=1
 		incorrect_path=0
@@ -40,6 +39,6 @@
 Email=jean-baptiste@holcroft.fr
 Notification=all
 ;;; Upgrade options
-	; commit=5d26c33b91a98c7e9e830edbd7150a3cc9a1e7dd
-		name=Upgrade from 0.13
-manifest_arg=domain=DOMAIN&path=PATH&admin=USER&is_public=1
+	; commit=2d2aedf3dac89e47f4c7083c0b9f55988ab3de54
+		name=Upgrade from 0.14
+manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
