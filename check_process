@@ -6,7 +6,6 @@
 ;; Test complet
 	; Manifest
 		domain="domain.tld"	(DOMAIN)
-		path="/"	(PATH)
 		admin="john"	(USER)
 		is_public=1	(PUBLIC|public=1|private=0)
 	; Checks
@@ -42,4 +41,4 @@ Notification=all
 ;;; Upgrade options
 	; commit=2d2aedf3dac89e47f4c7083c0b9f55988ab3de54
 		name=Upgrade from 0.14
-manifest_arg=domain=DOMAIN&path=PATH&admin=USER&is_public=1
+manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1

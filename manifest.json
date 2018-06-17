@@ -8,7 +8,7 @@
 	"description": {
 		"en": "A modern, convivial and free music server"
 	},
-	"version": "0.14.1~ynh1",
+	"version": "0.14.2~ynh1",
 	"url": "https://funkwhale.audio",
 	"license": "BSD-3-Clause",
 	"maintainer": {
@@ -28,15 +28,6 @@
 					"en": "Choose a domain"
 				},
 				"example": "domain.fr"
-			},
-			{
-				"name": "path",
-				"type": "path",
-				"ask": {
-				    "en": "Choose a path (for now, only / works)"
-				},
-				"example": "/",
-				"default": "/"
 			},
 			{
 				"name": "is_public",
