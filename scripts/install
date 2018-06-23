@@ -71,7 +71,7 @@ ynh_app_setting_set "$app" port "$port"
 #=================================================
 
 # add backports (required to install ffmpeg)
-echo "deb http://httpredir.debian.org/debian jessie-backports main" | tee /etc/apt/sources.list.d/jessie-backports.list
+echo "deb http://httpredir.debian.org/debian stretch-backports main" | tee /etc/apt/sources.list.d/stretch-backports.list
 ynh_package_update
 
 ynh_install_app_dependencies build-essential curl ffmpeg \
