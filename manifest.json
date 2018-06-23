@@ -3,12 +3,12 @@
 	"id": "funkwhale",
 	"packaging_format": 1,
 	"requirements": {
-		"yunohost": ">= 3.0.0~beta1.2"
+		"yunohost": ">= 3.0.0"
 	},
 	"description": {
 		"en": "A modern, convivial and free music server"
 	},
-	"version": "0.14.2~ynh1",
+	"version": "0.14.2~ynh2",
 	"url": "https://funkwhale.audio",
 	"license": "BSD-3-Clause",
 	"maintainer": {
