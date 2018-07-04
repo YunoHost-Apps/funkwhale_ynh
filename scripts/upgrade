@@ -35,11 +35,9 @@ if [ -z "$redis_db" ]; then
 	ynh_app_setting_set "$app" redis_db "$redis_db"
 fi
 
-# Make sure we use stretch backports and not jessie's
-if [ ! -f /etc/apt/sources.list.d/stretch-backports.list ]; then
-	echo "deb http://httpredir.debian.org/debian stretch-backports main" | tee /etc/apt/sources.list.d/stretch-backports.list
-	ynh_secure_remove /etc/apt/sources.list.d/jessie-backports.list
-fi
+# We don't need backports anymore
+ynh_secure_remove /etc/apt/sources.list.d/stretch-backports.list
+ynh_secure_remove /etc/apt/sources.list.d/jessie-backports.list
 
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
