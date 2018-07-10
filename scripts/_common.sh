@@ -213,7 +213,7 @@ ynh_psql_drop_user() {
 #	If you give the name of a YunoHost user, ynh_send_readme_to_admin will find its email adress for you
 #	example: "root admin@domain user1 user2"
 ynh_send_readme_to_admin() {
-	local app_message="${1:-...No specific informations...}"
+	local app_message="${1:-...No specific information...}"
 	local recipients="${2:-root}"
 
 	# Retrieve the email of users
@@ -243,12 +243,25 @@ ynh_send_readme_to_admin() {
 	local mail_subject="☁️🆈🅽🅷☁️: \`$app\` was just installed!"
 
 	local mail_message="This is an automated message from your beloved YunoHost server.
-Specific informations for the application $app.
+
+Specific information for the application $app.
+
 $app_message
+
 ---
 Automatic diagnosis data from YunoHost
+
 $(yunohost tools diagnosis | grep -B 100 "services:" | sed '/services:/d')"
 
+	# Define binary to use for mail command
+	if [ -e /usr/bin/bsd-mailx ]
+	then
+		local mail_bin=/usr/bin/bsd-mailx
+	else
+		local mail_bin=/usr/bin/mail.mailutils
+	fi
+
 	# Send the email to the recipients
-	echo "$mail_message" | mail -a "Content-Type: text/plain; charset=UTF-8" -s "$mail_subject" "$recipients"
+	echo "$mail_message" | $mail_bin -a "Content-Type: text/plain; charset=UTF-8" -s "$mail_subject" "$recipients"
 }
+
