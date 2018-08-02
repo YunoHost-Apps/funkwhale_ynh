@@ -219,8 +219,8 @@ systemctl restart "$app".target
 # SECURE FILES AND DIRECTORIES
 #=================================================
 
-# Set permissions to app files
 chown -R "$app": "$final_path"
+chmod -R 755 "$final_path/front/dist/"
 
 #=================================================
 # SETUP SSOWAT

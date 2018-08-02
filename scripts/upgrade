@@ -35,10 +35,6 @@ if [ -z "$redis_db" ]; then
 	ynh_app_setting_set "$app" redis_db "$redis_db"
 fi
 
-# We don't need backports anymore
-ynh_secure_remove /etc/apt/sources.list.d/stretch-backports.list
-ynh_secure_remove /etc/apt/sources.list.d/jessie-backports.list
-
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
@@ -131,6 +127,9 @@ python3 -m venv "$final_path/virtualenv"
 	pip install --upgrade setuptools
 	pip install wheel
 	pip install -r "${final_path}/api/requirements.txt"
+
+	# https://code.eliotberriot.com/funkwhale/funkwhale/tags/0.16
+	pip uninstall django-cacheops --yes
 )
 
 #=================================================
@@ -178,6 +177,11 @@ chmod +x "$final_path/load_env"
 	ynh_psql_execute_as_root "ALTER USER $db_user WITH NOSUPERUSER;"
 
 	python api/manage.py collectstatic --clear --noinput
+
+	# https://code.eliotberriot.com/funkwhale/funkwhale/tags/0.16 # users-now-have-an-activitypub-actor-manual-action-required
+	python api/manage.py script create_actors --no-input
+	# https://code.eliotberriot.com/funkwhale/funkwhale/tags/0.16 #image-thumbnails-manual-action-required
+	python api/manage.py script create_image_variations --no-input
 )
 
 #=================================================
@@ -200,8 +204,8 @@ systemctl restart "$app".target
 # SECURE FILES AND DIRECTORIES
 #=================================================
 
-# Set right permissions for curl installation
 chown -R "$app": "$final_path"
+chmod -R 755 "$final_path/front/dist/"
 
 #=================================================
 # SETUP SSOWAT
