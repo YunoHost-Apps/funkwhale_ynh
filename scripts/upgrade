@@ -182,6 +182,8 @@ chmod +x "$final_path/load_env"
 	python api/manage.py script create_actors --no-input
 	# https://code.eliotberriot.com/funkwhale/funkwhale/tags/0.16 #image-thumbnails-manual-action-required
 	python api/manage.py script create_image_variations --no-input
+
+	python api/manage.py script migrate_to_user_libraries --no-input
 )
 
 #=================================================
