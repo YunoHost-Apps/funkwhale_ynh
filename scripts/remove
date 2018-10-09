@@ -33,6 +33,10 @@ ynh_remove_systemd_config "$app-server"
 ynh_remove_systemd_config "$app-worker"
 ynh_remove_systemd_config "$app-beat"
 
+yunohost service remove $app-server
+yunohost service remove $app-worker
+yunohost service remove $app-beat
+
 systemctl stop "$app".target
 ynh_secure_remove "/etc/systemd/system/$app.target"
 

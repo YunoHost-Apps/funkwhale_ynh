@@ -102,6 +102,11 @@ ynh_restore_file "/etc/systemd/system/$app-server.service"
 ynh_restore_file "/etc/systemd/system/$app-worker.service"
 ynh_restore_file "/etc/systemd/system/$app.target"
 
+# Add services to YunoHost dashboard
+yunohost service add $app-server
+yunohost service add $app-worker
+yunohost service add $app-beat
+
 systemctl enable "$app-beat.service"
 systemctl enable "$app-server.service"
 systemctl enable "$app-worker.service"

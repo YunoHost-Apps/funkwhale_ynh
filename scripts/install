@@ -211,6 +211,11 @@ ynh_add_systemd_config "$app-server" "funkwhale-server.service"
 ynh_add_systemd_config "$app-worker" "funkwhale-worker.service"
 ynh_add_systemd_config "$app-beat"   "funkwhale-beat.service"
 
+# Add services to YunoHost dashboard
+yunohost service add $app-server
+yunohost service add $app-worker
+yunohost service add $app-beat
+
 systemctl restart "$app".target
 
 #=================================================
