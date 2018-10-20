@@ -226,15 +226,11 @@ chmod -R 755 "$final_path/front/dist/"
 # SETUP SSOWAT
 #=================================================
 
-if [ "$is_public" -eq 0 ]
-then	# Remove the public access
-	ynh_app_setting_delete "$app" skipped_uris
-fi
 # Make app public if necessary
 if [ "$is_public" -eq 1 ]
 then
-	# unprotected_uris allows SSO credentials to be passed anyway.
-	ynh_app_setting_set "$app" unprotected_uris "/"
+	# makes sure no SSO credentials to be passed
+	ynh_app_setting_set "$app" skipped_uris "/"
 fi
 
 #=================================================

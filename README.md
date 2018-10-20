@@ -9,7 +9,7 @@ Installation requires a dedicated domain for now. I hope subpath installation wi
 
 ## Admin
 
-Admin password is **funkwhale**, login is the user you provided at installation.
+The admin uses the login you provided at installation. The password is the same you use for YunoHost.
 
 The admin interface is accessible with the address: your.domain.fr/api/admin
 
