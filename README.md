@@ -24,6 +24,9 @@ The admin interface is accessible with the address: your.domain.fr/api/admin
   * [x] [CLI Import](https://docs.funkwhale.audio/importing-music.html#from-music-directory-on-the-server) Remember to `source $final_path/venv/bin/activate`, then `source $final_path/load_env` before typinh using manage.py. 
   * [x] ARM support
 
+* end-user configuration required:
+  * [x] LDAP integration
+
 * to be added:
   * [ ] Store files in HOME, see https://github.com/YunoHost-Apps/funkwhale_ynh/issues/15
 
