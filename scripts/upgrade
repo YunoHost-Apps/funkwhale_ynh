@@ -35,9 +35,20 @@ if [ -z "$redis_db" ]; then
 	ynh_app_setting_set "$app" redis_db "$redis_db"
 fi
 
+# make sure we have the last code organization
+if [ ! -d "$final_path/code/" ]; then
+	mkdir "$final_path/code"
+	mv "$final_path/!(code)" "$final_path/code/"
+	mv "$final_path/code/data/media" "$final_path/media"
+	mv "$final_path/code/data/music" "$final_path/import"
+fi
+
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
+
+# Inform the backup/restore process that it should not save the data directory
+ynh_app_setting_set "$app" backup_core_only 1
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
@@ -63,12 +74,12 @@ path_url=$(ynh_normalize_url_path "$path_url")
 
 ynh_app_setting_set "$app" final_path "$final_path"
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source "$final_path"
-ynh_setup_source "$final_path" "app-frontend"
+ynh_setup_source "$final_path/code"
+ynh_setup_source "$final_path/code" "app-frontend"
 
 (
 	cd "$final_path"
-	mkdir -p config api data/static data/media data/music front
+	mkdir -p code/config code/api code/data/static media import code/front
 )
 
 #=================================================
@@ -118,15 +129,15 @@ ynh_install_app_dependencies build-essential curl ffmpeg \
 # PYTHON DEPENDENCIES
 #=================================================
 
-python3 -m venv "$final_path/virtualenv"
+python3 -m venv "$final_path/code/virtualenv"
 (
 	set +o nounset
-	source "${final_path}/virtualenv/bin/activate"
+	source "${final_path}/code/virtualenv/bin/activate"
 	set -o nounset
 	pip install --upgrade pip
 	pip install --upgrade setuptools
 	pip install wheel
-	pip install -r "${final_path}/api/requirements.txt"
+	pip install -r "${final_path}/code/api/requirements.txt"
 
 	# https://code.eliotberriot.com/funkwhale/funkwhale/tags/0.16
 	pip uninstall django-cacheops --yes
@@ -136,7 +147,7 @@ python3 -m venv "$final_path/virtualenv"
 # MODIFY THE CONFIG FILE
 #=================================================
 
-configfile="$final_path/config/.env"
+configfile="$final_path/code/config/.env"
 
 cp ../conf/env.prod "$configfile"
 
@@ -153,12 +164,12 @@ ynh_replace_string "__DBNAME__"    "$app"         "$configfile"
 ynh_replace_string "__FINALPATH__" "$final_path"  "$configfile"
 ynh_replace_string "__KEY__"       "$key"         "$configfile"
 
-cat > "$final_path/load_env" <<'EOL'
+cat > "$final_path/code/load_env" <<'EOL'
 #!/bin/bash
-export $(cat "$final_path/config/.env" | grep -v ^# | xargs)
+export $(cat "$final_path/code/config/.env" | grep -v ^# | xargs)
 EOL
 
-chmod +x "$final_path/load_env"
+chmod +x "$final_path/code/load_env"
 
 #=================================================
 # MIGRATE
@@ -166,10 +177,10 @@ chmod +x "$final_path/load_env"
 
 (
 	set +o nounset
-	source "${final_path}/virtualenv/bin/activate"
-	source "${final_path}/load_env"
+	source "${final_path}/code/virtualenv/bin/activate"
+	source "${final_path}/code/load_env"
 	set -o nounset
-	cd "$final_path"
+	cd "$final_path/code"
 
 	# needed for enabling the 'unaccent' extension
 	ynh_psql_execute_as_root "ALTER USER $db_user WITH SUPERUSER;"
@@ -183,6 +194,7 @@ chmod +x "$final_path/load_env"
 	# https://code.eliotberriot.com/funkwhale/funkwhale/tags/0.16 #image-thumbnails-manual-action-required
 	python api/manage.py script create_image_variations --no-input
 
+	# https://docs.funkwhale.audio/upgrading/0.17.html#upgrade-instructions
 	python api/manage.py script migrate_to_user_libraries --no-input
 )
 
@@ -207,7 +219,7 @@ systemctl restart "$app".target
 #=================================================
 
 chown -R "$app": "$final_path"
-chmod -R 755 "$final_path/front/dist/"
+chmod -R 755 "$final_path/code/front/dist/"
 
 #=================================================
 # SETUP SSOWAT
