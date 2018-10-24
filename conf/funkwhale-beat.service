@@ -5,10 +5,24 @@ PartOf=__APP__.target
 
 [Service]
 User=__APP__
-# adapt this depending on the path of your funkwhale installation
-WorkingDirectory=__FINALPATH__/api
-EnvironmentFile=__FINALPATH__/config/.env
-ExecStart=__FINALPATH__/virtualenv/bin/celery -A funkwhale_api.taskapp beat -l INFO
+Group=__APP__
+WorkingDirectory=__FINALPATH__/code/api
+EnvironmentFile=__FINALPATH__/code/config/.env
+ExecStart=__FINALPATH__/code/virtualenv/bin/celery -A funkwhale_api.taskapp beat -l INFO
+
+NoNewPrivileges=true
+PrivateDevices=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ProtectControlGroups=yes
+ProtectKernelModules=yes
+ReadOnlyPaths=__FINALPATH__/code/config/.env __FINALPATH__/code/
+ReadWritePaths=__FINALPATH__/media __FINALPATH__/import __FINALPATH__/code/api
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=__APP__-beat
 
 [Install]
 WantedBy=multi-user.target

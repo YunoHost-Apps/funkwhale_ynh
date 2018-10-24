@@ -28,12 +28,13 @@ redis_db=$(ynh_app_setting_get $app redis_db)
 # STOP AND REMOVE SERVICE
 #=================================================
 
+systemctl stop "$app".target
+
 # Remove the dedicated systemd config
 ynh_remove_systemd_config "$app-server"
 ynh_remove_systemd_config "$app-worker"
 ynh_remove_systemd_config "$app-beat"
 
-systemctl stop "$app".target
 ynh_secure_remove "/etc/systemd/system/$app.target"
 
 #=================================================

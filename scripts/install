@@ -72,7 +72,7 @@ ynh_app_setting_set "$app" port "$port"
 
 ynh_install_app_dependencies build-essential curl ffmpeg \
 	libjpeg-dev libmagic-dev libpq-dev postgresql python3-dev python3-venv \
-	redis-server \
+	redis-server libldap2-dev libsasl2-dev \
 	`# add arm support` \
 	zlib1g-dev libffi-dev libssl-dev
 
@@ -85,10 +85,11 @@ ynh_psql_test_if_first_run
 db_name=$(ynh_sanitize_dbid "$app")
 db_user=$db_name
 db_pwd=$(ynh_string_random)
-# Initialize database and store postgres password for upgrade
-ynh_psql_create_db "$db_name" "$db_user" "$db_pwd"
 ynh_app_setting_set "$app" db_name "$db_name"
 ynh_app_setting_set "$app" psqlpwd "$db_pwd"
+
+# Initialize database and store postgres password for upgrade
+ynh_psql_create_db "$db_name" "$db_user" "$db_pwd"
 
 systemctl reload postgresql
 
@@ -98,12 +99,12 @@ systemctl reload postgresql
 
 ynh_app_setting_set "$app" final_path "$final_path"
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source "$final_path"
-ynh_setup_source "$final_path" "app-frontend"
+ynh_setup_source "$final_path/code"
+ynh_setup_source "$final_path/code" "app-frontend"
 
 (
 	cd "$final_path"
-	mkdir -p config api data/static data/media data/music front
+	mkdir -p code/config code/api code/data/static media import code/front
 )
 
 #=================================================
@@ -138,22 +139,22 @@ ynh_system_user_create "$app" "$final_path"
 # PYTHON DEPENDENCIES
 #=================================================
 
-python3 -m venv "$final_path/virtualenv"
+python3 -m venv "$final_path/code/virtualenv"
 (
 	set +o nounset
-	source "${final_path}/virtualenv/bin/activate"
+	source "${final_path}/code/virtualenv/bin/activate"
 	set -o nounset
 	pip install --upgrade pip
 	pip install --upgrade setuptools
 	pip install wheel
-	pip install -r "${final_path}/api/requirements.txt"
+	pip install -r "${final_path}/code/api/requirements.txt"
 )
 
 #=================================================
 # MODIFY THE CONFIG FILE
 #=================================================
 
-configfile="$final_path/config/.env"
+configfile="$final_path/code/config/.env"
 
 cp ../conf/env.prod "$configfile"
 
@@ -172,12 +173,12 @@ ynh_replace_string "__DBNAME__"    "$app"         "$configfile"
 ynh_replace_string "__FINALPATH__" "$final_path"  "$configfile"
 ynh_replace_string "__KEY__"       "$key"         "$configfile"
 
-cat > "$final_path/load_env" <<'EOL'
+cat > "$final_path/code/load_env" <<'EOL'
 #!/bin/bash
-export $(cat "$final_path/config/.env" | grep -v ^# | xargs)
+export $(cat "$final_path/code/config/.env" | grep -v ^# | xargs)
 EOL
 
-chmod +x "$final_path/load_env"
+chmod +x "$final_path/code/load_env"
 
 #=================================================
 # MODIFY THE CONFIG FILE
@@ -186,10 +187,10 @@ chmod +x "$final_path/load_env"
 admin_mail=$(ynh_user_get_info "$admin" "mail")
 (
 	set +o nounset
-	source "${final_path}/virtualenv/bin/activate"
-	source "${final_path}/load_env"
+	source "${final_path}/code/virtualenv/bin/activate"
+	source "${final_path}/code/load_env"
 	set -o nounset
-	cd "$final_path"
+	cd "$final_path/code/"
 
 	# needed for enabling the 'unaccent' extension
 	ynh_psql_execute_as_root "ALTER USER $db_user WITH SUPERUSER;"
@@ -220,21 +221,17 @@ systemctl restart "$app".target
 #=================================================
 
 chown -R "$app": "$final_path"
-chmod -R 755 "$final_path/front/dist/"
+chmod -R 755 "$final_path/code/front/dist/"
 
 #=================================================
 # SETUP SSOWAT
 #=================================================
 
-if [ "$is_public" -eq 0 ]
-then	# Remove the public access
-	ynh_app_setting_delete "$app" skipped_uris
-fi
 # Make app public if necessary
 if [ "$is_public" -eq 1 ]
 then
-	# unprotected_uris allows SSO credentials to be passed anyway.
-	ynh_app_setting_set "$app" unprotected_uris "/"
+	# makes sure no SSO credentials to be passed
+	ynh_app_setting_set "$app" skipped_uris "/"
 fi
 
 #=================================================

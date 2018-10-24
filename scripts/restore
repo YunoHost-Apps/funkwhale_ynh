@@ -57,7 +57,18 @@ ynh_restore_file "/etc/nginx/conf.d/$domain.conf"
 # RESTORE THE APP MAIN DIR
 #=================================================
 
-ynh_restore_file "$final_path"
+backup_core_only=$(ynh_app_setting_get "$app" backup_core_only)
+
+# If backup_core_only have any value, then restore only code
+if [ -z "$backup_core_only" ]
+then
+	ynh_restore_file "$final_path/code"
+else
+	ynh_restore_file "$final_path"
+fi
+
+# Remove the option backup_core_only if it's in the settings.yml file
+ynh_app_setting_delete "$app" backup_core_only
 
 #=================================================
 # RECREATE THE DEDICATED USER

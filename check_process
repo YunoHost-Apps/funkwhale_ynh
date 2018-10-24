@@ -17,6 +17,7 @@
 		setup_public=1
 		upgrade=1
 		upgrade=1		from_commit=11c81c1f503691272df5002dad8278bd82f34535
+		upgrade=1		from_commit=80a5044d13a6782063fee2d7fb7a01832a6aa767
 		backup_restore=1
 		multi_instance=1
 		incorrect_path=0
@@ -41,4 +42,7 @@ Notification=all
 ;;; Upgrade options
 	; commit=11c81c1f503691272df5002dad8278bd82f34535
 		name=Upgrade from 0.15~ynh2
+manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
+	; commit=80a5044d13a6782063fee2d7fb7a01832a6aa767
+		name=Upgrade from 0.16.3
 manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1

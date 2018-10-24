@@ -5,11 +5,11 @@ A modern, convivial and free music server on YunoHost
 
 Installation requires a dedicated domain for now. I hope subpath installation will be possible in the future.
 
-**Shipped version:** 0.16.3 (this is an Alpha version!)
+**Shipped version:** 0.17.0 (this is an Alpha version!)
 
 ## Admin
 
-Admin password is **funkwhale**, login is the user you provided at installation.
+The admin uses the login you provided at installation. The password is the same you use for YunoHost.
 
 The admin interface is accessible with the address: your.domain.fr/api/admin
 
@@ -23,6 +23,9 @@ The admin interface is accessible with the address: your.domain.fr/api/admin
   * [x] [Federation](https://docs.funkwhale.audio/federation.html) tests
   * [x] [CLI Import](https://docs.funkwhale.audio/importing-music.html#from-music-directory-on-the-server) Remember to `source $final_path/venv/bin/activate`, then `source $final_path/load_env` before typinh using manage.py. 
   * [x] ARM support
+
+* end-user configuration required:
+  * [x] LDAP integration
 
 * to be added:
   * [ ] Store files in HOME, see https://github.com/YunoHost-Apps/funkwhale_ynh/issues/15

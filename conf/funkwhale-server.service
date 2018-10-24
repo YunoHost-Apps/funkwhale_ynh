@@ -5,10 +5,24 @@ PartOf=__APP__.target
 
 [Service]
 User=__APP__
-# adapt this depending on the path of your funkwhale installation
-WorkingDirectory=__FINALPATH__/api
-EnvironmentFile=__FINALPATH__/config/.env
-ExecStart=__FINALPATH__/virtualenv/bin/daphne -b ${FUNKWHALE_API_IP} -p ${FUNKWHALE_API_PORT} config.asgi:application --proxy-headers
+Group=__APP__
+WorkingDirectory=__FINALPATH__/code/api
+EnvironmentFile=__FINALPATH__/code/config/.env
+ExecStart=__FINALPATH__/code/virtualenv/bin/daphne -b ${FUNKWHALE_API_IP} -p ${FUNKWHALE_API_PORT} config.asgi:application --proxy-headers
+
+NoNewPrivileges=true
+PrivateDevices=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ProtectControlGroups=yes
+ProtectKernelModules=yes
+ReadOnlyPaths=__FINALPATH__/code/config/.env __FINALPATH__/code/
+ReadWritePaths=__FINALPATH__/media __FINALPATH__/import
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=__APP__-server
 
 [Install]
 WantedBy=multi-user.target
