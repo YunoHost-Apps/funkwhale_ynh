@@ -41,6 +41,7 @@ if [ ! -d "$final_path/code/" ]; then
 	mv "$final_path/!(code)" "$final_path/code/"
 	mv "$final_path/code/data/media" "$final_path/media"
 	mv "$final_path/code/data/music" "$final_path/import"
+	ynh_app_setting_set "$app" code_migration 1
 fi
 
 #=================================================
@@ -119,7 +120,7 @@ ynh_system_user_create "$app"
 
 ynh_install_app_dependencies build-essential curl ffmpeg \
 	libjpeg-dev libmagic-dev libpq-dev postgresql python3-dev python3-venv \
-	redis-server \
+	redis-server libldap2-dev libsasl2-dev \
 	`# add arm support` \
 	zlib1g-dev libffi-dev libssl-dev
 
@@ -231,8 +232,15 @@ then
 	# makes sure no SSO credentials to be passed
 	ynh_app_setting_set "$app" skipped_uris "/"
 fi
+
 #=================================================
 # RELOAD NGINX
 #=================================================
 
 systemctl reload nginx
+
+#=================================================
+# REMOVE CODE MIGRATION FLAG
+#=================================================
+
+ynh_app_setting_delete "$app" code_migration
