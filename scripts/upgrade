@@ -70,6 +70,16 @@ path_url=$(ynh_normalize_url_path "$path_url")
 #=================================================
 # STANDARD UPGRADE STEPS
 #=================================================
+# CLOSE A PORT
+#=================================================
+
+if yunohost firewall list | grep -q "\- $port$"
+then
+	echo "Close port $port"
+	yunohost firewall disallow TCP $port 2>&1
+fi
+
+#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
