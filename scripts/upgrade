@@ -233,6 +233,12 @@ chown -R "$app": "$final_path"
 chmod -R 755 "$final_path/code/front/dist/"
 
 #=================================================
+# SETUP FAIL2BAN
+#=================================================
+
+ynh_add_fail2ban_config "/var/log/nginx/$domain-access.log" "<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" 5
+
+#=================================================
 # SETUP SSOWAT
 #=================================================
 
