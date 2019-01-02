@@ -172,12 +172,16 @@ ynh_replace_string "__DBNAME__"    "$app"         "$configfile"
 ynh_replace_string "__FINALPATH__" "$final_path"  "$configfile"
 ynh_replace_string "__KEY__"       "$key"         "$configfile"
 
-cat > "$final_path/code/load_env" <<'EOL'
+loadfile="$final_path/code/load_env"
+
+cat > "$loadfile" <<'EOL'
 #!/bin/bash
-export $(cat "$final_path/code/config/.env" | grep -v ^# | xargs)
+export $(cat "__FINALPATH__/code/config/.env" | grep -v ^# | xargs)
 EOL
 
-chmod +x "$final_path/code/load_env"
+chmod +x "$loadfile"
+
+ynh_replace_string "__FINALPATH__" "$final_path"  "$loadfile"
 
 #=================================================
 # MODIFY THE CONFIG FILE
@@ -187,7 +191,7 @@ admin_mail=$(ynh_user_get_info "$admin" "mail")
 (
 	set +o nounset
 	source "${final_path}/code/virtualenv/bin/activate"
-	source "${final_path}/code/load_env"
+	source "$loadfile"
 	set -o nounset
 	cd "$final_path/code/"
 
