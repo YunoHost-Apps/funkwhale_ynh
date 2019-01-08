@@ -228,6 +228,15 @@ chmod -R 755 "$final_path/code/front/dist/"
 
 ynh_add_fail2ban_config "/var/log/nginx/$domain-access.log" "<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" 5
 
+
+#=================================================
+# ADVERTISE SERVICE IN ADMIN PANEL
+#=================================================
+
+yunohost service add "$app-server" --log "/var/log/$app/server.log"
+yunohost service add "$app-worker" --log "/var/log/$app/worker.log"
+yunohost service add "$app-beat"   --log "/var/log/$app/beat.log"
+
 #=================================================
 # SETUP SSOWAT
 #=================================================

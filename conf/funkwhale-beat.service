@@ -8,7 +8,11 @@ User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/code/api
 EnvironmentFile=__FINALPATH__/code/config/.env
-ExecStart=__FINALPATH__/code/virtualenv/bin/celery -A funkwhale_api.taskapp beat -l INFO
+
+# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#RuntimeDirectory=
+LogsDirectory=__APP__
+ExecStart=__FINALPATH__/code/virtualenv/bin/celery -A funkwhale_api.taskapp beat \
+	--loglevel INFO --logfile=/var/log/__APP__/beat.log
 
 NoNewPrivileges=true
 PrivateDevices=true

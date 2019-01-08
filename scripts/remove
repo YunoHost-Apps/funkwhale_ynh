@@ -38,6 +38,29 @@ ynh_remove_systemd_config "$app-beat"
 ynh_secure_remove "/etc/systemd/system/$app.target"
 
 #=================================================
+# REMOVE SERVICE FROM ADMIN PANEL
+#=================================================
+
+# Remove a service from the admin panel, added by `yunohost service add`
+if yunohost service status | grep -q "$app-server"
+then
+	echo "Remove $app-server service"
+	yunohost service remove "$app-server"
+fi
+
+if yunohost service status | grep -q "$app-worker"
+then
+	echo "Remove $app-worker service"
+	yunohost service remove "$app-worker"
+fi
+
+if yunohost service status | grep -q "$app-beat"
+then
+	echo "Remove $app-beat service"
+	yunohost service remove "$app-beat"
+fi
+
+#=================================================
 # REMOVE THE PostgreSQL DATABASE
 #=================================================
 

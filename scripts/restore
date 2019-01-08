@@ -116,6 +116,14 @@ ynh_psql_execute_file_as_root ./db.sql "$db_name"
 chown -R "$app": "$final_path"
 
 #=================================================
+# ADVERTISE SERVICE IN ADMIN PANEL
+#=================================================
+
+yunohost service add "$app-server" --log "/var/log/$app/server.log"
+yunohost service add "$app-worker" --log "/var/log/$app/worker.log"
+yunohost service add "$app-beat"   --log "/var/log/$app/beat.log"
+
+#=================================================
 # RESTORE SYSTEMD
 #=================================================
 

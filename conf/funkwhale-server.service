@@ -8,7 +8,11 @@ User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/code/api
 EnvironmentFile=__FINALPATH__/code/config/.env
-ExecStart=__FINALPATH__/code/virtualenv/bin/daphne -b ${FUNKWHALE_API_IP} -p ${FUNKWHALE_API_PORT} config.asgi:application --proxy-headers
+
+# https://www.freedesktop.org/software/systemd/man/systemd.exec.html#RuntimeDirectory=
+LogsDirectory=__APP__
+ExecStart=__FINALPATH__/code/virtualenv/bin/daphne -b ${FUNKWHALE_API_IP} -p ${FUNKWHALE_API_PORT} config.asgi:application --proxy-headers \
+	--loglevel INFO --logfile=/var/log/__APP__/server.log
 
 NoNewPrivileges=true
 PrivateDevices=true
