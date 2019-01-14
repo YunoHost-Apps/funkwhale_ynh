@@ -226,6 +226,9 @@ systemctl restart "$app".target
 chown -R "$app": "$final_path"
 chmod -R 755 "$final_path/code/front/dist/"
 
+mkdir -p "/var/log/$app"
+chown -R "$app": "/var/log/$app"
+
 #=================================================
 # SETUP FAIL2BAN
 #=================================================

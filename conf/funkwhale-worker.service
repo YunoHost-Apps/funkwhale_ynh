@@ -9,9 +9,6 @@ Group=__APP__
 WorkingDirectory=__FINALPATH__/code/api
 EnvironmentFile=__FINALPATH__/code/config/.env
 
-PermissionsStartOnly=true
-ExecStartPre=/bin/mkdir -p /var/log/__APP__
-ExecStartPre=/bin/chown __APP__:__APP__ /var/log/__APP__
 ExecStart=__FINALPATH__/code/virtualenv/bin/celery -A funkwhale_api.taskapp worker -l INFO \
 	--loglevel INFO --logfile=/var/log/__APP__/worker.log
 

@@ -9,9 +9,6 @@ Group=__APP__
 WorkingDirectory=__FINALPATH__/code/api
 EnvironmentFile=__FINALPATH__/code/config/.env
 
-PermissionsStartOnly=true
-ExecStartPre=/bin/mkdir -p /var/log/__APP__
-ExecStartPre=/bin/chown __APP__:__APP__ /var/log/__APP__
 ExecStart=__FINALPATH__/code/virtualenv/bin/daphne -b ${FUNKWHALE_API_IP} -p ${FUNKWHALE_API_PORT} config.asgi:application --proxy-headers \
 	--verbosity 1 --access-log=/var/log/__APP__/server.log
 

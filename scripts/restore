@@ -115,6 +115,9 @@ ynh_psql_execute_file_as_root ./db.sql "$db_name"
 # Restore permissions on app files
 chown -R "$app": "$final_path"
 
+mkdir -p "/var/log/$app"
+chown -R "$app": "/var/log/$app"
+
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
