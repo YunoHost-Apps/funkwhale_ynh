@@ -1,6 +1,7 @@
 # Funkwhale
 A modern, convivial and free music server on YunoHost
 
+[![Integration level](https://dash.yunohost.org/integration/funkwhale.svg)](https://dash.yunohost.org/appci/app/funkwhale)  
 [![Install Funkwhale with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=funkwhale)
 
 Installation requires a dedicated domain for now. I hope subpath installation will be possible in the future.
