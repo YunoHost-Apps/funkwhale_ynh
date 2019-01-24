@@ -24,6 +24,7 @@ db_user=$db_name
 port=$(ynh_app_setting_get "$app" port)
 db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
 redis_db=$(ynh_app_setting_get "$app" redis_db)
+code_migration=$(ynh_app_setting_get "$app" code_migration)
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
@@ -37,10 +38,15 @@ fi
 
 # make sure we have the last code organization
 if [ ! -d "$final_path/code/" ]; then
+	mkdir "$final_path-tmp"
+	mv "$final_path"/* "$final_path-tmp/"
+
 	mkdir "$final_path/code"
-	mv "$final_path"/!(code) "$final_path/code/"
-	mv "$final_path/code/data/media" "$final_path/media"
-	mv "$final_path/code/data/music" "$final_path/import"
+	mv "$final_path-tmp/data/media" "$final_path/media"
+	mv "$final_path-tmp/data/music" "$final_path/import"
+	mv "$final_path-tmp"/* "$final_path/code"
+
+	ynh_secure_remove "$final_path-tmp/"
 	ynh_app_setting_set "$app" code_migration 1
 fi
 
@@ -266,4 +272,4 @@ systemctl reload nginx
 # REMOVE CODE MIGRATION FLAG
 #=================================================
 
-ynh_app_setting_delete "$app" code_migration
+ynh_app_setting_set "$app" code_migration 2

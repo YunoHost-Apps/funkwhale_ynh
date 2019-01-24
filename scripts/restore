@@ -79,6 +79,7 @@ then
 	mv "$final_path/media" "$final_path/code/data/media"
 	mv "$final_path/import" "$final_path/code/data/music"
 	ynh_secure_remove "$final_path/code"
+	ynh_app_setting_delete "$app" code_migration
 fi
 
 #=================================================
