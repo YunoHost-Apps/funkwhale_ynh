@@ -24,6 +24,7 @@ db_user=$db_name
 port=$(ynh_app_setting_get "$app" port)
 db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
 redis_db=$(ynh_app_setting_get "$app" redis_db)
+code_migration=$(ynh_app_setting_get "$app" code_migration)
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
@@ -37,10 +38,15 @@ fi
 
 # make sure we have the last code organization
 if [ ! -d "$final_path/code/" ]; then
+	mkdir "$final_path-tmp"
+	mv "$final_path"/* "$final_path-tmp/"
+
 	mkdir "$final_path/code"
-	mv "$final_path/!(code)" "$final_path/code/"
-	mv "$final_path/code/data/media" "$final_path/media"
-	mv "$final_path/code/data/music" "$final_path/import"
+	mv "$final_path-tmp/data/media" "$final_path/media"
+	mv "$final_path-tmp/data/music" "$final_path/import"
+	mv "$final_path-tmp"/* "$final_path/code"
+
+	ynh_secure_remove "$final_path-tmp/"
 	ynh_app_setting_set "$app" code_migration 1
 fi
 
@@ -61,6 +67,14 @@ ynh_clean_setup () {
 ynh_abort_if_errors
 
 #=================================================
+# STOP SERVICES
+#=================================================
+
+systemctl stop "$app-beat.service"
+systemctl stop "$app-server.service"
+systemctl stop "$app-worker.service"
+
+#=================================================
 # CHECK THE PATH
 #=================================================
 
@@ -69,6 +83,16 @@ path_url=$(ynh_normalize_url_path "$path_url")
 
 #=================================================
 # STANDARD UPGRADE STEPS
+#=================================================
+# CLOSE A PORT
+#=================================================
+
+if yunohost firewall list | grep -q "\- $port$"
+then
+	echo "Close port $port"
+	yunohost firewall disallow TCP $port 2>&1
+fi
+
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
@@ -119,7 +143,7 @@ ynh_system_user_create "$app"
 #=================================================
 
 ynh_install_app_dependencies build-essential curl ffmpeg \
-	libjpeg-dev libmagic-dev libpq-dev postgresql python3-dev python3-venv \
+	libjpeg-dev libmagic-dev libpq-dev postgresql python3-dev virtualenv \
 	redis-server libldap2-dev libsasl2-dev \
 	`# add arm support` \
 	zlib1g-dev libffi-dev libssl-dev
@@ -130,7 +154,8 @@ ynh_install_app_dependencies build-essential curl ffmpeg \
 # PYTHON DEPENDENCIES
 #=================================================
 
-python3 -m venv "$final_path/code/virtualenv"
+ynh_secure_remove "$final_path/code/virtualenv"
+virtualenv -p python3 "$final_path/code/virtualenv"
 (
 	set +o nounset
 	source "${final_path}/code/virtualenv/bin/activate"
@@ -165,12 +190,16 @@ ynh_replace_string "__DBNAME__"    "$app"         "$configfile"
 ynh_replace_string "__FINALPATH__" "$final_path"  "$configfile"
 ynh_replace_string "__KEY__"       "$key"         "$configfile"
 
-cat > "$final_path/code/load_env" <<'EOL'
+loadfile="$final_path/code/load_env"
+
+cat > "$loadfile" <<'EOL'
 #!/bin/bash
-export $(cat "$final_path/code/config/.env" | grep -v ^# | xargs)
+export $(cat "__FINALPATH__/code/config/.env" | grep -v ^# | xargs)
 EOL
 
-chmod +x "$final_path/code/load_env"
+chmod +x "$loadfile"
+
+ynh_replace_string "__FINALPATH__" "$final_path"  "$loadfile"
 
 #=================================================
 # MIGRATE
@@ -179,7 +208,7 @@ chmod +x "$final_path/code/load_env"
 (
 	set +o nounset
 	source "${final_path}/code/virtualenv/bin/activate"
-	source "${final_path}/code/load_env"
+	source "$loadfile"
 	set -o nounset
 	cd "$final_path/code"
 
@@ -222,6 +251,15 @@ systemctl restart "$app".target
 chown -R "$app": "$final_path"
 chmod -R 755 "$final_path/code/front/dist/"
 
+mkdir -p "/var/log/$app"
+chown -R "$app": "/var/log/$app"
+
+#=================================================
+# SETUP FAIL2BAN
+#=================================================
+
+ynh_add_fail2ban_config "/var/log/nginx/$domain-access.log" "<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" 5
+
 #=================================================
 # SETUP SSOWAT
 #=================================================
@@ -243,4 +281,10 @@ systemctl reload nginx
 # REMOVE CODE MIGRATION FLAG
 #=================================================
 
-ynh_app_setting_delete "$app" code_migration
+ynh_app_setting_set "$app" code_migration 2
+
+#=================================================
+# RESTART Funkwhale
+#=================================================
+
+systemctl restart "$app.target"

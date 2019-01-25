@@ -8,7 +8,9 @@ User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/code/api
 EnvironmentFile=__FINALPATH__/code/config/.env
-ExecStart=__FINALPATH__/code/virtualenv/bin/celery -A funkwhale_api.taskapp worker -l INFO
+
+ExecStart=__FINALPATH__/code/virtualenv/bin/celery -A funkwhale_api.taskapp worker -l INFO \
+	--loglevel INFO --logfile=/var/log/__APP__/worker.log
 
 NoNewPrivileges=true
 PrivateDevices=true
@@ -18,7 +20,7 @@ ProtectSystem=strict
 ProtectControlGroups=yes
 ProtectKernelModules=yes
 ReadOnlyPaths=__FINALPATH__/code/config/.env __FINALPATH__/code/
-ReadWritePaths=__FINALPATH__/media __FINALPATH__/import
+ReadWritePaths=__FINALPATH__/media __FINALPATH__/import /var/log/__APP__
 
 StandardOutput=syslog
 StandardError=syslog

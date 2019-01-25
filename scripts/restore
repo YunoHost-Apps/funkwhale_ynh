@@ -79,6 +79,7 @@ then
 	mv "$final_path/media" "$final_path/code/data/media"
 	mv "$final_path/import" "$final_path/code/data/music"
 	ynh_secure_remove "$final_path/code"
+	ynh_app_setting_delete "$app" code_migration
 fi
 
 #=================================================
@@ -95,7 +96,7 @@ ynh_system_user_create "$app"
 #=================================================
 
 ynh_install_app_dependencies build-essential curl ffmpeg \
-	libjpeg-dev libmagic-dev libpq-dev postgresql python3-dev python3-venv \
+	libjpeg-dev libmagic-dev libpq-dev postgresql python3-dev virtualenv \
 	redis-server libldap2-dev libsasl2-dev \
 	`# add arm support` \
 	zlib1g-dev libffi-dev libssl-dev
@@ -114,6 +115,17 @@ ynh_psql_execute_file_as_root ./db.sql "$db_name"
 
 # Restore permissions on app files
 chown -R "$app": "$final_path"
+
+mkdir -p "/var/log/$app"
+chown -R "$app": "/var/log/$app"
+
+#=================================================
+# ADVERTISE SERVICE IN ADMIN PANEL
+#=================================================
+
+yunohost service add "$app-server" --log "/var/log/$app/server.log"
+yunohost service add "$app-worker" --log "/var/log/$app/worker.log"
+yunohost service add "$app-beat"   --log "/var/log/$app/beat.log"
 
 #=================================================
 # RESTORE SYSTEMD

@@ -25,6 +25,29 @@ redis_db=$(ynh_app_setting_get $app redis_db)
 #=================================================
 # STANDARD REMOVE
 #=================================================
+# REMOVE SERVICE FROM ADMIN PANEL
+#=================================================
+
+# Remove a service from the admin panel, added by `yunohost service add`
+if yunohost service status | grep -q "$app-server"
+then
+	echo "Remove $app-server service"
+	yunohost service remove "$app-server"
+fi
+
+if yunohost service status | grep -q "$app-worker"
+then
+	echo "Remove $app-worker service"
+	yunohost service remove "$app-worker"
+fi
+
+if yunohost service status | grep -q "$app-beat"
+then
+	echo "Remove $app-beat service"
+	yunohost service remove "$app-beat"
+fi
+
+#=================================================
 # STOP AND REMOVE SERVICE
 #=================================================
 
@@ -65,6 +88,8 @@ ynh_remove_app_dependencies
 # Remove the app directory securely
 ynh_secure_remove "$final_path"
 
+ynh_secure_remove "/var/log/$app"
+
 #=================================================
 # REMOVE NGINX CONFIGURATION
 #=================================================
@@ -91,6 +116,12 @@ fi
 
 #=================================================
 # GENERIC FINALIZATION
+#=================================================
+# REMOVE FAIL2BAN CONFIGURATION
+#=================================================
+
+ynh_remove_fail2ban_config
+
 #=================================================
 # REMOVE DEDICATED USER
 #=================================================
