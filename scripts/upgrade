@@ -67,6 +67,14 @@ ynh_clean_setup () {
 ynh_abort_if_errors
 
 #=================================================
+# STOP SERVICES
+#=================================================
+
+systemctl stop "$app-beat.service"
+systemctl stop "$app-server.service"
+systemctl stop "$app-worker.service"
+
+#=================================================
 # CHECK THE PATH
 #=================================================
 
@@ -135,7 +143,7 @@ ynh_system_user_create "$app"
 #=================================================
 
 ynh_install_app_dependencies build-essential curl ffmpeg \
-	libjpeg-dev libmagic-dev libpq-dev postgresql python3-dev python3-venv \
+	libjpeg-dev libmagic-dev libpq-dev postgresql python3-dev virtualenv \
 	redis-server libldap2-dev libsasl2-dev \
 	`# add arm support` \
 	zlib1g-dev libffi-dev libssl-dev
@@ -146,7 +154,8 @@ ynh_install_app_dependencies build-essential curl ffmpeg \
 # PYTHON DEPENDENCIES
 #=================================================
 
-python3 -m venv "$final_path/code/virtualenv"
+ynh_secure_remove "$final_path/code/virtualenv"
+virtualenv -p python3 "$final_path/code/virtualenv"
 (
 	set +o nounset
 	source "${final_path}/code/virtualenv/bin/activate"
@@ -273,3 +282,9 @@ systemctl reload nginx
 #=================================================
 
 ynh_app_setting_set "$app" code_migration 2
+
+#=================================================
+# RESTART Funkwhale
+#=================================================
+
+systemctl restart "$app.target"
