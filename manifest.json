@@ -8,7 +8,7 @@
 	"description": {
 		"en": "A modern, convivial and free music server"
 	},
-	"version": "0.17.0~ynh3",
+	"version": "0.18.0~ynh1",
 	"url": "https://funkwhale.audio",
 	"license": "BSD-3-Clause",
 	"maintainer": {

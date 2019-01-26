@@ -1,5 +1,5 @@
-SOURCE_URL=https://code.eliotberriot.com/funkwhale/funkwhale/-/archive/0.17/funkwhale-0.17.tar.bz2
-SOURCE_SUM=100eb3dfa5285eb9886d05dd575251e24cf43525596083b3793e8f80e369db1b
+SOURCE_URL=https://dev.funkwhale.audio/funkwhale/funkwhale/-/archive/0.18/funkwhale-0.18.tar.bz2
+SOURCE_SUM=a2271056338dc89254e0b7847ebbb4cbddc7ea3fe28bf786eb0c794e316ddb02
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.bz2
 SOURCE_IN_SUBDIR=true
