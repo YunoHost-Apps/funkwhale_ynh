@@ -70,7 +70,7 @@ ynh_app_setting_set "$app" port "$port"
 #=================================================
 
 ynh_install_app_dependencies build-essential curl ffmpeg \
-	libjpeg-dev libmagic-dev libpq-dev postgresql python3-dev virtualenv \
+	libjpeg-dev libmagic-dev libpq-dev postgresql postgresql-contrib python3-dev virtualenv \
 	redis-server libldap2-dev libsasl2-dev \
 	`# add arm support` \
 	zlib1g-dev libffi-dev libssl-dev
