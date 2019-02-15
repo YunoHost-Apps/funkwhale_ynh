@@ -95,7 +95,7 @@ ynh_secure_remove "/var/log/$app"
 #=================================================
 
 # remove domain specific configuration
-tail -n +11 "/etc/nginx/conf.d/$domain.conf" > "/etc/nginx/conf.d/$domain.conf.temp"
+tail -n +9 "/etc/nginx/conf.d/$domain.conf" > "/etc/nginx/conf.d/$domain.conf.temp"
 mv "/etc/nginx/conf.d/$domain.conf.temp" "/etc/nginx/conf.d/$domain.conf"
 
 # Remove the dedicated nginx config
