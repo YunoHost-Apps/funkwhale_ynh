@@ -41,7 +41,7 @@
 				"name": "admin",
 				"type": "user",
 				"ask": {
-					"en": "Choose an admin user for Funkwhale?"
+					"en": "Choose an admin user for Funkwhale"
 				},
 				"example": "jibec"
 			}
