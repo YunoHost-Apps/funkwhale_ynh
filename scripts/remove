@@ -95,14 +95,10 @@ ynh_secure_remove "/var/log/$app"
 #=================================================
 
 # remove domain specific configuration
-tail -n +9 "/etc/nginx/conf.d/$domain.conf" > "/etc/nginx/conf.d/$domain.conf.temp"
-mv "/etc/nginx/conf.d/$domain.conf.temp" "/etc/nginx/conf.d/$domain.conf"
+funkwhale_nginx_domain_cleaning
 
 # Remove the dedicated nginx config
 ynh_remove_nginx_config
-
-# remove local nginx cache
-ynh_secure_remove "/tmp/$app-transcode"
 
 #=================================================
 # CLOSE A PORT

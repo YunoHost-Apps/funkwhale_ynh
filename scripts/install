@@ -110,15 +110,8 @@ ynh_setup_source "$final_path/code" "app-frontend"
 # NGINX CONFIGURATION
 #=================================================
 
-# add proxy_cache and connection_upgrade at the beginning of the domain configuration
-echo "
-
-# required for websocket support
-map \$http_upgrade \$connection_upgrade {
-    default upgrade;
-    ''      close;
-}
-" | cat - "/etc/nginx/conf.d/$domain.conf" > temp && mv temp "/etc/nginx/conf.d/$domain.conf"
+# add funkwhale specifics at the beginning of the domain configuration
+funkwhale_nginx_domain_configure
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
