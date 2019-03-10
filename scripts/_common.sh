@@ -1,5 +1,40 @@
 #!/bin/bash
 
+# funkwhale needs edits to the domain config file
+# this function removes funkwhale specifics
+funkwhale_nginx_domain_cleaning() {
+	local line
+	local tempFile
+	local nginxConf
+
+	nginxConf="/etc/nginx/conf.d/$domain.conf"
+	tempFile="$nginxConf.temp"
+
+	line=$(sed -n '/server /=' "$nginxConf" | head -n 1)
+
+	tail -n +"$line" "$nginxConf" > "$tempFile"
+	mv "$tempFile" "$nginxConf"
+}
+
+# funkwhale needs edits to the domain config file
+# this function adds funkwhale specifics
+funkwhale_nginx_domain_configure() {
+	local tempFile
+	local nginxConf
+
+	nginxConf="/etc/nginx/conf.d/$domain.conf"
+	tempFile="$nginxConf.temp"
+
+	echo "
+# required for websocket support
+map \$http_upgrade \$connection_upgrade {
+    default upgrade;
+    ''      close;
+}
+" | cat - "$nginxConf" > "$tempFile"
+	mv "$tempFile" "$nginxConf"
+}
+
 #=================================================
 #
 # Redis HELPERS

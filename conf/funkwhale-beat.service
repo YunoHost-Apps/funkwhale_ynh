@@ -12,15 +12,15 @@ EnvironmentFile=__FINALPATH__/code/config/.env
 ExecStart=__FINALPATH__/code/virtualenv/bin/celery -A funkwhale_api.taskapp beat \
 	--loglevel INFO --logfile=/var/log/__APP__/beat.log
 
-NoNewPrivileges=true
-PrivateDevices=true
-PrivateTmp=true
-ProtectHome=true
-ProtectSystem=strict
-ProtectControlGroups=yes
-ProtectKernelModules=yes
-ReadOnlyPaths=__FINALPATH__/code/config/.env __FINALPATH__/code/
-ReadWritePaths=__FINALPATH__/media __FINALPATH__/import __FINALPATH__/code/api /var/log/__APP__
+#NoNewPrivileges=true
+#PrivateDevices=true
+#PrivateTmp=true
+#ProtectHome=true
+#ProtectSystem=strict
+#ProtectControlGroups=yes
+#ProtectKernelModules=yes
+#ReadOnlyPaths=__FINALPATH__/code/config/.env __FINALPATH__/code/
+#ReadWritePaths=__FINALPATH__/media __FINALPATH__/import __FINALPATH__/code/api /var/log/__APP__
 
 StandardOutput=syslog
 StandardError=syslog

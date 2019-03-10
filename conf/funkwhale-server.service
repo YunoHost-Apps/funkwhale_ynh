@@ -12,15 +12,15 @@ EnvironmentFile=__FINALPATH__/code/config/.env
 ExecStart=__FINALPATH__/code/virtualenv/bin/daphne -b ${FUNKWHALE_API_IP} -p ${FUNKWHALE_API_PORT} config.asgi:application --proxy-headers \
 	--verbosity 1 --access-log=/var/log/__APP__/server.log
 
-NoNewPrivileges=true
-PrivateDevices=true
-PrivateTmp=true
-ProtectHome=true
-ProtectSystem=strict
-ProtectControlGroups=yes
-ProtectKernelModules=yes
-ReadOnlyPaths=__FINALPATH__/code/config/.env __FINALPATH__/code/
-ReadWritePaths=__FINALPATH__/media __FINALPATH__/import /var/log/__APP__
+#NoNewPrivileges=true
+#PrivateDevices=true
+#PrivateTmp=true
+#ProtectHome=true
+#ProtectSystem=strict
+#ProtectControlGroups=yes
+#ProtectKernelModules=yes
+#ReadOnlyPaths=__FINALPATH__/code/config/.env __FINALPATH__/code/
+#ReadWritePaths=__FINALPATH__/media __FINALPATH__/import /var/log/__APP__
 
 StandardOutput=syslog
 StandardError=syslog

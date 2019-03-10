@@ -3,12 +3,12 @@
 	"id": "funkwhale",
 	"packaging_format": 1,
 	"requirements": {
-		"yunohost": ">= 3.2.0"
+		"yunohost": ">= 3.3.0"
 	},
 	"description": {
 		"en": "A modern, convivial and free music server"
 	},
-	"version": "0.17.0~ynh3",
+	"version": "0.18.2~ynh1",
 	"url": "https://funkwhale.audio",
 	"license": "BSD-3-Clause",
 	"maintainer": {
@@ -41,7 +41,7 @@
 				"name": "admin",
 				"type": "user",
 				"ask": {
-					"en": "Choose an admin user for Funkwhale?"
+					"en": "Choose an admin user for Funkwhale"
 				},
 				"example": "jibec"
 			}
