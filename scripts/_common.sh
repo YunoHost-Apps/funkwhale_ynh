@@ -1,5 +1,20 @@
 #!/bin/bash
 
+#=================================================
+# COMMON VARIABLES
+#=================================================
+
+# dependencies used by the app
+pkg_dependencies="build-essential curl ffmpeg \
+	libjpeg-dev libmagic-dev libpq-dev postgresql postgresql-contrib python3-dev virtualenv \
+	redis-server libldap2-dev libsasl2-dev \
+	`# add arm support` \
+	zlib1g-dev libffi-dev libssl-dev"
+
+#=================================================
+# PERSONAL HELPERS
+#=================================================
+
 # funkwhale needs edits to the domain config file
 # this function removes funkwhale specifics
 funkwhale_nginx_domain_cleaning() {
@@ -34,6 +49,10 @@ map \$http_upgrade \$connection_upgrade {
 " | cat - "$nginxConf" > "$tempFile"
 	mv "$tempFile" "$nginxConf"
 }
+
+#=================================================
+# EXPERIMENTAL HELPERS
+#=================================================
 
 #=================================================
 #

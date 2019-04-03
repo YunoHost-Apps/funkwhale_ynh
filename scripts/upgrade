@@ -12,6 +12,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_print_info "Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -29,6 +30,7 @@ code_migration=$(ynh_app_setting_get "$app" code_migration)
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
+ynh_print_info "Ensuring downward compatibility..."
 
 # If redis_db doesn't exist, create it
 if [ -z "$redis_db" ]; then
@@ -53,6 +55,7 @@ fi
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
+ynh_print_info "Backing up the app before upgrading (may take a while)..."
 
 # Inform the backup/restore process that it should not save the data directory
 ynh_app_setting_set "$app" backup_core_only 1
@@ -69,6 +72,7 @@ ynh_abort_if_errors
 #=================================================
 # STOP SERVICES
 #=================================================
+ynh_print_info "Stopping $app services..."
 
 systemctl stop "$app-beat.service"
 systemctl stop "$app-server.service"
@@ -96,6 +100,7 @@ fi
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
+ynh_print_info "Upgrading source files..."
 
 ynh_app_setting_set "$app" final_path "$final_path"
 # Download, check integrity, uncompress and patch the source from app.src
@@ -110,6 +115,7 @@ ynh_setup_source "$final_path/code" "app-frontend"
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
+ynh_print_info "Upgrading nginx web server configuration..."
 
 # remove domain specific configuration
 funkwhale_nginx_domain_cleaning
@@ -121,21 +127,19 @@ funkwhale_nginx_domain_configure
 ynh_add_nginx_config
 
 #=================================================
+# UPGRADE DEPENDENCIES
+#=================================================
+ynh_print_info "Upgrading dependencies..."
+
+ynh_install_app_dependencies $pkg_dependencies
+
+#=================================================
 # CREATE DEDICATED USER
 #=================================================
+ynh_print_info "Making sure dedicated system user exists..."
 
 # Create a system user
 ynh_system_user_create "$app"
-
-#=================================================
-# INSTALL DEPENDENCIES
-#=================================================
-
-ynh_install_app_dependencies build-essential curl ffmpeg \
-	libjpeg-dev libmagic-dev libpq-dev postgresql postgresql-contrib python3-dev virtualenv \
-	redis-server libldap2-dev libsasl2-dev \
-	`# add arm support` \
-	zlib1g-dev libffi-dev libssl-dev
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -224,6 +228,7 @@ ynh_replace_string "__FINALPATH__" "$final_path"  "$loadfile"
 #=================================================
 # SETUP SYSTEMD
 #=================================================
+ynh_print_info "Upgrading systemd configuration..."
 
 cp ../conf/funkwhale.target "/etc/systemd/system/$app.target"
 ynh_replace_string "__APP__"    "$app"   "/etc/systemd/system/$app.target"
@@ -256,6 +261,7 @@ ynh_add_fail2ban_config "/var/log/nginx/$domain-access.log" "<HOST>.* \"POST /ap
 #=================================================
 # SETUP SSOWAT
 #=================================================
+ynh_print_info "Upgrading SSOwat configuration..."
 
 # Make app public if necessary
 if [ "$is_public" -eq 1 ]
@@ -267,6 +273,7 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
+ynh_print_info "Upgrading SSOwat configuration..."
 
 systemctl reload nginx
 
@@ -277,7 +284,14 @@ systemctl reload nginx
 ynh_app_setting_set "$app" code_migration 2
 
 #=================================================
-# RESTART Funkwhale
+# START SERVICES
 #=================================================
+ynh_print_info "Starting $app services..."
 
 systemctl restart "$app.target"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_print_info "Upgrade of $app completed"

@@ -6,12 +6,8 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
-if [ ! -e _common.sh ]; then
-	# Get the _common.sh file if it's not in the current directory
-	cp ../settings/scripts/_common.sh ./_common.sh
-	chmod a+rx _common.sh
-fi
-source _common.sh
+#Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
+source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -24,6 +20,7 @@ ynh_abort_if_errors
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_print_info "Loading settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -34,10 +31,10 @@ db_name=$(ynh_app_setting_get "$app" db_name)
 db_user=$db_name
 db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
 
-
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
 #=================================================
+ynh_print_info "Validating restoration parameters..."
 
 ynh_webpath_available "$domain" "$path_url" \
 	|| ynh_die "Path not available: ${domain}${path_url}"
@@ -56,6 +53,7 @@ ynh_restore_file "/etc/nginx/conf.d/$domain.conf"
 #=================================================
 # RESTORE THE APP MAIN DIR
 #=================================================
+ynh_print_info "Restoring the app main directory..."
 
 backup_core_only=$(ynh_app_setting_get "$app" backup_core_only)
 
@@ -85,6 +83,7 @@ fi
 #=================================================
 # RECREATE THE DEDICATED USER
 #=================================================
+ynh_print_info "Recreating the dedicated system user..."
 
 # Create the dedicated user (if not existing)
 ynh_system_user_create "$app"
@@ -94,16 +93,14 @@ ynh_system_user_create "$app"
 #=================================================
 # REINSTALL DEPENDENCIES
 #=================================================
+ynh_print_info "Reinstalling dependencies..."
 
-ynh_install_app_dependencies build-essential curl ffmpeg \
-	libjpeg-dev libmagic-dev libpq-dev postgresql postgresql-contrib python3-dev virtualenv \
-	redis-server libldap2-dev libsasl2-dev \
-	`# add arm support` \
-	zlib1g-dev libffi-dev libssl-dev
+ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
-# RESTORE THE PostgreSQL DATABASE
+# RESTORE THE POSTGRESQL DATABASE
 #=================================================
+ynh_print_info "Restoring the PostgreSQL database..."
 
 ynh_psql_test_if_first_run
 ynh_psql_setup_db "$db_user" "$db_name" "$db_pwd"
@@ -123,6 +120,7 @@ chown -R "$app": "/var/log/$app"
 #=================================================
 # RESTORE SYSTEMD
 #=================================================
+ynh_print_info "Restoring the systemd configuration..."
 
 ynh_restore_file "/etc/systemd/system/$app-beat.service"
 ynh_restore_file "/etc/systemd/system/$app-server.service"
@@ -145,7 +143,15 @@ yunohost service add "$app-beat"   --log "/var/log/$app/beat.log"
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
-# RELOAD NGINX AND PHP-FPM
+# RELOAD NGINX
 #=================================================
+ynh_print_info "Reloading nginx web server..."
+
 
 systemctl reload nginx
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_print_info "Restoration completed for $app"

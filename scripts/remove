@@ -12,14 +12,15 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_print_info "Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
 domain=$(ynh_app_setting_get $app domain)
+port=$(ynh_app_setting_get $app port)
 db_name=$(ynh_app_setting_get $app db_name)
 db_user=$db_name
 final_path=$(ynh_app_setting_get $app final_path)
-port=$(ynh_app_setting_get $app port)
 redis_db=$(ynh_app_setting_get $app redis_db)
 
 #=================================================
@@ -29,19 +30,19 @@ redis_db=$(ynh_app_setting_get $app redis_db)
 #=================================================
 
 # Remove a service from the admin panel, added by `yunohost service add`
-if yunohost service status | grep -q "$app-server"
+if yunohost service status "$app-server" >/dev/null 2>&1
 then
 	echo "Remove $app-server service"
 	yunohost service remove "$app-server"
 fi
 
-if yunohost service status | grep -q "$app-worker"
+if yunohost service status "$app-worker" >/dev/null 2>&1
 then
 	echo "Remove $app-worker service"
 	yunohost service remove "$app-worker"
 fi
 
-if yunohost service status | grep -q "$app-beat"
+if yunohost service status "$app-beat" >/dev/null 2>&1
 then
 	echo "Remove $app-beat service"
 	yunohost service remove "$app-beat"
@@ -50,6 +51,7 @@ fi
 #=================================================
 # STOP AND REMOVE SERVICE
 #=================================================
+ynh_print_info "Stopping and removing the systemd service"
 
 systemctl stop "$app".target
 
@@ -61,15 +63,17 @@ ynh_remove_systemd_config "$app-beat"
 ynh_secure_remove "/etc/systemd/system/$app.target"
 
 #=================================================
-# REMOVE THE PostgreSQL DATABASE
+# REMOVE THE POSTGRESQL DATABASE
 #=================================================
+ynh_print_info "Removing the PostgreSQL database"
 
 # Remove a database if it exists, along with the associated user
 ynh_psql_remove_db "$db_name" "$app"
 
 #=================================================
-# REMOVE THE Redis DATABASE
+# REMOVE THE REDIS DATABASE
 #=================================================
+ynh_print_info "Removing the Redis database"
 
 # Remove a database if it exists, along with the associated user
 ynh_redis_remove_db "$redis_db"
@@ -77,6 +81,7 @@ ynh_redis_remove_db "$redis_db"
 #=================================================
 # REMOVE DEPENDENCIES
 #=================================================
+ynh_print_info "Removing dependencies"
 
 # Remove metapackage and its dependencies
 ynh_remove_app_dependencies
@@ -84,6 +89,7 @@ ynh_remove_app_dependencies
 #=================================================
 # REMOVE APP MAIN DIR
 #=================================================
+ynh_print_info "Removing app main directory"
 
 # Remove the app directory securely
 ynh_secure_remove "$final_path"
@@ -93,6 +99,7 @@ ynh_secure_remove "/var/log/$app"
 #=================================================
 # REMOVE NGINX CONFIGURATION
 #=================================================
+ynh_print_info "Removing nginx web server configuration"
 
 # remove domain specific configuration
 funkwhale_nginx_domain_cleaning
@@ -106,8 +113,8 @@ ynh_remove_nginx_config
 
 if yunohost firewall list | grep -q "\- $port$"
 then
-	echo "Close port $port"
-	yunohost firewall disallow TCP $port 2>&1
+	ynh_print_info "Closing port $port"
+	ynh_exec_warn_less yunohost firewall disallow TCP $port
 fi
 
 #=================================================
@@ -121,6 +128,13 @@ ynh_remove_fail2ban_config
 #=================================================
 # REMOVE DEDICATED USER
 #=================================================
+ynh_print_info "Removing the dedicated system user"
 
 # Delete a system user
 ynh_system_user_delete "$app"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_print_info "Removal of $app completed"

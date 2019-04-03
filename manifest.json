@@ -7,7 +7,7 @@
 	},
 	"version": "0.18.2~ynh1",
 	"url": "https://funkwhale.audio",
-	"license": "BSD-3-Clause",
+	"license": "AGPL-3.0-or-later",
 	"maintainer": {
 		"name": "Jean-Baptiste Holcroft",
 		"email": "jean-baptiste@holcroft.fr"

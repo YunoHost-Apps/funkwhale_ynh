@@ -6,12 +6,8 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
-if [ ! -e _common.sh ]; then
-	# Get the _common.sh file if it's not in the current directory
-	cp ../settings/scripts/_common.sh ./_common.sh
-	chmod a+rx _common.sh
-fi
-source _common.sh
+#Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
+source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -24,6 +20,7 @@ ynh_abort_if_errors
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_print_info "Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -37,6 +34,7 @@ db_name=$(ynh_app_setting_get "$app" db_name)
 #=================================================
 # BACKUP THE APP MAIN DIR
 #=================================================
+ynh_print_info "Backing up the main app directory..."
 
 backup_core_only=$(ynh_app_setting_get "$app" backup_core_only)
 # If backup_core_only have any value in the settings.yml file, do not backup the data directory
@@ -51,13 +49,15 @@ fi
 #=================================================
 # BACKUP THE NGINX CONFIGURATION
 #=================================================
+ynh_print_info "Backing up nginx web server configuration..."
 
 ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
 ynh_backup "/etc/nginx/conf.d/$domain.conf"
 
 #=================================================
-# BACKUP THE PostgreSQL DATABASE
+# BACKUP THE POSTGRESQL DATABASE
 #=================================================
+ynh_print_info "Backing up the PostgreSQL database..."
 
 ynh_psql_dump_db "$db_name" > db.sql
 
@@ -66,8 +66,15 @@ ynh_psql_dump_db "$db_name" > db.sql
 #=================================================
 # BACKUP SYSTEMD
 #=================================================
+ynh_print_info "Backing up systemd configuration..."
 
 ynh_backup "/etc/systemd/system/$app-beat.service"
 ynh_backup "/etc/systemd/system/$app-server.service"
 ynh_backup "/etc/systemd/system/$app-worker.service"
 ynh_backup "/etc/systemd/system/$app.target"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_print_info "Backup script completed for $app. (YunoHost will then actually copy those files to the archive)."
