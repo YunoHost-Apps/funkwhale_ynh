@@ -2,9 +2,6 @@
 	"name": "Funkwhale",
 	"id": "funkwhale",
 	"packaging_format": 1,
-	"requirements": {
-		"yunohost": ">= 3.3.0"
-	},
 	"description": {
 		"en": "A modern, convivial and free music server"
 	},
@@ -14,6 +11,9 @@
 	"maintainer": {
 		"name": "Jean-Baptiste Holcroft",
 		"email": "jean-baptiste@holcroft.fr"
+	},
+	"requirements": {
+		"yunohost": ">= 3.3.0"
 	},
 	"multi_instance": true,
 	"services": [
