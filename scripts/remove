@@ -68,7 +68,7 @@ ynh_secure_remove "/etc/systemd/system/$app.target"
 ynh_print_info "Removing the PostgreSQL database"
 
 # Remove a database if it exists, along with the associated user
-ynh_psql_remove_db "$db_name" "$app"
+ynh_psql_remove_db --db_name="$db_name" --db_user="$app"
 
 #=================================================
 # REMOVE THE REDIS DATABASE

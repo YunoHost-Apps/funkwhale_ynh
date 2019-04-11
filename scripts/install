@@ -81,9 +81,7 @@ ynh_app_setting_set "$app" db_name "$db_name"
 ynh_app_setting_set "$app" psqlpwd "$db_pwd"
 
 # Initialize database and store postgres password for upgrade
-ynh_psql_create_db "$db_name" "$db_user" "$db_pwd"
-
-systemctl reload postgresql
+ynh_psql_setup_db --db_name="$db_name" --db_user="$db_user" --db_pwd="$db_pwd"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -183,9 +181,9 @@ admin_mail=$(ynh_user_get_info "$admin" "mail")
 	cd "$final_path/code/"
 
 	# needed for enabling the 'unaccent' extension
-	ynh_psql_execute_as_root "ALTER USER $db_user WITH SUPERUSER;"
+	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
 	python api/manage.py migrate
-	ynh_psql_execute_as_root "ALTER USER $db_user WITH NOSUPERUSER;"
+	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
 	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | python api/manage.py shell
 	python api/manage.py collectstatic
 )

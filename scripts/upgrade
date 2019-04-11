@@ -206,9 +206,9 @@ ynh_replace_string "__FINALPATH__" "$final_path"  "$loadfile"
 	cd "$final_path/code"
 
 	# needed for enabling the 'unaccent' extension
-	ynh_psql_execute_as_root "ALTER USER $db_user WITH SUPERUSER;"
+	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
 	python api/manage.py migrate
-	ynh_psql_execute_as_root "ALTER USER $db_user WITH NOSUPERUSER;"
+	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
 
 	python api/manage.py collectstatic --clear --noinput
 
