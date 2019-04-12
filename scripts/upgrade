@@ -64,6 +64,7 @@ ynh_app_setting_set "$app" backup_core_only 1
 ynh_backup_before_upgrade
 ynh_clean_setup () {
 	# restore it if the upgrade fails
+	ynh_clean_check_starting
 	ynh_restore_upgradebackup
 }
 # Exit if an error occurs during the execution of the script
@@ -138,7 +139,7 @@ ynh_install_app_dependencies $pkg_dependencies
 #=================================================
 ynh_print_info "Making sure dedicated system user exists..."
 
-# Create a system user
+# Create a dedicated user (if not existing)
 ynh_system_user_create "$app"
 
 #=================================================
@@ -271,7 +272,7 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_print_info "Upgrading SSOwat configuration..."
+ynh_print_info "Reloading nginx web server..."
 
 systemctl reload nginx
 

@@ -14,6 +14,9 @@ source /usr/share/yunohost/helpers
 # MANAGE SCRIPT FAILURE
 #=================================================
 
+ynh_clean_setup () {
+	ynh_clean_check_starting
+}
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
 
@@ -89,12 +92,24 @@ ynh_print_info "Recreating the dedicated system user..."
 ynh_system_user_create "$app"
 
 #=================================================
+# RESTORE USER RIGHTS
+#=================================================
+
+# Restore permissions on app files
+chown -R "$app": "$final_path"
+chmod -R 755 "$final_path/code/front/dist/"
+
+mkdir -p "/var/log/$app"
+chown -R "$app": "/var/log/$app"
+
+#=================================================
 # SPECIFIC RESTORATION
 #=================================================
 # REINSTALL DEPENDENCIES
 #=================================================
 ynh_print_info "Reinstalling dependencies..."
 
+# Define and install dependencies
 ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
@@ -105,17 +120,6 @@ ynh_print_info "Restoring the PostgreSQL database..."
 ynh_psql_test_if_first_run
 ynh_psql_setup_db --db_user="$db_user" --db_name="$db_name" --db_pwd="$db_pwd"
 ynh_psql_execute_file_as_root --file="./db.sql" --database="$db_name"
-
-#=================================================
-# RESTORE USER RIGHTS
-#=================================================
-
-# Restore permissions on app files
-chown -R "$app": "$final_path"
-chmod -R 755 "$final_path/code/front/dist/"
-
-mkdir -p "/var/log/$app"
-chown -R "$app": "/var/log/$app"
 
 #=================================================
 # RESTORE SYSTEMD
