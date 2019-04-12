@@ -130,7 +130,6 @@ ynh_restore_file "/etc/systemd/system/$app.target"
 systemctl enable "$app-beat.service"
 systemctl enable "$app-server.service"
 systemctl enable "$app-worker.service"
-systemctl restart "$app.target"
 
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
@@ -147,8 +146,16 @@ yunohost service add "$app-beat"   --log "/var/log/$app/beat.log"
 #=================================================
 ynh_print_info "Reloading nginx web server..."
 
-
 systemctl reload nginx
+
+#=================================================
+# START SERVICES
+#=================================================
+ynh_print_info "Start Services..."
+
+ynh_systemd_action --action=start --service_name=${app}-beat --log_path=systemd --line_match="celery beat process"
+ynh_systemd_action --action=start --service_name=${app}-server --log_path=systemd --line_match="Listening on TCP address"
+ynh_systemd_action --action=start --service_name=${app}-worker --log_path=systemd --line_match="celery worker"
 
 #=================================================
 # END OF SCRIPT

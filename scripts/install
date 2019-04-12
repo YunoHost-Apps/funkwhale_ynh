@@ -200,8 +200,6 @@ ynh_add_systemd_config "$app-server" "funkwhale-server.service"
 ynh_add_systemd_config "$app-worker" "funkwhale-worker.service"
 ynh_add_systemd_config "$app-beat"   "funkwhale-beat.service"
 
-systemctl restart "$app".target
-
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
@@ -219,7 +217,6 @@ chown -R "$app": "/var/log/$app"
 #=================================================
 
 ynh_add_fail2ban_config "/var/log/nginx/$domain-access.log" "<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" 5
-
 
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
@@ -253,7 +250,9 @@ systemctl reload nginx
 #=================================================
 ynh_print_info "Start Services..."
 
-systemctl start "$app-server" "$app-worker" "$app-beat"
+ynh_systemd_action --action=start --service_name=${app}-beat --log_path=systemd --line_match="celery beat process"
+ynh_systemd_action --action=start --service_name=${app}-server --log_path=systemd --line_match="Listening on TCP address"
+ynh_systemd_action --action=start --service_name=${app}-worker --log_path=systemd --line_match="celery worker"
 
 #=================================================
 # END OF SCRIPT

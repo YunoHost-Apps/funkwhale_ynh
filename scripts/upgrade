@@ -74,9 +74,9 @@ ynh_abort_if_errors
 #=================================================
 ynh_print_info "Stopping $app services..."
 
-systemctl stop "$app-beat.service"
-systemctl stop "$app-server.service"
-systemctl stop "$app-worker.service"
+ynh_systemd_action --action=stop --service_name=${app}-beat --log_path=systemd --line_match="Stopped Funkwhale"
+ynh_systemd_action --action=stop --service_name=${app}-server --log_path=systemd --line_match="Stopped Funkwhale"
+ynh_systemd_action --action=stop --service_name=${app}-worker --log_path=systemd --line_match="Stopped Funkwhale"
 
 #=================================================
 # CHECK THE PATH
@@ -238,8 +238,6 @@ ynh_add_systemd_config "$app-server" "funkwhale-server.service"
 ynh_add_systemd_config "$app-worker" "funkwhale-worker.service"
 ynh_add_systemd_config "$app-beat"   "funkwhale-beat.service"
 
-systemctl restart "$app".target
-
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
@@ -286,9 +284,11 @@ ynh_app_setting_set "$app" code_migration 2
 #=================================================
 # START SERVICES
 #=================================================
-ynh_print_info "Starting $app services..."
+ynh_print_info "Start Services..."
 
-systemctl restart "$app.target"
+ynh_systemd_action --action=start --service_name=${app}-beat --log_path=systemd --line_match="celery beat process"
+ynh_systemd_action --action=start --service_name=${app}-server --log_path=systemd --line_match="Listening on TCP address"
+ynh_systemd_action --action=start --service_name=${app}-worker --log_path=systemd --line_match="celery worker"
 
 #=================================================
 # END OF SCRIPT

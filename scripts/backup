@@ -28,7 +28,6 @@ final_path=$(ynh_app_setting_get "$app" final_path)
 domain=$(ynh_app_setting_get "$app" domain)
 db_name=$(ynh_app_setting_get "$app" db_name)
 
-
 #=================================================
 # STANDARD BACKUP STEPS
 #=================================================

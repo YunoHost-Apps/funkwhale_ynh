@@ -53,7 +53,9 @@ fi
 #=================================================
 ynh_print_info "Stopping and removing the systemd service"
 
-systemctl stop "$app".target
+ynh_systemd_action --action=stop --service_name=${app}-beat --log_path=systemd --line_match="Stopped Funkwhale"
+ynh_systemd_action --action=stop --service_name=${app}-server --log_path=systemd --line_match="Stopped Funkwhale"
+ynh_systemd_action --action=stop --service_name=${app}-worker --log_path=systemd --line_match="Stopped Funkwhale"
 
 # Remove the dedicated systemd config
 ynh_remove_systemd_config "$app-server"
