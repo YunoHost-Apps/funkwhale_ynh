@@ -33,55 +33,55 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
-ynh_print_info "Validating installation parameters..."
+ynh_print_info --message="Validating installation parameters..."
 
 final_path="/var/www/$app"
-test ! -e "$final_path" || ynh_die "This path already contains a folder"
+test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
 
 # Register (book) web path
-ynh_webpath_register "$app" "$domain" "$path_url"
+ynh_webpath_register --app="$app" --domain="$domain" --path_url="$path_url"
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
-ynh_print_info "Storing installation settings..."
+ynh_print_info --message="Storing installation settings..."
 
-ynh_app_setting_set "$app" domain "$domain"
-ynh_app_setting_set "$app" path "$path_url"
-ynh_app_setting_set "$app" is_public "$is_public"
-ynh_app_setting_set "$app" admin "$admin"
+ynh_app_setting_set --app="$app" --key=domain --value="$domain"
+ynh_app_setting_set --app="$app" --key=path --value="$path_url"
+ynh_app_setting_set --app="$app" --key=is_public --value="$is_public"
+ynh_app_setting_set --app="$app" --key=admin --value="$admin"
 
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
 # FIND AND OPEN A PORT
 #=================================================
-ynh_print_info "Configuring firewall..."
+ynh_print_info --message="Configuring firewall..."
 
 # Find a free port
-port=$(ynh_find_port 5000)
+port=$(ynh_find_port --port=5000)
 # Open this port
-ynh_app_setting_set "$app" port "$port"
+ynh_app_setting_set --app="$app" --key=port --value="$port"
 
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
-ynh_print_info "Installing dependencies..."
+ynh_print_info --message="Installing dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # CREATE A POSTGRESQL DATABASE
 #=================================================
-ynh_print_info "Creating a PostgreSQL database..."
+ynh_print_info --message="Creating a PostgreSQL database..."
 
 ynh_psql_test_if_first_run
 
 db_name=$(ynh_sanitize_dbid "$app")
-db_user=$db_name
+db_user="$db_name"
 db_pwd=$(ynh_string_random)
-ynh_app_setting_set "$app" db_name "$db_name"
-ynh_app_setting_set "$app" psqlpwd "$db_pwd"
+ynh_app_setting_set --app="$app" --key=db_name --value="$db_name"
+ynh_app_setting_set --app="$app" --key=psqlpwd --value="$db_pwd"
 
 # Initialize database and store postgres password for upgrade
 ynh_psql_setup_db --db_name="$db_name" --db_user="$db_user" --db_pwd="$db_pwd"
@@ -89,12 +89,12 @@ ynh_psql_setup_db --db_name="$db_name" --db_user="$db_user" --db_pwd="$db_pwd"
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_print_info "Setting up source files..."
+ynh_print_info --message="Setting up source files..."
 
-ynh_app_setting_set "$app" final_path "$final_path"
+ynh_app_setting_set --app="$app" --key=final_path --value="$final_path"
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source "$final_path/code"
-ynh_setup_source "$final_path/code" "app-frontend"
+ynh_setup_source --dest_dir="$final_path/code"
+ynh_setup_source --dest_dir="$final_path/code" --source_id="app-frontend"
 
 (
 	cd "$final_path"
@@ -104,7 +104,7 @@ ynh_setup_source "$final_path/code" "app-frontend"
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_print_info "Configuring nginx web server..."
+ynh_print_info --message="Configuring nginx web server..."
 
 # add funkwhale specifics at the beginning of the domain configuration
 funkwhale_nginx_domain_configure
@@ -115,10 +115,10 @@ ynh_add_nginx_config
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_print_info "Configuring system user..."
+ynh_print_info --message="Configuring system user..."
 
 # Create a system user
-ynh_system_user_create "$app" "$final_path"
+ynh_system_user_create --username="$app" --home_dir="$final_path"
 
 #=================================================
 # SPECIFIC SETUP
@@ -148,17 +148,17 @@ cp ../conf/env.prod "$configfile"
 key=$(ynh_string_random)
 redis_db=$(ynh_redis_get_free_db)
 
-ynh_app_setting_set "$app" key "$key"
-ynh_app_setting_set "$app" redis_db "$redis_db"
+ynh_app_setting_set --app="$app" --key=key --value="$key"
+ynh_app_setting_set --app="$app" --key=redis_db --value="$redis_db"
 
-ynh_replace_string "__REDIS_DB__"  "$redis_db"    "$configfile"
-ynh_replace_string "__PORT__"      "$port"        "$configfile"
-ynh_replace_string "__DOMAIN__"    "$domain"      "$configfile"
-ynh_replace_string "__DBUSER__"    "$db_name"     "$configfile"
-ynh_replace_string "__DBPWD__"     "$db_pwd"      "$configfile"
-ynh_replace_string "__DBNAME__"    "$app"         "$configfile"
-ynh_replace_string "__FINALPATH__" "$final_path"  "$configfile"
-ynh_replace_string "__KEY__"       "$key"         "$configfile"
+ynh_replace_string --match_string="__REDIS_DB__"  --replace_string="$redis_db"    --target_file="$configfile"
+ynh_replace_string --match_string="__PORT__"      --replace_string="$port"        --target_file="$configfile"
+ynh_replace_string --match_string="__DOMAIN__"    --replace_string="$domain"      --target_file="$configfile"
+ynh_replace_string --match_string="__DBUSER__"    --replace_string="$db_name"     --target_file="$configfile"
+ynh_replace_string --match_string="__DBPWD__"     --replace_string="$db_pwd"      --target_file="$configfile"
+ynh_replace_string --match_string="__DBNAME__"    --replace_string="$app"         --target_file="$configfile"
+ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path"  --target_file="$configfile"
+ynh_replace_string --match_string="__KEY__"       --replace_string="$key"         --target_file="$configfile"
 
 loadfile="$final_path/code/load_env"
 
@@ -169,13 +169,13 @@ EOL
 
 chmod +x "$loadfile"
 
-ynh_replace_string "__FINALPATH__" "$final_path"  "$loadfile"
+ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path"  --target_file="$loadfile"
 
 #=================================================
 # CONFIGURE ADMIN USER
 #=================================================
 
-admin_mail=$(ynh_user_get_info "$admin" "mail")
+admin_mail=$(ynh_user_get_info --username="$admin" --key="mail")
 (
 	set +o nounset
 	source "${final_path}/code/virtualenv/bin/activate"
@@ -194,14 +194,15 @@ admin_mail=$(ynh_user_get_info "$admin" "mail")
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-ynh_print_info "Configuring a systemd service..."
+ynh_print_info --message="Configuring a systemd service..."
+
 cp ../conf/funkwhale.target "/etc/systemd/system/$app.target"
-ynh_replace_string "__APP__"    "$app"   "/etc/systemd/system/$app.target"
+ynh_replace_string --match_string="__APP__"    --replace_string="$app"   --target_file="/etc/systemd/system/$app.target"
 
 # Create a dedicated systemd config
-ynh_add_systemd_config "$app-server" "funkwhale-server.service"
-ynh_add_systemd_config "$app-worker" "funkwhale-worker.service"
-ynh_add_systemd_config "$app-beat"   "funkwhale-beat.service"
+ynh_add_systemd_config --service="$app-server" --template="funkwhale-server.service"
+ynh_add_systemd_config --service="$app-worker" --template="funkwhale-worker.service"
+ynh_add_systemd_config --service="$app-beat"   --template="funkwhale-beat.service"
 
 #=================================================
 # GENERIC FINALIZATION
@@ -216,12 +217,6 @@ mkdir -p "/var/log/$app"
 chown -R "$app": "/var/log/$app"
 
 #=================================================
-# SETUP FAIL2BAN
-#=================================================
-
-ynh_add_fail2ban_config "/var/log/nginx/$domain-access.log" "<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" 5
-
-#=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
@@ -230,35 +225,43 @@ yunohost service add "$app-worker" --log "/var/log/$app/worker.log"
 yunohost service add "$app-beat"   --log "/var/log/$app/beat.log"
 
 #=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_print_info --message="Starting a systemd service..."
+
+ynh_systemd_action --action="start" --service_name="${app}-beat" --log_path="systemd" --line_match="celery beat process"
+ynh_systemd_action --action="start" --service_name="${app}-server" --log_path="systemd" --line_match="Listening on TCP address"
+ynh_systemd_action --action="start" --service_name="${app}-worker" --log_path="systemd" --line_match="celery worker"
+
+#=================================================
+# SETUP FAIL2BAN
+#=================================================
+ynh_print_info --message="Configuring fail2ban..."
+
+# Create a dedicated fail2ban config
+ynh_add_fail2ban_config --logpath="/var/log/nginx/$domain-access.log" --failregex="<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" --max_retry=5
+
+#=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_print_info "Configuring SSOwat..."
+ynh_print_info --message="Configuring SSOwat..."
 
 # Make app public if necessary
 if [ "$is_public" -eq 1 ]
 then
 	# makes sure no SSO credentials to be passed
-	ynh_app_setting_set "$app" skipped_uris "/"
+	ynh_app_setting_set --app="$app" --key=skipped_uris --value="/"
 fi
 
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_print_info "Reloading nginx web server..."
+ynh_print_info --message="Reloading nginx web server..."
 
-systemctl reload nginx
-
-#=================================================
-# START SERVICES
-#=================================================
-ynh_print_info "Start Services..."
-
-ynh_systemd_action --action=start --service_name=${app}-beat --log_path=systemd --line_match="celery beat process"
-ynh_systemd_action --action=start --service_name=${app}-server --log_path=systemd --line_match="Listening on TCP address"
-ynh_systemd_action --action=start --service_name=${app}-worker --log_path=systemd --line_match="celery worker"
+ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info "Installation of $app completed"
+ynh_print_info --message="Installation of $app completed"
