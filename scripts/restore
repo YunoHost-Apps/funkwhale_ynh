@@ -6,24 +6,24 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
-if [ ! -e _common.sh ]; then
-	# Get the _common.sh file if it's not in the current directory
-	cp ../settings/scripts/_common.sh ./_common.sh
-	chmod a+rx _common.sh
-fi
-source _common.sh
+#Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
+source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
 # MANAGE SCRIPT FAILURE
 #=================================================
 
+ynh_clean_setup () {
+	ynh_clean_check_starting
+}
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
 
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_print_info "Loading settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -34,10 +34,10 @@ db_name=$(ynh_app_setting_get "$app" db_name)
 db_user=$db_name
 db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
 
-
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
 #=================================================
+ynh_print_info "Validating restoration parameters..."
 
 ynh_webpath_available "$domain" "$path_url" \
 	|| ynh_die "Path not available: ${domain}${path_url}"
@@ -56,6 +56,7 @@ ynh_restore_file "/etc/nginx/conf.d/$domain.conf"
 #=================================================
 # RESTORE THE APP MAIN DIR
 #=================================================
+ynh_print_info "Restoring the app main directory..."
 
 backup_core_only=$(ynh_app_setting_get "$app" backup_core_only)
 
@@ -85,29 +86,10 @@ fi
 #=================================================
 # RECREATE THE DEDICATED USER
 #=================================================
+ynh_print_info "Recreating the dedicated system user..."
 
 # Create the dedicated user (if not existing)
 ynh_system_user_create "$app"
-
-#=================================================
-# SPECIFIC RESTORATION
-#=================================================
-# REINSTALL DEPENDENCIES
-#=================================================
-
-ynh_install_app_dependencies build-essential curl ffmpeg \
-	libjpeg-dev libmagic-dev libpq-dev postgresql postgresql-contrib python3-dev virtualenv \
-	redis-server libldap2-dev libsasl2-dev \
-	`# add arm support` \
-	zlib1g-dev libffi-dev libssl-dev
-
-#=================================================
-# RESTORE THE PostgreSQL DATABASE
-#=================================================
-
-ynh_psql_test_if_first_run
-ynh_psql_setup_db "$db_user" "$db_name" "$db_pwd"
-ynh_psql_execute_file_as_root ./db.sql "$db_name"
 
 #=================================================
 # RESTORE USER RIGHTS
@@ -121,8 +103,28 @@ mkdir -p "/var/log/$app"
 chown -R "$app": "/var/log/$app"
 
 #=================================================
+# SPECIFIC RESTORATION
+#=================================================
+# REINSTALL DEPENDENCIES
+#=================================================
+ynh_print_info "Reinstalling dependencies..."
+
+# Define and install dependencies
+ynh_install_app_dependencies $pkg_dependencies
+
+#=================================================
+# RESTORE THE POSTGRESQL DATABASE
+#=================================================
+ynh_print_info "Restoring the PostgreSQL database..."
+
+ynh_psql_test_if_first_run
+ynh_psql_setup_db --db_user="$db_user" --db_name="$db_name" --db_pwd="$db_pwd"
+ynh_psql_execute_file_as_root --file="./db.sql" --database="$db_name"
+
+#=================================================
 # RESTORE SYSTEMD
 #=================================================
+ynh_print_info "Restoring the systemd configuration..."
 
 ynh_restore_file "/etc/systemd/system/$app-beat.service"
 ynh_restore_file "/etc/systemd/system/$app-server.service"
@@ -132,7 +134,6 @@ ynh_restore_file "/etc/systemd/system/$app.target"
 systemctl enable "$app-beat.service"
 systemctl enable "$app-server.service"
 systemctl enable "$app-worker.service"
-systemctl restart "$app.target"
 
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
@@ -145,7 +146,23 @@ yunohost service add "$app-beat"   --log "/var/log/$app/beat.log"
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
-# RELOAD NGINX AND PHP-FPM
+# RELOAD NGINX
 #=================================================
+ynh_print_info "Reloading nginx web server..."
 
 systemctl reload nginx
+
+#=================================================
+# START SERVICES
+#=================================================
+ynh_print_info "Start Services..."
+
+ynh_systemd_action --action=start --service_name=${app}-beat --log_path=systemd --line_match="celery beat process"
+ynh_systemd_action --action=start --service_name=${app}-server --log_path=systemd --line_match="Listening on TCP address"
+ynh_systemd_action --action=start --service_name=${app}-worker --log_path=systemd --line_match="celery worker"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_print_info "Restoration completed for $app"

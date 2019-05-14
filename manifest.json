@@ -2,18 +2,18 @@
 	"name": "Funkwhale",
 	"id": "funkwhale",
 	"packaging_format": 1,
-	"requirements": {
-		"yunohost": ">= 3.3.0"
-	},
 	"description": {
 		"en": "A modern, convivial and free music server"
 	},
-	"version": "0.18.2~ynh1",
+	"version": "0.18.3~ynh2",
 	"url": "https://funkwhale.audio",
-	"license": "BSD-3-Clause",
+	"license": "AGPL-3.0-or-later",
 	"maintainer": {
 		"name": "Jean-Baptiste Holcroft",
 		"email": "jean-baptiste@holcroft.fr"
+	},
+	"requirements": {
+        "yunohost": ">= 3.5"
 	},
 	"multi_instance": true,
 	"services": [
@@ -25,25 +25,25 @@
 				"name": "domain",
 				"type": "domain",
 				"ask": {
-					"en": "Choose a domain"
+					"en": "Choose a domain for funkwhale"
 				},
-				"example": "domain.fr"
-			},
-			{
-				"name": "is_public",
-				"type": "boolean",
-				"ask": {
-					"en": "Should Funkwhale be publicly accessible?"
-				},
-				"default": "0"
+				"example": "example.com"
 			},
 			{
 				"name": "admin",
 				"type": "user",
 				"ask": {
-					"en": "Choose an admin user for Funkwhale"
+					"en": "Choose an admin user"
 				},
 				"example": "jibec"
+			},
+			{
+				"name": "is_public",
+				"type": "boolean",
+				"ask": {
+					"en": "Is it a public application?"
+				},
+				"default": true
 			}
 		]
 	}

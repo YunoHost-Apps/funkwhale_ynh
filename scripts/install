@@ -13,6 +13,9 @@ source /usr/share/yunohost/helpers
 # MANAGE SCRIPT FAILURE
 #=================================================
 
+ynh_clean_setup () {
+	ynh_clean_check_starting
+}
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
 
@@ -27,27 +30,21 @@ admin=$YNH_APP_ARG_ADMIN
 
 app=$YNH_APP_INSTANCE_NAME
 
-
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
+ynh_print_info "Validating installation parameters..."
 
 final_path="/var/www/$app"
 test ! -e "$final_path" || ynh_die "This path already contains a folder"
 
-# Normalize the url path syntax
-path_url=$(ynh_normalize_url_path "$path_url")
-
-test ! "$path_url" != "/" ||  ynh_die 'The path should be "/" for now...'
-
-# Check web path availability
-ynh_webpath_available "$domain" "$path_url"
 # Register (book) web path
 ynh_webpath_register "$app" "$domain" "$path_url"
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
+ynh_print_info "Storing installation settings..."
 
 ynh_app_setting_set "$app" domain "$domain"
 ynh_app_setting_set "$app" path "$path_url"
@@ -59,6 +56,7 @@ ynh_app_setting_set "$app" admin "$admin"
 #=================================================
 # FIND AND OPEN A PORT
 #=================================================
+ynh_print_info "Configuring firewall..."
 
 # Find a free port
 port=$(ynh_find_port 5000)
@@ -68,16 +66,14 @@ ynh_app_setting_set "$app" port "$port"
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
+ynh_print_info "Installing dependencies..."
 
-ynh_install_app_dependencies build-essential curl ffmpeg \
-	libjpeg-dev libmagic-dev libpq-dev postgresql postgresql-contrib python3-dev virtualenv \
-	redis-server libldap2-dev libsasl2-dev \
-	`# add arm support` \
-	zlib1g-dev libffi-dev libssl-dev
+ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
-# CREATE A PostgreSQL DATABASE
+# CREATE A POSTGRESQL DATABASE
 #=================================================
+ynh_print_info "Creating a PostgreSQL database..."
 
 ynh_psql_test_if_first_run
 
@@ -88,13 +84,12 @@ ynh_app_setting_set "$app" db_name "$db_name"
 ynh_app_setting_set "$app" psqlpwd "$db_pwd"
 
 # Initialize database and store postgres password for upgrade
-ynh_psql_create_db "$db_name" "$db_user" "$db_pwd"
-
-systemctl reload postgresql
+ynh_psql_setup_db --db_name="$db_name" --db_user="$db_user" --db_pwd="$db_pwd"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
+ynh_print_info "Setting up source files..."
 
 ynh_app_setting_set "$app" final_path "$final_path"
 # Download, check integrity, uncompress and patch the source from app.src
@@ -109,6 +104,7 @@ ynh_setup_source "$final_path/code" "app-frontend"
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
+ynh_print_info "Configuring nginx web server..."
 
 # add funkwhale specifics at the beginning of the domain configuration
 funkwhale_nginx_domain_configure
@@ -119,6 +115,7 @@ ynh_add_nginx_config
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
+ynh_print_info "Configuring system user..."
 
 # Create a system user
 ynh_system_user_create "$app" "$final_path"
@@ -175,7 +172,7 @@ chmod +x "$loadfile"
 ynh_replace_string "__FINALPATH__" "$final_path"  "$loadfile"
 
 #=================================================
-# MODIFY THE CONFIG FILE
+# CONFIGURE ADMIN USER
 #=================================================
 
 admin_mail=$(ynh_user_get_info "$admin" "mail")
@@ -187,9 +184,9 @@ admin_mail=$(ynh_user_get_info "$admin" "mail")
 	cd "$final_path/code/"
 
 	# needed for enabling the 'unaccent' extension
-	ynh_psql_execute_as_root "ALTER USER $db_user WITH SUPERUSER;"
+	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
 	python api/manage.py migrate
-	ynh_psql_execute_as_root "ALTER USER $db_user WITH NOSUPERUSER;"
+	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
 	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | python api/manage.py shell
 	python api/manage.py collectstatic
 )
@@ -197,7 +194,7 @@ admin_mail=$(ynh_user_get_info "$admin" "mail")
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-
+ynh_print_info "Configuring a systemd service..."
 cp ../conf/funkwhale.target "/etc/systemd/system/$app.target"
 ynh_replace_string "__APP__"    "$app"   "/etc/systemd/system/$app.target"
 
@@ -205,8 +202,6 @@ ynh_replace_string "__APP__"    "$app"   "/etc/systemd/system/$app.target"
 ynh_add_systemd_config "$app-server" "funkwhale-server.service"
 ynh_add_systemd_config "$app-worker" "funkwhale-worker.service"
 ynh_add_systemd_config "$app-beat"   "funkwhale-beat.service"
-
-systemctl restart "$app".target
 
 #=================================================
 # GENERIC FINALIZATION
@@ -226,7 +221,6 @@ chown -R "$app": "/var/log/$app"
 
 ynh_add_fail2ban_config "/var/log/nginx/$domain-access.log" "<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" 5
 
-
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
@@ -238,6 +232,7 @@ yunohost service add "$app-beat"   --log "/var/log/$app/beat.log"
 #=================================================
 # SETUP SSOWAT
 #=================================================
+ynh_print_info "Configuring SSOwat..."
 
 # Make app public if necessary
 if [ "$is_public" -eq 1 ]
@@ -249,6 +244,21 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
+ynh_print_info "Reloading nginx web server..."
 
-systemctl start "$app-server" "$app-worker" "$app-beat"
 systemctl reload nginx
+
+#=================================================
+# START SERVICES
+#=================================================
+ynh_print_info "Start Services..."
+
+ynh_systemd_action --action=start --service_name=${app}-beat --log_path=systemd --line_match="celery beat process"
+ynh_systemd_action --action=start --service_name=${app}-server --log_path=systemd --line_match="Listening on TCP address"
+ynh_systemd_action --action=start --service_name=${app}-worker --log_path=systemd --line_match="celery worker"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_print_info "Installation of $app completed"
