@@ -205,6 +205,13 @@ ynh_add_systemd_config --service="$app-worker" --template="funkwhale-worker.serv
 ynh_add_systemd_config --service="$app-beat"   --template="funkwhale-beat.service"
 
 #=================================================
+# STORE THE CONFIG FILE CHECKSUM
+#=================================================
+
+# Calculate and store the config file checksum into the app settings
+ynh_store_file_checksum --file="$configfile"
+
+#=================================================
 # GENERIC FINALIZATION
 #=================================================
 # SECURE FILES AND DIRECTORIES

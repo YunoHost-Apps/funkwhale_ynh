@@ -168,7 +168,7 @@ virtualenv -p python3 "$final_path/code/virtualenv"
 #=================================================
 
 configfile="$final_path/code/config/.env"
-
+ynh_backup_if_checksum_is_different --file="$configfile"
 cp ../conf/env.prod "$configfile"
 
 key=$(ynh_string_random)
@@ -225,6 +225,13 @@ ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path"
 	# https://dev.funkwhale.audio/funkwhale/funkwhale/tags/0.18
 	python api/manage.py script delete_pre_017_federated_uploads --no-input
 )
+
+#=================================================
+# STORE THE CONFIG FILE CHECKSUM
+#=================================================
+
+# Recalculate and store the checksum of the file for the next upgrade.
+ynh_store_file_checksum --file="$configfile"
 
 #=================================================
 # SETUP SYSTEMD
