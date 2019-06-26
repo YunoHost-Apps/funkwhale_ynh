@@ -84,7 +84,7 @@ ynh_redis_get_free_db() {
  		db=-1
 	done
 
-	test "$db" -eq -1 && ynh_die "No available Redis databases..."
+	test "$db" -eq -1 && ynh_die --message="No available Redis databases..."
 
 	echo "$db"
 }
@@ -183,8 +183,8 @@ ynh_add_fail2ban_config () {
 	max_retry=${3:-3}
 	ports=${4:-http,https}
 
-	test -n "$logpath" || ynh_die "ynh_add_fail2ban_config expects a logfile path as first argument and received nothing."
-	test -n "$failregex" || ynh_die "ynh_add_fail2ban_config expects a failure regex as second argument and received nothing."
+	test -n "$logpath" || ynh_die --message="ynh_add_fail2ban_config expects a logfile path as first argument and received nothing."
+	test -n "$failregex" || ynh_die --message="ynh_add_fail2ban_config expects a failure regex as second argument and received nothing."
 
 	finalfail2banjailconf="/etc/fail2ban/jail.d/$app.conf"
 	finalfail2banfilterconf="/etc/fail2ban/filter.d/$app.conf"

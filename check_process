@@ -27,7 +27,6 @@
 	Level 3=auto
 # Level 4: https://github.com/YunoHost-Apps/funkwhale_ynh/issues/21
 	Level 4=1
-# Level 5:
 	Level 5=auto
 	Level 6=auto
 	Level 7=auto
