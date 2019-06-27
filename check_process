@@ -16,6 +16,7 @@
 		setup_private=1
 		setup_public=1
 		upgrade=1
+		upgrade=1		from_commit=99bae16efca321ce50ba9a98c62996169195e0ba
 		backup_restore=1
 		multi_instance=1
 		incorrect_path=0
@@ -42,4 +43,7 @@ Notification=all
 manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
 	; commit=806bcb0f320d8e3e28711a9ae1d2b175b95c65ce
 		name=Upgrade from 0.17.0~ynh2
+manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
+	; commit=99bae16efca321ce50ba9a98c62996169195e0ba
+		name=Upgrade from 0.18.3
 manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
