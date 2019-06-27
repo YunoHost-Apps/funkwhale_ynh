@@ -12,30 +12,30 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_print_info "Loading installation settings..."
+ynh_print_info --message="Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get "$app" domain)
-path_url=$(ynh_app_setting_get "$app" path)
-is_public=$(ynh_app_setting_get "$app" is_public)
-final_path=$(ynh_app_setting_get "$app" final_path)
-db_name=$(ynh_app_setting_get "$app" db_name)
-db_user=$db_name
-port=$(ynh_app_setting_get "$app" port)
-db_pwd=$(ynh_app_setting_get "$app" psqlpwd)
-redis_db=$(ynh_app_setting_get "$app" redis_db)
-code_migration=$(ynh_app_setting_get "$app" code_migration)
+domain=$(ynh_app_setting_get --app="$app" --key=domain)
+path_url=$(ynh_app_setting_get --app="$app" --key=path)
+is_public=$(ynh_app_setting_get --app="$app" --key=is_public)
+final_path=$(ynh_app_setting_get --app="$app" --key=final_path)
+db_name=$(ynh_app_setting_get --app="$app" --key=db_name)
+db_user="$db_name"
+port=$(ynh_app_setting_get --app="$app" --key=port)
+db_pwd=$(ynh_app_setting_get --app="$app" --key=psqlpwd)
+redis_db=$(ynh_app_setting_get --app="$app" --key=redis_db)
+code_migration=$(ynh_app_setting_get --app="$app" --key=code_migration)
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
-ynh_print_info "Ensuring downward compatibility..."
+ynh_print_info --message="Ensuring downward compatibility..."
 
 # If redis_db doesn't exist, create it
 if [ -z "$redis_db" ]; then
 	redis_db=0
-	ynh_app_setting_set "$app" redis_db "$redis_db"
+	ynh_app_setting_set --app="$app" --key=redis_db --value="$redis_db"
 fi
 
 # make sure we have the last code organization
@@ -48,17 +48,17 @@ if [ ! -d "$final_path/code/" ]; then
 	mv "$final_path-tmp/data/music" "$final_path/import"
 	mv "$final_path-tmp"/* "$final_path/code"
 
-	ynh_secure_remove "$final_path-tmp/"
-	ynh_app_setting_set "$app" code_migration 1
+	ynh_secure_remove --file="$final_path-tmp/"
+	ynh_app_setting_set --app="$app" --key=code_migration --value=1
 fi
 
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_print_info "Backing up the app before upgrading (may take a while)..."
+ynh_print_info --message="Backing up the app before upgrading (may take a while)..."
 
 # Inform the backup/restore process that it should not save the data directory
-ynh_app_setting_set "$app" backup_core_only 1
+ynh_app_setting_set --app="$app" --key=backup_core_only --value=1
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
@@ -71,23 +71,12 @@ ynh_clean_setup () {
 ynh_abort_if_errors
 
 #=================================================
-# STOP SERVICES
-#=================================================
-ynh_print_info "Stopping $app services..."
-
-ynh_systemd_action --action=stop --service_name=${app}-beat --log_path=systemd --line_match="Stopped Funkwhale"
-ynh_systemd_action --action=stop --service_name=${app}-server --log_path=systemd --line_match="Stopped Funkwhale"
-ynh_systemd_action --action=stop --service_name=${app}-worker --log_path=systemd --line_match="Stopped Funkwhale"
-
-#=================================================
 # CHECK THE PATH
 #=================================================
 
 # Normalize the URL path syntax
 path_url=$(ynh_normalize_url_path "$path_url")
 
-#=================================================
-# STANDARD UPGRADE STEPS
 #=================================================
 # CLOSE A PORT
 #=================================================
@@ -99,14 +88,25 @@ then
 fi
 
 #=================================================
+# STANDARD UPGRADE STEPS
+#=================================================
+# STOP SYSTEMD SERVICE
+#=================================================
+ynh_print_info --message="Stopping a systemd service..."
+
+ynh_systemd_action --action="stop" --service_name="${app}-beat" --log_path="systemd" --line_match="Stopped Funkwhale"
+ynh_systemd_action --action="stop" --service_name="${app}-server" --log_path="systemd" --line_match="Stopped Funkwhale"
+ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="systemd" --line_match="Stopped Funkwhale"
+
+#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_print_info "Upgrading source files..."
+ynh_print_info --message="Upgrading source files..."
 
-ynh_app_setting_set "$app" final_path "$final_path"
+ynh_app_setting_set --app="$app" --key=final_path --value="$final_path"
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source "$final_path/code"
-ynh_setup_source "$final_path/code" "app-frontend"
+ynh_setup_source --dest_dir="$final_path/code"
+ynh_setup_source --dest_dir="$final_path/code" --source_id="app-frontend"
 
 (
 	cd "$final_path"
@@ -116,7 +116,7 @@ ynh_setup_source "$final_path/code" "app-frontend"
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_print_info "Upgrading nginx web server configuration..."
+ynh_print_info --message="Upgrading nginx web server configuration..."
 
 # remove domain specific configuration
 funkwhale_nginx_domain_cleaning
@@ -130,17 +130,17 @@ ynh_add_nginx_config
 #=================================================
 # UPGRADE DEPENDENCIES
 #=================================================
-ynh_print_info "Upgrading dependencies..."
+ynh_print_info --message="Upgrading dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_print_info "Making sure dedicated system user exists..."
+ynh_print_info --message="Making sure dedicated system user exists..."
 
 # Create a dedicated user (if not existing)
-ynh_system_user_create "$app"
+ynh_system_user_create --username="$app" --home_dir="$final_path"
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -148,7 +148,7 @@ ynh_system_user_create "$app"
 # PYTHON DEPENDENCIES
 #=================================================
 
-ynh_secure_remove "$final_path/code/virtualenv"
+ynh_secure_remove --file="$final_path/code/virtualenv"
 virtualenv -p python3 "$final_path/code/virtualenv"
 (
 	set +o nounset
@@ -168,21 +168,21 @@ virtualenv -p python3 "$final_path/code/virtualenv"
 #=================================================
 
 configfile="$final_path/code/config/.env"
-
+ynh_backup_if_checksum_is_different --file="$configfile"
 cp ../conf/env.prod "$configfile"
 
 key=$(ynh_string_random)
 
-ynh_app_setting_set "$app" key "$key"
+ynh_app_setting_set --app="$app" --key=key --value="$key"
 
-ynh_replace_string "__REDIS_DB__"  "$redis_db"    "$configfile"
-ynh_replace_string "__PORT__"      "$port"        "$configfile"
-ynh_replace_string "__DOMAIN__"    "$domain"      "$configfile"
-ynh_replace_string "__DBUSER__"    "$db_name"     "$configfile"
-ynh_replace_string "__DBPWD__"     "$db_pwd"      "$configfile"
-ynh_replace_string "__DBNAME__"    "$app"         "$configfile"
-ynh_replace_string "__FINALPATH__" "$final_path"  "$configfile"
-ynh_replace_string "__KEY__"       "$key"         "$configfile"
+ynh_replace_string --match_string="__REDIS_DB__"  --replace_string="$redis_db"    --target_file="$configfile"
+ynh_replace_string --match_string="__PORT__"      --replace_string="$port"        --target_file="$configfile"
+ynh_replace_string --match_string="__DOMAIN__"    --replace_string="$domain"      --target_file="$configfile"
+ynh_replace_string --match_string="__DBUSER__"    --replace_string="$db_name"     --target_file="$configfile"
+ynh_replace_string --match_string="__DBPWD__"     --replace_string="$db_pwd"      --target_file="$configfile"
+ynh_replace_string --match_string="__DBNAME__"    --replace_string="$app"         --target_file="$configfile"
+ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path"  --target_file="$configfile"
+ynh_replace_string --match_string="__KEY__"       --replace_string="$key"         --target_file="$configfile"
 
 loadfile="$final_path/code/load_env"
 
@@ -193,7 +193,7 @@ EOL
 
 chmod +x "$loadfile"
 
-ynh_replace_string "__FINALPATH__" "$final_path"  "$loadfile"
+ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path"  --target_file="$loadfile"
 
 #=================================================
 # MIGRATE
@@ -227,20 +227,34 @@ ynh_replace_string "__FINALPATH__" "$final_path"  "$loadfile"
 )
 
 #=================================================
+# STORE THE CONFIG FILE CHECKSUM
+#=================================================
+
+# Recalculate and store the checksum of the file for the next upgrade.
+ynh_store_file_checksum --file="$configfile"
+
+#=================================================
 # SETUP SYSTEMD
 #=================================================
-ynh_print_info "Upgrading systemd configuration..."
+ynh_print_info --message="Upgrading systemd configuration..."
 
 cp ../conf/funkwhale.target "/etc/systemd/system/$app.target"
-ynh_replace_string "__APP__"    "$app"   "/etc/systemd/system/$app.target"
+ynh_replace_string --match_string="__APP__"    --replace_string="$app"   --target_file="/etc/systemd/system/$app.target"
 
 # Create a dedicated systemd config
-ynh_add_systemd_config "$app-server" "funkwhale-server.service"
-ynh_add_systemd_config "$app-worker" "funkwhale-worker.service"
-ynh_add_systemd_config "$app-beat"   "funkwhale-beat.service"
+ynh_add_systemd_config --service="$app-server" --template="funkwhale-server.service"
+ynh_add_systemd_config --service="$app-worker" --template="funkwhale-worker.service"
+ynh_add_systemd_config --service="$app-beat"   --template="funkwhale-beat.service"
 
 #=================================================
 # GENERIC FINALIZATION
+#=================================================
+# UPGRADE FAIL2BAN
+#=================================================
+ynh_print_info --message="Reconfiguring fail2ban..."
+
+ynh_add_fail2ban_config --logpath="/var/log/nginx/$domain-access.log" --failregex="<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" --max_retry=5
+
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
@@ -252,47 +266,41 @@ mkdir -p "/var/log/$app"
 chown -R "$app": "/var/log/$app"
 
 #=================================================
-# SETUP FAIL2BAN
-#=================================================
-
-ynh_add_fail2ban_config "/var/log/nginx/$domain-access.log" "<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" 5
-
-#=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_print_info "Upgrading SSOwat configuration..."
+ynh_print_info --message="Upgrading SSOwat configuration..."
 
 # Make app public if necessary
 if [ "$is_public" -eq 1 ]
 then
 	# makes sure no SSO credentials to be passed
-	ynh_app_setting_set "$app" skipped_uris "/"
+	ynh_app_setting_set --app="$app" --key=skipped_uris --value="/"
 fi
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_print_info --message="Starting a systemd service..."
+
+ynh_systemd_action --action="start" --service_name="${app}-beat" --log_path="systemd" --line_match="celery beat process"
+ynh_systemd_action --action="start" --service_name="${app}-server" --log_path="systemd" --line_match="Listening on TCP address"
+ynh_systemd_action --action="start" --service_name="${app}-worker" --log_path="systemd" --line_match="celery worker"
 
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_print_info "Reloading nginx web server..."
+ynh_print_info --message="Reloading nginx web server..."
 
-systemctl reload nginx
+ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # REMOVE CODE MIGRATION FLAG
 #=================================================
 
-ynh_app_setting_set "$app" code_migration 2
-
-#=================================================
-# START SERVICES
-#=================================================
-ynh_print_info "Start Services..."
-
-ynh_systemd_action --action=start --service_name=${app}-beat --log_path=systemd --line_match="celery beat process"
-ynh_systemd_action --action=start --service_name=${app}-server --log_path=systemd --line_match="Listening on TCP address"
-ynh_systemd_action --action=start --service_name=${app}-worker --log_path=systemd --line_match="celery worker"
+ynh_app_setting_set --app="$app" --key=code_migration --value=2
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info "Upgrade of $app completed"
+ynh_print_info --message="Upgrade of $app completed"
