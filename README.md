@@ -11,7 +11,7 @@ A modern, convivial and free music server on YunoHost
 
 Installation requires a dedicated domain for now. I hope subpath installation will be possible in the future.
 
-**Shipped version:** 0.19.0 (this is an Alpha version!)
+**Shipped version:** 0.19.1 (this is an Alpha version!)
 
 ## Screenshots
 
