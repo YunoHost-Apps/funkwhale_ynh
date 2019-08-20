@@ -149,7 +149,7 @@ ynh_system_user_create --username="$app" --home_dir="$final_path"
 #=================================================
 
 ynh_secure_remove --file="$final_path/code/virtualenv"
-virtualenv -p python3 "$final_path/code/virtualenv"
+virtualenv -p python3.6 "$final_path/code/virtualenv"
 (
 	set +o nounset
 	source "${final_path}/code/virtualenv/bin/activate"
