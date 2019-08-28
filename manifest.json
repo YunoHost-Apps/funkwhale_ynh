@@ -5,7 +5,7 @@
 	"description": {
 		"en": "A modern, convivial and free music server"
 	},
-	"version": "0.19.1~ynh1",
+	"version": "0.19.1~ynh2",
 	"url": "https://funkwhale.audio",
 	"license": "AGPL-3.0-or-later",
 	"maintainer": {
@@ -42,6 +42,9 @@
 				"type": "boolean",
 				"ask": {
 					"en": "Is it a public application?"
+				},
+				"help": {
+					"en": "Allows non loggued users to access the user interface (mandatory for federation)"
 				},
 				"default": true
 			}
