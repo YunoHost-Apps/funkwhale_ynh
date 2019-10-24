@@ -15,6 +15,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_clean_setup () {
+	read -p "key"
 	ynh_clean_check_starting
 }
 # Exit if an error occurs during the execution of the script
@@ -64,6 +65,7 @@ backup_core_only=$(ynh_app_setting_get --app="$app" --key=backup_core_only)
 if [ -z "$backup_core_only" ]
 then
 	ynh_restore_file --origin_path="$final_path/code"
+	ynh_restore_file --origin_path="$final_path/.pythonz"
 else
 	ynh_restore_file --origin_path="$final_path"
 fi
@@ -148,9 +150,9 @@ yunohost service add "$app-beat"   --log "/var/log/$app/beat.log"
 #=================================================
 ynh_print_info --message="Starting a systemd service..."
 
-ynh_systemd_action --action="start" --service_name="${app}-beat" --log_path="systemd" --line_match="celery beat process"
-ynh_systemd_action --action="start" --service_name="${app}-server" --log_path="systemd" --line_match="Listening on TCP address"
-ynh_systemd_action --action="start" --service_name="${app}-worker" --log_path="systemd" --line_match="celery worker"
+ynh_systemd_action --action="start" --service_name="${app}-beat" --log_path="systemd" --line_match="Running with"
+ynh_systemd_action --action="start" --service_name="${app}-server" --log_path="systemd" --line_match="Running with"
+ynh_systemd_action --action="start" --service_name="${app}-worker" --log_path="systemd" --line_match="Running with"
 
 #=================================================
 # GENERIC FINALIZATION

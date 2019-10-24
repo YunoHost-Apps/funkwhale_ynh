@@ -145,23 +145,36 @@ ynh_system_user_create --username="$app" --home_dir="$final_path"
 #=================================================
 # SPECIFIC UPGRADE
 #=================================================
+# INSTALL PYTHONZ TO GET PYTHON 3.7.5
+#=================================================
+
+# Get pythonz
+# curl -kL https://raw.githubusercontent.com/saghul/pythonz/master/pythonz-install
+# ./pythonz-install
+ynh_setup_source --dest_dir="$final_path/.pythonz" --source_id="pythonz"
+export PYTHONZ_ROOT="$final_path/.pythonz"
+# Then install it
+python $final_path/.pythonz/pythonz_install.py
+
+# Install Python 3.7.5
+$final_path/.pythonz/bin/pythonz install 3.7.5
+
+#=================================================
 # PYTHON DEPENDENCIES
 #=================================================
 
 ynh_secure_remove --file="$final_path/code/virtualenv"
-virtualenv -p python3 "$final_path/code/virtualenv"
-(
-	set +o nounset
-	source "${final_path}/code/virtualenv/bin/activate"
-	set -o nounset
-	pip install --upgrade pip
-	pip install --upgrade setuptools
-	pip install wheel
-	pip install -r "${final_path}/code/api/requirements.txt"
+pushd "$final_path/code"
+	virtualenv -p $($final_path/.pythonz/bin/pythonz locate 3.7.5) ve3
+	ve3/bin/pip3 install --upgrade pip
+	ve3/bin/pip3 install --upgrade setuptools
+	ve3/bin/pip3 install wheel
+	ve3/bin/pip3 install service_identity
+	ve3/bin/pip3 install -r "${final_path}/code/api/requirements.txt"
 
 	# https://code.eliotberriot.com/funkwhale/funkwhale/tags/0.16
-	pip uninstall django-cacheops --yes
-)
+	ve3/bin/pip3 uninstall django-cacheops --yes
+popd
 
 #=================================================
 # MODIFY THE CONFIG FILE
@@ -199,32 +212,26 @@ ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path"
 # MIGRATE
 #=================================================
 
-(
-	set +o nounset
-	source "${final_path}/code/virtualenv/bin/activate"
-	source "$loadfile"
-	set -o nounset
-	cd "$final_path/code"
-
+pushd "$final_path/code"
 	# needed for enabling the 'unaccent' extension
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
-	python api/manage.py migrate
+	ve3/bin/python3 api/manage.py migrate
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
 
-	python api/manage.py collectstatic --clear --noinput
+	ve3/bin/python3 api/manage.py collectstatic --clear --noinput
 
 	# https://code.eliotberriot.com/funkwhale/funkwhale/tags/0.16 # users-now-have-an-activitypub-actor-manual-action-required
-	python api/manage.py script create_actors --no-input
+	ve3/bin/python3 api/manage.py script create_actors --no-input
 	# https://code.eliotberriot.com/funkwhale/funkwhale/tags/0.16 #image-thumbnails-manual-action-required
-	python api/manage.py script create_image_variations --no-input
+	ve3/bin/python3 api/manage.py script create_image_variations --no-input
 
 	# https://docs.funkwhale.audio/upgrading/0.17.html#upgrade-instructions
-	python api/manage.py script migrate_to_user_libraries --no-input
+	ve3/bin/python3 api/manage.py script migrate_to_user_libraries --no-input
 
 	# Delete pre 0.17 federated tracks [manual action suggested]
 	# https://dev.funkwhale.audio/funkwhale/funkwhale/tags/0.18
-	python api/manage.py script delete_pre_017_federated_uploads --no-input
-)
+	ve3/bin/python3 api/manage.py script delete_pre_017_federated_uploads --no-input
+popd
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
@@ -282,9 +289,9 @@ fi
 #=================================================
 ynh_print_info --message="Starting a systemd service..."
 
-ynh_systemd_action --action="start" --service_name="${app}-beat" --log_path="systemd" --line_match="celery beat process"
-ynh_systemd_action --action="start" --service_name="${app}-server" --log_path="systemd" --line_match="Listening on TCP address"
-ynh_systemd_action --action="start" --service_name="${app}-worker" --log_path="systemd" --line_match="celery worker"
+ynh_systemd_action --action="start" --service_name="${app}-beat" --log_path="systemd" --line_match="Running with"
+ynh_systemd_action --action="start" --service_name="${app}-server" --log_path="systemd" --line_match="Running with"
+ynh_systemd_action --action="start" --service_name="${app}-worker" --log_path="systemd" --line_match="Running with"
 
 #=================================================
 # RELOAD NGINX

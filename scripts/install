@@ -96,10 +96,9 @@ ynh_app_setting_set --app="$app" --key=final_path --value="$final_path"
 ynh_setup_source --dest_dir="$final_path/code"
 ynh_setup_source --dest_dir="$final_path/code" --source_id="app-frontend"
 
-(
-	cd "$final_path"
+pushd "$final_path"
 	mkdir -p code/config code/api code/data/static media import code/front
-)
+popd
 
 #=================================================
 # NGINX CONFIGURATION
@@ -123,19 +122,32 @@ ynh_system_user_create --username="$app" --home_dir="$final_path"
 #=================================================
 # SPECIFIC SETUP
 #=================================================
+# INSTALL PYTHONZ TO GET PYTHON 3.7.5
+#=================================================
+
+# Get pythonz
+# curl -kL https://raw.githubusercontent.com/saghul/pythonz/master/pythonz-install
+# ./pythonz-install
+ynh_setup_source --dest_dir="$final_path/.pythonz" --source_id="pythonz"
+export PYTHONZ_ROOT="$final_path/.pythonz"
+# Then install it
+python $final_path/.pythonz/pythonz_install.py
+
+# Install Python 3.7.5
+$final_path/.pythonz/bin/pythonz install 3.7.5
+
+#=================================================
 # PYTHON DEPENDENCIES
 #=================================================
 
-virtualenv -p python3 "$final_path/code/virtualenv"
-(
-	set +o nounset
-	source "${final_path}/code/virtualenv/bin/activate"
-	set -o nounset
-	pip install --upgrade pip
-	pip install --upgrade setuptools
-	pip install wheel
-	pip install -r "${final_path}/code/api/requirements.txt"
-)
+pushd "$final_path/code"
+	virtualenv -p $($final_path/.pythonz/bin/pythonz locate 3.7.5) ve3
+	ve3/bin/pip3 install --upgrade pip
+	ve3/bin/pip3 install --upgrade setuptools
+	ve3/bin/pip3 install wheel
+	ve3/bin/pip3 install service_identity
+	ve3/bin/pip3 install -r "${final_path}/code/api/requirements.txt"
+popd
 
 #=================================================
 # MODIFY THE CONFIG FILE
@@ -176,20 +188,15 @@ ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path"
 #=================================================
 
 admin_mail=$(ynh_user_get_info --username="$admin" --key="mail")
-(
-	set +o nounset
-	source "${final_path}/code/virtualenv/bin/activate"
-	source "$loadfile"
-	set -o nounset
-	cd "$final_path/code/"
 
+pushd "$final_path/code"
 	# needed for enabling the 'unaccent' extension
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
-	python api/manage.py migrate
+	ve3/bin/python3 api/manage.py migrate
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
-	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | python api/manage.py shell
-	python api/manage.py collectstatic
-)
+	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | ve3/bin/python3 api/manage.py shell
+	ve3/bin/python3 api/manage.py collectstatic
+popd
 
 #=================================================
 # SETUP SYSTEMD
@@ -236,9 +243,9 @@ yunohost service add "$app-beat"   --log "/var/log/$app/beat.log"
 #=================================================
 ynh_print_info --message="Starting a systemd service..."
 
-ynh_systemd_action --action="start" --service_name="${app}-beat" --log_path="systemd" --line_match="celery beat process"
-ynh_systemd_action --action="start" --service_name="${app}-server" --log_path="systemd" --line_match="Listening on TCP address"
-ynh_systemd_action --action="start" --service_name="${app}-worker" --log_path="systemd" --line_match="celery worker"
+ynh_systemd_action --action="start" --service_name="${app}-beat" --log_path="systemd" --line_match="Running with"
+ynh_systemd_action --action="start" --service_name="${app}-server" --log_path="systemd" --line_match="Running with"
+ynh_systemd_action --action="start" --service_name="${app}-worker" --log_path="systemd" --line_match="Running with"
 
 #=================================================
 # SETUP FAIL2BAN

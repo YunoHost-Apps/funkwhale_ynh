@@ -1,11 +1,11 @@
 # Bleeding edge Django
-django>=2.2.1,<2.3
+django>=2.2.4,<2.3
 
 # Configuration
 django-environ>=0.4,<0.5
 
 # Images
-Pillow>=5.4,<5.5
+Pillow>=6.2.0
 
 # For user registration, either via email or social
 # Well-built with regular release cycles!
@@ -29,7 +29,7 @@ celery>=4.3,<4.4
 # Your custom requirements go here
 django-cors-headers>=2.5.3,<2.6
 musicbrainzngs==0.6
-djangorestframework>=3.9,<3.10
+djangorestframework>=3.10,<3.11
 djangorestframework-jwt>=1.11,<1.12
 pendulum>=2,<3
 persisting-theory>=0.2,<0.3
@@ -39,11 +39,9 @@ django-rest-auth>=0.9,<0.10
 ipython>=7,<8
 mutagen>=1.42,<1.43
 
-
-django-taggit>=0.24,<0.25
 pymemoize==1.0.3
 
-django-dynamic-preferences>=1.7,<1.8
+django-dynamic-preferences>=1.7.1,<1.8
 raven>=6.10,<7
 python-magic==0.4.15
 # XXX: until https://github.com/django/channels/issues/1240 is fixed
@@ -53,12 +51,16 @@ channels==2.1.6
 channels_redis==2.3.2
 
 daphne>=2.2,<2.3
+uvicorn
+gunicorn
 
 cryptography>=2,<3
 # requests-http-signature==0.0.3
 # clone until the branch is merged and released upstream
 git+https://github.com/EliotBerriot/requests-http-signature.git@signature-header-support
 django-cleanup==3.2.0
+requests>=2.22<2.23
+pyOpenSSL>=19<20
 
 # for LDAP authentication
 python-ldap==3.2.0

@@ -46,6 +46,7 @@ then
 else
 	echo "Data dir will not be saved, because backup_core_only is set." >&2
 	ynh_backup --src_path="$final_path/code"
+	ynh_backup --src_path="$final_path/.pythonz"
 fi
 
 #=================================================

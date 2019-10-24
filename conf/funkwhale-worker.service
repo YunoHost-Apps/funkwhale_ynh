@@ -8,9 +8,7 @@ User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/code/api
 EnvironmentFile=__FINALPATH__/code/config/.env
-
-ExecStart=__FINALPATH__/code/virtualenv/bin/celery -A funkwhale_api.taskapp worker -l INFO \
-	--loglevel INFO --logfile=/var/log/__APP__/worker.log
+ExecStart=__FINALPATH__/code/ve3/bin/celery -A funkwhale_api.taskapp worker -l INFO --loglevel INFO --logfile=/var/log/__APP__/worker.log
 
 #NoNewPrivileges=true
 #PrivateDevices=true
