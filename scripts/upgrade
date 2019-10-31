@@ -78,6 +78,16 @@ ynh_abort_if_errors
 path_url=$(ynh_normalize_url_path "$path_url")
 
 #=================================================
+# CHECK THE PATH
+#=================================================
+
+# see 0.20.0: https://docs.funkwhale.audio/changelog.html#automatically-load-env-file
+loadfile="$final_path/code/load_env"
+if [ -e "$loadfile" ] ; then
+    ynh_secure_remove --file="$loadfile"
+fi
+
+#=================================================
 # CLOSE A PORT
 #=================================================
 
@@ -184,17 +194,6 @@ ynh_replace_string --match_string="__DBNAME__"    --replace_string="$app"       
 ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path"  --target_file="$configfile"
 ynh_replace_string --match_string="__KEY__"       --replace_string="$key"         --target_file="$configfile"
 
-loadfile="$final_path/code/load_env"
-
-cat > "$loadfile" <<'EOL'
-#!/bin/bash
-export $(cat "__FINALPATH__/code/config/.env" | grep -v ^# | xargs)
-EOL
-
-chmod +x "$loadfile"
-
-ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path"  --target_file="$loadfile"
-
 #=================================================
 # MIGRATE
 #=================================================
@@ -202,7 +201,6 @@ ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path"
 (
 	set +o nounset
 	source "${final_path}/code/virtualenv/bin/activate"
-	source "$loadfile"
 	set -o nounset
 	cd "$final_path/code"
 

@@ -160,17 +160,6 @@ ynh_replace_string --match_string="__DBNAME__"    --replace_string="$app"       
 ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path"  --target_file="$configfile"
 ynh_replace_string --match_string="__KEY__"       --replace_string="$key"         --target_file="$configfile"
 
-loadfile="$final_path/code/load_env"
-
-cat > "$loadfile" <<'EOL'
-#!/bin/bash
-export $(cat "__FINALPATH__/code/config/.env" | grep -v ^# | xargs)
-EOL
-
-chmod +x "$loadfile"
-
-ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path"  --target_file="$loadfile"
-
 #=================================================
 # CONFIGURE ADMIN USER
 #=================================================
@@ -179,7 +168,6 @@ admin_mail=$(ynh_user_get_info --username="$admin" --key="mail")
 (
 	set +o nounset
 	source "${final_path}/code/virtualenv/bin/activate"
-	source "$loadfile"
 	set -o nounset
 	cd "$final_path/code/"
 
