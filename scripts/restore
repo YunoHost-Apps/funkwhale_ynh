@@ -148,9 +148,9 @@ yunohost service add "$app-beat"   --log "/var/log/$app/beat.log"
 #=================================================
 ynh_print_info --message="Starting a systemd service..."
 
-ynh_systemd_action --action="start" --service_name="${app}-beat" --log_path="systemd" --line_match="celery beat process"
-ynh_systemd_action --action="start" --service_name="${app}-server" --log_path="systemd" --line_match="Listening on TCP address"
-ynh_systemd_action --action="start" --service_name="${app}-worker" --log_path="systemd" --line_match="celery worker"
+ynh_systemd_action --action="start" --service_name="${app}-beat"
+ynh_systemd_action --action="start" --service_name="${app}-server"
+ynh_systemd_action --action="start" --service_name="${app}-worker"
 
 #=================================================
 # GENERIC FINALIZATION

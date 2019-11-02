@@ -104,9 +104,9 @@ fi
 #=================================================
 ynh_print_info --message="Stopping a systemd service..."
 
-ynh_systemd_action --action="stop" --service_name="${app}-beat" --log_path="systemd" --line_match="Stopped Funkwhale"
-ynh_systemd_action --action="stop" --service_name="${app}-server" --log_path="systemd" --line_match="Stopped Funkwhale"
-ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="systemd" --line_match="Stopped Funkwhale"
+ynh_systemd_action --action="stop" --service_name="${app}-beat"
+ynh_systemd_action --action="stop" --service_name="${app}-server"
+ynh_systemd_action --action="stop" --service_name="${app}-worker"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -280,9 +280,9 @@ fi
 #=================================================
 ynh_print_info --message="Starting a systemd service..."
 
-ynh_systemd_action --action="start" --service_name="${app}-beat" --log_path="systemd" --line_match="celery beat process"
-ynh_systemd_action --action="start" --service_name="${app}-server" --log_path="systemd" --line_match="Listening on TCP address"
-ynh_systemd_action --action="start" --service_name="${app}-worker" --log_path="systemd" --line_match="celery worker"
+ynh_systemd_action --action="start" --service_name="${app}-beat"
+ynh_systemd_action --action="start" --service_name="${app}-server"
+ynh_systemd_action --action="start" --service_name="${app}-worker"
 
 #=================================================
 # RELOAD NGINX
