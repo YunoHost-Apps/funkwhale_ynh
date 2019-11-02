@@ -103,9 +103,6 @@ ynh_secure_remove --file="/var/log/$app"
 #=================================================
 ynh_print_info --message="Removing nginx web server configuration"
 
-# remove domain specific configuration
-funkwhale_nginx_domain_cleaning
-
 # Remove the dedicated nginx config
 ynh_remove_nginx_config
 

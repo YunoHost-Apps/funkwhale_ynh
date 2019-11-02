@@ -128,12 +128,6 @@ ynh_setup_source --dest_dir="$final_path/code" --source_id="app-frontend"
 #=================================================
 ynh_print_info --message="Upgrading nginx web server configuration..."
 
-# remove domain specific configuration
-funkwhale_nginx_domain_cleaning
-
-# add funkwhale specifics at the beginning of the domain configuration
-funkwhale_nginx_domain_configure
-
 # Create a dedicated nginx config
 ynh_add_nginx_config
 
