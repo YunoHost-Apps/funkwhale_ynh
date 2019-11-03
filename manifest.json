@@ -5,7 +5,7 @@
 	"description": {
 		"en": "A modern, convivial and free music server"
 	},
-	"version": "0.19.1~ynh2",
+	"version": "0.20.1~ynh4",
 	"url": "https://funkwhale.audio",
 	"license": "AGPL-3.0-or-later",
 	"maintainer": {
@@ -13,7 +13,7 @@
 		"email": "jean-baptiste@holcroft.fr"
 	},
 	"requirements": {
-        "yunohost": ">= 3.5"
+        "yunohost": ">= 3.6"
 	},
 	"multi_instance": true,
 	"services": [

@@ -16,23 +16,14 @@
 		setup_private=1
 		setup_public=1
 		upgrade=1
+		upgrade=1   from_commit=4d4bf0981e2d3a00eaae6b19bd54344fe55d6530
 		backup_restore=1
 		multi_instance=1
 		incorrect_path=0
 		port_already_use=0
 		change_url=0
 ;;; Levels
-	Level 1=auto
-	Level 2=auto
-	Level 3=auto
-# Level 4: https://github.com/YunoHost-Apps/funkwhale_ynh/issues/21
-	Level 4=1
-	Level 5=auto
-	Level 6=auto
-	Level 7=auto
-	Level 8=0
-	Level 9=0
-	Level 10=0
+
 ;;; Options
 Email=jean-baptiste@holcroft.fr
 Notification=all
@@ -45,4 +36,7 @@ manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
 manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
 	; commit=99bae16efca321ce50ba9a98c62996169195e0ba
 		name=Upgrade from 0.18.3
+manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
+	; commit=4d4bf0981e2d3a00eaae6b19bd54344fe55d6530
+		name=Upgrade from 0.19.1
 manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1

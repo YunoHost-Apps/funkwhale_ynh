@@ -78,6 +78,16 @@ ynh_abort_if_errors
 path_url=$(ynh_normalize_url_path "$path_url")
 
 #=================================================
+# CHECK THE PATH
+#=================================================
+
+# see 0.20.0: https://docs.funkwhale.audio/changelog.html#automatically-load-env-file
+loadfile="$final_path/code/load_env"
+if [ -e "$loadfile" ] ; then
+    ynh_secure_remove --file="$loadfile"
+fi
+
+#=================================================
 # CLOSE A PORT
 #=================================================
 
@@ -94,9 +104,9 @@ fi
 #=================================================
 ynh_print_info --message="Stopping a systemd service..."
 
-ynh_systemd_action --action="stop" --service_name="${app}-beat" --log_path="systemd" --line_match="Stopped Funkwhale"
-ynh_systemd_action --action="stop" --service_name="${app}-server" --log_path="systemd" --line_match="Stopped Funkwhale"
-ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="systemd" --line_match="Stopped Funkwhale"
+ynh_systemd_action --action="stop" --service_name="${app}-beat"
+ynh_systemd_action --action="stop" --service_name="${app}-server"
+ynh_systemd_action --action="stop" --service_name="${app}-worker"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -117,12 +127,6 @@ ynh_setup_source --dest_dir="$final_path/code" --source_id="app-frontend"
 # NGINX CONFIGURATION
 #=================================================
 ynh_print_info --message="Upgrading nginx web server configuration..."
-
-# remove domain specific configuration
-funkwhale_nginx_domain_cleaning
-
-# add funkwhale specifics at the beginning of the domain configuration
-funkwhale_nginx_domain_configure
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
@@ -184,17 +188,6 @@ ynh_replace_string --match_string="__DBNAME__"    --replace_string="$app"       
 ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path"  --target_file="$configfile"
 ynh_replace_string --match_string="__KEY__"       --replace_string="$key"         --target_file="$configfile"
 
-loadfile="$final_path/code/load_env"
-
-cat > "$loadfile" <<'EOL'
-#!/bin/bash
-export $(cat "__FINALPATH__/code/config/.env" | grep -v ^# | xargs)
-EOL
-
-chmod +x "$loadfile"
-
-ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path"  --target_file="$loadfile"
-
 #=================================================
 # MIGRATE
 #=================================================
@@ -202,7 +195,6 @@ ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path"
 (
 	set +o nounset
 	source "${final_path}/code/virtualenv/bin/activate"
-	source "$loadfile"
 	set -o nounset
 	cd "$final_path/code"
 
@@ -282,9 +274,9 @@ fi
 #=================================================
 ynh_print_info --message="Starting a systemd service..."
 
-ynh_systemd_action --action="start" --service_name="${app}-beat" --log_path="systemd" --line_match="celery beat process"
-ynh_systemd_action --action="start" --service_name="${app}-server" --log_path="systemd" --line_match="Listening on TCP address"
-ynh_systemd_action --action="start" --service_name="${app}-worker" --log_path="systemd" --line_match="celery worker"
+ynh_systemd_action --action="start" --service_name="${app}-beat"
+ynh_systemd_action --action="start" --service_name="${app}-server"
+ynh_systemd_action --action="start" --service_name="${app}-worker"
 
 #=================================================
 # RELOAD NGINX
