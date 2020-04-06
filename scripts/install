@@ -27,6 +27,7 @@ domain=$YNH_APP_ARG_DOMAIN
 path_url="/"
 is_public=$YNH_APP_ARG_IS_PUBLIC
 admin=$YNH_APP_ARG_ADMIN
+sync_ynh_media=$YNH_ARG_SYNC_YNH_MEDIA
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -50,6 +51,7 @@ ynh_app_setting_set --app="$app" --key=domain --value="$domain"
 ynh_app_setting_set --app="$app" --key=path --value="$path_url"
 ynh_app_setting_set --app="$app" --key=is_public --value="$is_public"
 ynh_app_setting_set --app="$app" --key=admin --value="$admin"
+ynh_app_setting_set --app="$app" --key=sync_ynh_media --value="$sync_ynh_media"
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -195,6 +197,31 @@ ynh_add_systemd_config --service="$app-beat"   --template="funkwhale-beat.servic
 
 # Calculate and store the config file checksum into the app settings
 ynh_store_file_checksum --file="$configfile"
+
+#=================================================
+# SETUP SYMLINK
+#=================================================
+
+if [ "$sync_ynh_media" -eq 1 ]
+then
+	# symlink yunohost media directory
+	ln -s /home/yunohost.multimedia/share/Music $finalpath/import/
+fi
+
+
+#=================================================
+# SETUP CLI
+#=================================================
+
+pip install git+https://dev.funkwhale.audio/funkwhale/cli
+
+#=================================================
+# SETUP CRON
+#=================================================
+
+cp ../conf/cron_sync /etc/cron.d/$app
+ynh_replace_string --match_string="__KEY__" --replace_string="$key" --target_file=/etc/cron.d/$app
+ynh_replace_string --match_string="__SERVER_URL__" --replace_string="$domain/" --target_file=/etc/cron.d/$app
 
 #=================================================
 # GENERIC FINALIZATION
