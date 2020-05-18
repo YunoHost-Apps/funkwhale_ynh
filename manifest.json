@@ -9,8 +9,8 @@
 	"url": "https://funkwhale.audio",
 	"license": "AGPL-3.0-or-later",
 	"maintainer": {
-		"name": "Jean-Baptiste Holcroft",
-		"email": "jean-baptiste@holcroft.fr"
+		"name": "Ciarán Ainsworth",
+		"email": "ciaranainsworth@posteo.net"
 	},
 	"requirements": {
         "yunohost": ">= 3.6"
@@ -35,7 +35,7 @@
 				"ask": {
 					"en": "Choose an admin user"
 				},
-				"example": "jibec"
+				"example": "sporiff"
 			},
 			{
 				"name": "is_public",
@@ -44,7 +44,7 @@
 					"en": "Is it a public application?"
 				},
 				"help": {
-					"en": "Allows non loggued users to access the user interface (mandatory for federation)"
+					"en": "Allows unauthenticated users to access the user interface (mandatory for federation)"
 				},
 				"default": true
 			}
