@@ -1,5 +1,5 @@
-SOURCE_URL=https://dev.funkwhale.audio/funkwhale/funkwhale/-/archive/0.20.1/funkwhale-0.20.1.tar.gz
-SOURCE_SUM=4fe4c9069957060b3ab31cbc39f01d621aed01c39fc0177628fd96777fdffc7e
+SOURCE_URL=https://dev.funkwhale.audio/funkwhale/funkwhale/-/archive/0.21/funkwhale-0.21.tar.gz
+SOURCE_SUM=af4d5f9a339a47f5f8881e15dd3b60d4557d46569d1b1ec8b558b086ba101af8
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.bz2
 SOURCE_IN_SUBDIR=true
