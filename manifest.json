@@ -1,53 +1,56 @@
 {
-	"name": "Funkwhale",
-	"id": "funkwhale",
-	"packaging_format": 1,
-	"description": {
-		"en": "A modern, convivial and free music server"
-	},
-	"version": "0.21~ynh1",
-	"url": "https://funkwhale.audio",
-	"license": "AGPL-3.0-or-later",
-	"maintainer": {
-		"name": "Ciarán Ainsworth",
-		"email": "ciaranainsworth@posteo.net"
-	},
-	"requirements": {
+    "name": "Funkwhale",
+    "id": "funkwhale",
+    "packaging_format": 1,
+    "description": {
+        "en": "A modern, convivial and free music server"
+    },
+    "version": "0.21.1~ynh1",
+    "url": "https://funkwhale.audio",
+    "license": "AGPL-3.0-or-later",
+    "maintainer": {
+        "name": "Ciarán Ainsworth",
+        "email": "cda@rootkey.co.uk"
+    },
+    "previous_maintainers": [{
+        "name": "Jean-Baptiste Holcroft",
+        "email": "jean-baptiste@holcroft.fr"
+    }],
+    "requirements": {
         "yunohost": ">= 3.6"
-	},
-	"multi_instance": true,
-	"services": [
-		"nginx"
-	],
-	"arguments": {
-		"install" : [
-			{
-				"name": "domain",
-				"type": "domain",
-				"ask": {
-					"en": "Choose a domain for funkwhale"
-				},
-				"example": "example.com"
-			},
-			{
-				"name": "admin",
-				"type": "user",
-				"ask": {
-					"en": "Choose an admin user"
-				},
-				"example": "sporiff"
-			},
-			{
-				"name": "is_public",
-				"type": "boolean",
-				"ask": {
-					"en": "Is it a public application?"
-				},
-				"help": {
-					"en": "Allows unauthenticated users to access the user interface (mandatory for federation)"
-				},
-				"default": true
-			}
-		]
-	}
+    },
+    "multi_instance": true,
+    "services": [
+        "nginx"
+    ],
+    "arguments": {
+        "install": [{
+                "name": "domain",
+                "type": "domain",
+                "ask": {
+                    "en": "Choose a domain for funkwhale"
+                },
+                "example": "example.com"
+            },
+            {
+                "name": "admin",
+                "type": "user",
+                "ask": {
+                    "en": "Choose an admin user"
+                },
+                "example": "sporiff"
+            },
+            {
+                "name": "is_public",
+                "type": "boolean",
+                "ask": {
+                    "en": "Is it a public application?"
+                },
+                "help": {
+                    "en": "Allows unauthenticated users to access the user interface (mandatory for federation)"
+                },
+                "default": true
+            }
+        ]
+    }
 }

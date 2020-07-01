@@ -3,15 +3,15 @@
 [![Integration level](https://dash.yunohost.org/integration/funkwhale.svg)](https://dash.yunohost.org/appci/app/funkwhale)  
 [![Install Funkwhale with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=funkwhale)
 
-> *This package allow you to install Funkwhale quickly and simply on a YunoHost server.  
-If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to know how to install and enjoy it.*
+> *This package allows you to install Funkwhale quickly and simply on a YunoHost server.  
+If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to know how to install and enjoy it.
 
 ## Overview
 A modern, convivial and free music server on YunoHost
 
-Installation requires a dedicated domain for now. I hope subpath installation will be possible in the future.
+Installation requires a dedicated domain or subdomain. Installing in a subpath is not supported by the upstream project due to dependency requirements.
 
-**Shipped version:** 0.21
+**Shipped version:** 0.21.1
 
 ## Screenshots
 
@@ -21,11 +21,11 @@ Installation requires a dedicated domain for now. I hope subpath installation wi
 
 The admin uses the login you provided at installation. The password is the same you use for YunoHost.
 
-The admin interface is accessible with the address: your.domain.fr/api/admin
+The admin interface is accessible at the address: your.domain.fr/api/admin
 
 # State of this package
 
-* works fine:
+* The following have been tested with this package and work fine:
 
   * [x] install/remove/backup/remove/upgrade with x86_64
   * [x] import file with web interface, imports from youtube, interraction with MusicBrainz
