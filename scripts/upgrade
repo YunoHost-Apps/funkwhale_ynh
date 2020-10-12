@@ -221,7 +221,7 @@ ynh_replace_string --match_string="__KEY__"       --replace_string="$key"       
 	# higher quality images
 	# https://docs.funkwhale.audio/changelog.html#increased-quality-of-jpeg-thumbnails-manual-action-required
 	rm -rf "$final_path/media/__sized__"
-	python api/manage.py fw media generate-thumbnail
+	python api/manage.py fw media generate-thumbnails
 )
 
 #=================================================
