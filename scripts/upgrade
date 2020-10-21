@@ -206,16 +206,22 @@ ynh_replace_string --match_string="__KEY__"       --replace_string="$key"       
 	python api/manage.py collectstatic --clear --noinput
 
 	# https://code.eliotberriot.com/funkwhale/funkwhale/tags/0.16 # users-now-have-an-activitypub-actor-manual-action-required
-	python api/manage.py script create_actors --no-input
+	# python api/manage.py script create_actors --no-input
 	# https://code.eliotberriot.com/funkwhale/funkwhale/tags/0.16 #image-thumbnails-manual-action-required
-	python api/manage.py script create_image_variations --no-input
+	# python api/manage.py script create_image_variations --no-input
 
 	# https://docs.funkwhale.audio/upgrading/0.17.html#upgrade-instructions
-	python api/manage.py script migrate_to_user_libraries --no-input
+	# python api/manage.py script migrate_to_user_libraries --no-input
 
 	# Delete pre 0.17 federated tracks [manual action suggested]
 	# https://dev.funkwhale.audio/funkwhale/funkwhale/tags/0.18
-	python api/manage.py script delete_pre_017_federated_uploads --no-input
+	# python api/manage.py script delete_pre_017_federated_uploads --no-input
+
+	# Delete the original thumbnails and generate new ones for
+	# higher quality images
+	# https://docs.funkwhale.audio/changelog.html#increased-quality-of-jpeg-thumbnails-manual-action-required
+	rm -rf "$final_path/media/__sized__"
+	python api/manage.py fw media generate-thumbnails
 )
 
 #=================================================

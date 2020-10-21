@@ -1,6 +1,6 @@
 # Funkwhale for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/funkwhale.svg)](https://dash.yunohost.org/appci/app/funkwhale) ![](https://ci-apps.yunohost.org/ci/badges/funkwhale.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/funkwhale.maintain.svg)  
+[![Integration level](https://dash.yunohost.org/integration/funkwhale.svg)](https://dash.yunohost.org/appci/app/funkwhale) ![](https://ci-apps.yunohost.org/ci/badges/funkwhale.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/funkwhale.maintain.svg)   
 [![Install Funkwhale with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=funkwhale)
 
 > *This package allows you to install Funkwhale quickly and simply on a YunoHost server.  
@@ -48,7 +48,7 @@ The admin interface is accessible at the address: your.domain.fr/api/admin
 
 #### Supported architectures
 
-* x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/funkwhale%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/funkwhale/)
+* x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/funkwhale%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/funkwhale/)
 * ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/funkwhale%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/funkwhale/)
 
 ## Links
