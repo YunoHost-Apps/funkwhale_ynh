@@ -11,7 +11,7 @@ A modern, convivial and free music server on YunoHost
 
 Installation requires a dedicated domain or subdomain. Installing in a subpath is not supported by the upstream project due to dependency requirements.
 
-**Shipped version:** 0.21.1
+**Shipped version:** 1.0.1
 
 ## Screenshots
 
