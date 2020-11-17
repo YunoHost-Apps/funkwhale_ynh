@@ -49,5 +49,5 @@ manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
 	; commit=5fe8d545994eed02707ed0133a68db919bd5d3bb
 		name=Upgrade from 0.21.1
 manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
-	; commit=
+	; commit=65d4541750648436b5dc9dd2e7ba63a0bd8d1af1
 		name=Upgrade from 1.0
