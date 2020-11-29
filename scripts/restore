@@ -131,9 +131,9 @@ ynh_restore_file --origin_path="/etc/systemd/system/$app-server.service"
 ynh_restore_file --origin_path="/etc/systemd/system/$app-worker.service"
 ynh_restore_file --origin_path="/etc/systemd/system/$app.target"
 
-systemctl enable "$app-beat.service"
-systemctl enable "$app-server.service"
-systemctl enable "$app-worker.service"
+systemctl enable "$app-beat.service" --quiet
+systemctl enable "$app-server.service" --quiet
+systemctl enable "$app-worker.service" --quiet
 
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
