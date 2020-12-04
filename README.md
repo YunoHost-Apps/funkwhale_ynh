@@ -4,7 +4,7 @@
 [![Install Funkwhale with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=funkwhale)
 
 > *This package allows you to install Funkwhale quickly and simply on a YunoHost server.  
-If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to know how to install and enjoy it.
+If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to know how to install and enjoy it.*
 
 ## Overview
 A modern, convivial and free music server on YunoHost
@@ -61,8 +61,7 @@ The admin interface is accessible at the address: your.domain.fr/api/admin
 
 ---
 
-Developers info
-----------------
+## Developers info
 
 Please do your pull request to the [testing branch](https://github.com/YunoHost-Apps/funkwhale_ynh/tree/testing).
 
