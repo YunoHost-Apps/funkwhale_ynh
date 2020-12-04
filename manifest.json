@@ -3,9 +3,10 @@
     "id": "funkwhale",
     "packaging_format": 1,
     "description": {
-        "en": "A modern, convivial and free music server"
+        "en": "Modern, convivial and free music server",
+        "fr": "Serveur de musique moderne, convivial et gratuit"
     },
-    "version": "0.1.0.1~ynh1",
+    "version": "1.0.1~ynh1",
     "url": "https://funkwhale.audio",
     "license": "AGPL-3.0-or-later",
     "maintainer": {
@@ -28,7 +29,8 @@
                 "name": "domain",
                 "type": "domain",
                 "ask": {
-                    "en": "Choose a domain for funkwhale"
+                    "en": "Choose a domain for Funkwhale",
+                    "fr": "Choisissez un nom de domaine pour Funkwhale"
                 },
                 "example": "example.com"
             },
@@ -36,7 +38,8 @@
                 "name": "admin",
                 "type": "user",
                 "ask": {
-                    "en": "Choose an admin user"
+                    "en": "Choose an admin user",
+                    "fr": "Choisissez l'administrateur"
                 },
                 "example": "sporiff"
             },
@@ -44,10 +47,12 @@
                 "name": "is_public",
                 "type": "boolean",
                 "ask": {
-                    "en": "Is it a public application?"
+                    "en": "Is it a public application?",
+                    "fr": "Est-ce une application publique ?"
                 },
                 "help": {
-                    "en": "Allows unauthenticated users to access the user interface (mandatory for federation)"
+                    "en": "Allows unauthenticated users to access the user interface (mandatory for federation).",
+                    "fr": "Permet aux utilisateurs non authentifiés d'accéder à l'interface utilisateur (obligatoire pour la fédération)."
                 },
                 "default": true
             }
