@@ -22,29 +22,11 @@
 		incorrect_path=0
 		port_already_use=0
 		change_url=0
-;;; Levels
-
 ;;; Options
 Email=cda@rootkey.co.uk
 Notification=all
 ;;; Upgrade options
-	; commit=80a5044d13a6782063fee2d7fb7a01832a6aa767
-		name=Upgrade from 0.16.3
-manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
-	; commit=806bcb0f320d8e3e28711a9ae1d2b175b95c65ce
-		name=Upgrade from 0.17.0~ynh2
-manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
-	; commit=99bae16efca321ce50ba9a98c62996169195e0ba
-		name=Upgrade from 0.18.3
-manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
 	; commit=4d4bf0981e2d3a00eaae6b19bd54344fe55d6530
-		name=Upgrade from 0.19.1
-manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
-	; commit=4d4bf0981e2d3a00eaae6b19bd54344fe55d6530
-		name=Upgrade from 0.20.1
-manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
-	; commit=18dd9d6a59ad1f0d03dc634b20e805b5c4f6c6e9
-		name=Upgrade from 0.21
-manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
-	; commit=5fe8d545994eed02707ed0133a68db919bd5d3bb
-		name=Upgrade from 0.21.1
+		name=Upgrade to 0.19.1 and fix channels-redis bug
+		manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
+	
