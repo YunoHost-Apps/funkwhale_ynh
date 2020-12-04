@@ -12,7 +12,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_print_info --message="Loading installation settings..."
+ynh_script_progression --message="Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -30,7 +30,7 @@ code_migration=$(ynh_app_setting_get --app="$app" --key=code_migration)
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
-ynh_print_info --message="Ensuring downward compatibility..."
+ynh_script_progression --message="Ensuring downward compatibility..."
 
 # If redis_db doesn't exist, create it
 if [ -z "$redis_db" ]; then
@@ -55,7 +55,7 @@ fi
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_print_info --message="Backing up the app before upgrading (may take a while)..."
+ynh_script_progression --message="Backing up the app before upgrading (may take a while)..."
 
 # Inform the backup/restore process that it should not save the data directory
 ynh_app_setting_set --app="$app" --key=backup_core_only --value=1
@@ -74,13 +74,6 @@ ynh_abort_if_errors
 # CHECK THE PATH
 #=================================================
 
-# Normalize the URL path syntax
-path_url=$(ynh_normalize_url_path "$path_url")
-
-#=================================================
-# CHECK THE PATH
-#=================================================
-
 # see 0.20.0: https://docs.funkwhale.audio/changelog.html#automatically-load-env-file
 loadfile="$final_path/code/load_env"
 if [ -e "$loadfile" ] ; then
@@ -88,21 +81,11 @@ if [ -e "$loadfile" ] ; then
 fi
 
 #=================================================
-# CLOSE A PORT
-#=================================================
-
-if yunohost firewall list | grep -q "\- $port$"
-then
-	echo "Close port $port"
-	yunohost firewall disallow TCP $port 2>&1
-fi
-
-#=================================================
 # STANDARD UPGRADE STEPS
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_print_info --message="Stopping a systemd service..."
+ynh_script_progression --message="Stopping a systemd service..."
 
 ynh_systemd_action --action="stop" --service_name="${app}-beat"
 ynh_systemd_action --action="stop" --service_name="${app}-server"
@@ -111,7 +94,7 @@ ynh_systemd_action --action="stop" --service_name="${app}-worker"
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_print_info --message="Upgrading source files..."
+ynh_script_progression --message="Upgrading source files..."
 
 ynh_app_setting_set --app="$app" --key=final_path --value="$final_path"
 # Download, check integrity, uncompress and patch the source from app.src
@@ -126,22 +109,22 @@ ynh_setup_source --dest_dir="$final_path/code" --source_id="app-frontend"
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_print_info --message="Upgrading nginx web server configuration..."
+ynh_script_progression --message="Upgrading NGINX web server configuration..."
 
-# Create a dedicated nginx config
+# Create a dedicated NGINX config
 ynh_add_nginx_config
 
 #=================================================
 # UPGRADE DEPENDENCIES
 #=================================================
-ynh_print_info --message="Upgrading dependencies..."
+ynh_script_progression --message="Upgrading dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_print_info --message="Making sure dedicated system user exists..."
+ynh_script_progression --message="Making sure dedicated system user exists..."
 
 # Create a dedicated user (if not existing)
 ynh_system_user_create --username="$app" --home_dir="$final_path"
@@ -234,7 +217,7 @@ ynh_store_file_checksum --file="$configfile"
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-ynh_print_info --message="Upgrading systemd configuration..."
+ynh_script_progression --message="Upgrading systemd configuration..."
 
 cp ../conf/funkwhale.target "/etc/systemd/system/$app.target"
 ynh_replace_string --match_string="__APP__"    --replace_string="$app"   --target_file="/etc/systemd/system/$app.target"
@@ -249,7 +232,7 @@ ynh_add_systemd_config --service="$app-beat"   --template="funkwhale-beat.servic
 #=================================================
 # UPGRADE FAIL2BAN
 #=================================================
-ynh_print_info --message="Reconfiguring fail2ban..."
+ynh_script_progression --message="Reconfiguring Fail2Ban..."
 
 ynh_add_fail2ban_config --logpath="/var/log/nginx/$domain-access.log" --failregex="<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" --max_retry=5
 
@@ -267,14 +250,14 @@ chown -R "$app": "/var/log/$app"
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-yunohost service add "$app-server" --log "/var/log/$app/server.log"
-yunohost service add "$app-worker" --log "/var/log/$app/worker.log"
-yunohost service add "$app-beat"   --log "/var/log/$app/beat.log"
+yunohost service add "$app-server" --log="/var/log/$app/server.log"
+yunohost service add "$app-worker" --log="/var/log/$app/worker.log"
+yunohost service add "$app-beat"   --log="/var/log/$app/beat.log"
 
 #=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_print_info --message="Upgrading SSOwat configuration..."
+ynh_script_progression --message="Upgrading SSOwat configuration..."
 
 # Make app public if necessary
 if [ "$is_public" -eq 1 ]
@@ -286,7 +269,7 @@ fi
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_print_info --message="Starting a systemd service..."
+ynh_script_progression --message="Starting a systemd service..."
 
 ynh_systemd_action --action="start" --service_name="${app}-beat"
 ynh_systemd_action --action="start" --service_name="${app}-server"
@@ -295,7 +278,7 @@ ynh_systemd_action --action="start" --service_name="${app}-worker"
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_print_info --message="Reloading nginx web server..."
+ynh_script_progression --message="Reloading NGINX web server..."
 
 ynh_systemd_action --service_name=nginx --action=reload
 
@@ -309,4 +292,4 @@ ynh_app_setting_set --app="$app" --key=code_migration --value=2
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info --message="Upgrade of $app completed"
+ynh_script_progression --message="Upgrade of $app completed"
