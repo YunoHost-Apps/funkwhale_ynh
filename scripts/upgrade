@@ -74,13 +74,6 @@ ynh_abort_if_errors
 # CHECK THE PATH
 #=================================================
 
-# Normalize the URL path syntax
-path_url=$(ynh_normalize_url_path "$path_url")
-
-#=================================================
-# CHECK THE PATH
-#=================================================
-
 # see 0.20.0: https://docs.funkwhale.audio/changelog.html#automatically-load-env-file
 loadfile="$final_path/code/load_env"
 if [ -e "$loadfile" ] ; then
@@ -220,7 +213,7 @@ ynh_replace_string --match_string="__KEY__"       --replace_string="$key"       
 	# Delete the original thumbnails and generate new ones for
 	# higher quality images
 	# https://docs.funkwhale.audio/changelog.html#increased-quality-of-jpeg-thumbnails-manual-action-required
-	rm -rf "$final_path/media/__sized__"
+	ynh_secure_remove "$final_path/media/__sized__"
 	python api/manage.py fw media generate-thumbnails
 )
 
@@ -262,6 +255,10 @@ chmod -R 755 "$final_path/code/front/dist/"
 
 mkdir -p "/var/log/$app"
 chown -R "$app": "/var/log/$app"
+
+yunohost service add "$app-server" --log="/var/log/$app/server.log"
+yunohost service add "$app-worker" --log="/var/log/$app/worker.log"
+yunohost service add "$app-beat"   --log="/var/log/$app/beat.log"
 
 #=================================================
 # SETUP SSOWAT
