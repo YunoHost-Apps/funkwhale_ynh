@@ -23,7 +23,7 @@ ynh_abort_if_errors
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_print_info --message="Loading settings..."
+ynh_script_progression --message="Loading settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -37,7 +37,7 @@ db_pwd=$(ynh_app_setting_get --app="$app" --key=psqlpwd)
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
 #=================================================
-ynh_print_info --message="Validating restoration parameters..."
+ynh_script_progression --message="Validating restoration parameters..."
 
 ynh_webpath_available --domain="$domain" --path_url="$path_url" \
 	|| ynh_die --message="Path not available: ${domain}${path_url}"
@@ -56,7 +56,7 @@ ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.conf"
 #=================================================
 # RESTORE THE APP MAIN DIR
 #=================================================
-ynh_print_info --message="Restoring the app main directory..."
+ynh_script_progression --message="Restoring the app main directory..."
 
 backup_core_only=$(ynh_app_setting_get --app="$app" --key=backup_core_only)
 
@@ -86,7 +86,7 @@ fi
 #=================================================
 # RECREATE THE DEDICATED USER
 #=================================================
-ynh_print_info --message="Recreating the dedicated system user..."
+ynh_script_progression --message="Recreating the dedicated system user..."
 
 # Create the dedicated user (if not existing)
 ynh_system_user_create --username="$app" --home_dir="$final_path"
@@ -107,7 +107,7 @@ chown -R "$app": "/var/log/$app"
 #=================================================
 # REINSTALL DEPENDENCIES
 #=================================================
-ynh_print_info --message="Reinstalling dependencies..."
+ynh_script_progression --message="Reinstalling dependencies..."
 
 # Define and install dependencies
 ynh_install_app_dependencies $pkg_dependencies
@@ -115,7 +115,7 @@ ynh_install_app_dependencies $pkg_dependencies
 #=================================================
 # RESTORE THE POSTGRESQL DATABASE
 #=================================================
-ynh_print_info --message="Restoring the PostgreSQL database..."
+ynh_script_progression --message="Restoring the PostgreSQL database..."
 
 ynh_psql_test_if_first_run
 ynh_psql_setup_db --db_user="$db_user" --db_name="$db_name" --db_pwd="$db_pwd"
@@ -124,7 +124,7 @@ ynh_psql_execute_file_as_root --file="./db.sql" --database="$db_name"
 #=================================================
 # RESTORE SYSTEMD
 #=================================================
-ynh_print_info --message="Restoring the systemd configuration..."
+ynh_script_progression --message="Restoring the systemd configuration..."
 
 ynh_restore_file --origin_path="/etc/systemd/system/$app-beat.service"
 ynh_restore_file --origin_path="/etc/systemd/system/$app-server.service"
@@ -146,7 +146,7 @@ yunohost service add "$app-beat"   --log="/var/log/$app/beat.log"
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_print_info --message="Starting a systemd service..."
+ynh_script_progression --message="Starting a systemd service..."
 
 ynh_systemd_action --action="start" --service_name="${app}-beat"
 ynh_systemd_action --action="start" --service_name="${app}-server"
@@ -157,7 +157,7 @@ ynh_systemd_action --action="start" --service_name="${app}-worker"
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_print_info --message="Reloading nginx web server..."
+ynh_script_progression --message="Reloading NGINX web server..."
 
 ynh_systemd_action --service_name=nginx --action=reload
 
@@ -165,4 +165,4 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info --message="Restoration completed for $app"
+ynh_script_progression --message="Restoration completed for $app"
