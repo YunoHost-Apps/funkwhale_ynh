@@ -29,4 +29,3 @@ Notification=all
 	; commit=4d4bf0981e2d3a00eaae6b19bd54344fe55d6530
 		name=Upgrade to 0.19.1 and fix channels-redis bug
 		manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
-	
