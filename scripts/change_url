@@ -124,14 +124,6 @@ ynh_script_progression --message="Configuring Fail2Ban..."
 ynh_add_fail2ban_config --logpath="/var/log/nginx/$new_domain-access.log" --failregex="<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" --max_retry=5
 
 #=================================================
-# SETUP FAIL2BAN
-#=================================================
-ynh_script_progression --message="Configuring Fail2Ban..."
-
-# Create a dedicated Fail2Ban config
-ynh_add_fail2ban_config --logpath="/var/log/nginx/$new_domain-access.log" --failregex="<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" --max_retry=5
-
-#=================================================
 # RELOAD NGINX
 #=================================================
 ynh_script_progression --message="Reloading NGINX web server..." --weight=1
