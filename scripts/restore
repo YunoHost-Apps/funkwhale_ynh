@@ -148,9 +148,9 @@ yunohost service add "$app-beat"   --log="/var/log/$app/beat.log"
 #=================================================
 ynh_script_progression --message="Starting a systemd service..."
 
-ynh_systemd_action --action="start" --service_name="${app}-beat"
-ynh_systemd_action --action="start" --service_name="${app}-server"
-ynh_systemd_action --action="start" --service_name="${app}-worker"
+ynh_systemd_action --service_name="$app-beat" --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="$app-server" --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="$app-worker" --action="start" --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # GENERIC FINALIZATION
