@@ -16,16 +16,16 @@ ynh_script_progression --message="Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get --app="$app" --key=domain)
-path_url=$(ynh_app_setting_get --app="$app" --key=path)
-is_public=$(ynh_app_setting_get --app="$app" --key=is_public)
-final_path=$(ynh_app_setting_get --app="$app" --key=final_path)
-db_name=$(ynh_app_setting_get --app="$app" --key=db_name)
-db_user="$db_name"
-port=$(ynh_app_setting_get --app="$app" --key=port)
-db_pwd=$(ynh_app_setting_get --app="$app" --key=psqlpwd)
-redis_db=$(ynh_app_setting_get --app="$app" --key=redis_db)
-code_migration=$(ynh_app_setting_get --app="$app" --key=code_migration)
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+path_url=$(ynh_app_setting_get --app=$app --key=path)
+is_public=$(ynh_app_setting_get --app=$app --key=is_public)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+db_user=$db_name
+port=$(ynh_app_setting_get --app=$app --key=port)
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
+redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
+code_migration=$(ynh_app_setting_get --app=$app --key=code_migration)
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
@@ -33,9 +33,9 @@ code_migration=$(ynh_app_setting_get --app="$app" --key=code_migration)
 ynh_script_progression --message="Ensuring downward compatibility..."
 
 # If redis_db doesn't exist, create it
-if [ -z "$redis_db" ]; then
+if [ -z $redis_db ]; then
 	redis_db=0
-	ynh_app_setting_set --app="$app" --key=redis_db --value="$redis_db"
+	ynh_app_setting_set --app=$app --key=redis_db --value=$redis_db
 fi
 
 # make sure we have the last code organization
@@ -58,7 +58,7 @@ fi
 ynh_script_progression --message="Backing up the app before upgrading (may take a while)..."
 
 # Inform the backup/restore process that it should not save the data directory
-ynh_app_setting_set --app="$app" --key=backup_core_only --value=1
+ynh_app_setting_set --app=$app --key=backup_core_only --value=1
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
@@ -87,9 +87,9 @@ fi
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..."
 
-ynh_systemd_action --action="stop" --service_name="${app}-beat"
-ynh_systemd_action --action="stop" --service_name="${app}-server"
-ynh_systemd_action --action="stop" --service_name="${app}-worker"
+ynh_systemd_action --action=stop --service_name="${app}-beat"
+ynh_systemd_action --action=stop --service_name="${app}-server"
+ynh_systemd_action --action=stop --service_name="${app}-worker"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -127,7 +127,7 @@ ynh_install_app_dependencies $pkg_dependencies
 ynh_script_progression --message="Making sure dedicated system user exists..."
 
 # Create a dedicated user (if not existing)
-ynh_system_user_create --username="$app" --home_dir="$final_path"
+ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -139,12 +139,12 @@ ynh_secure_remove --file="$final_path/code/virtualenv"
 virtualenv -p python3 "$final_path/code/virtualenv"
 (
 	set +o nounset
-	source "${final_path}/code/virtualenv/bin/activate"
+	source "$final_path/code/virtualenv/bin/activate"
 	set -o nounset
 	pip install --upgrade pip
 	pip install --upgrade setuptools
 	pip install wheel
-	pip install -r "${final_path}/code/api/requirements.txt"
+	pip install -r "$final_path/code/api/requirements.txt"
 
 	# https://code.eliotberriot.com/funkwhale/funkwhale/tags/0.16
 	pip uninstall django-cacheops --yes
@@ -162,14 +162,14 @@ key=$(ynh_string_random)
 
 ynh_app_setting_set --app="$app" --key=key --value="$key"
 
-ynh_replace_string --match_string="__REDIS_DB__"  --replace_string="$redis_db"    --target_file="$configfile"
-ynh_replace_string --match_string="__PORT__"      --replace_string="$port"        --target_file="$configfile"
-ynh_replace_string --match_string="__DOMAIN__"    --replace_string="$domain"      --target_file="$configfile"
-ynh_replace_string --match_string="__DBUSER__"    --replace_string="$db_name"     --target_file="$configfile"
-ynh_replace_string --match_string="__DBPWD__"     --replace_string="$db_pwd"      --target_file="$configfile"
-ynh_replace_string --match_string="__DBNAME__"    --replace_string="$app"         --target_file="$configfile"
-ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path"  --target_file="$configfile"
-ynh_replace_string --match_string="__KEY__"       --replace_string="$key"         --target_file="$configfile"
+ynh_replace_string --match_string="__REDIS_DB__"  --replace_string="$redis_db"   --target_file="$configfile"
+ynh_replace_string --match_string="__PORT__"      --replace_string="$port"       --target_file="$configfile"
+ynh_replace_string --match_string="__DOMAIN__"    --replace_string="$domain"     --target_file="$configfile"
+ynh_replace_string --match_string="__DBUSER__"    --replace_string="$db_name"    --target_file="$configfile"
+ynh_replace_string --match_string="__DBPWD__"     --replace_string="$db_pwd"     --target_file="$configfile"
+ynh_replace_string --match_string="__DBNAME__"    --replace_string="$app"        --target_file="$configfile"
+ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path" --target_file="$configfile"
+ynh_replace_string --match_string="__KEY__"       --replace_string="$key"        --target_file="$configfile"
 
 #=================================================
 # MIGRATE
@@ -177,7 +177,7 @@ ynh_replace_string --match_string="__KEY__"       --replace_string="$key"       
 
 (
 	set +o nounset
-	source "${final_path}/code/virtualenv/bin/activate"
+	source "$final_path/code/virtualenv/bin/activate"
 	set -o nounset
 	cd "$final_path/code"
 
@@ -240,11 +240,11 @@ ynh_add_fail2ban_config --logpath="/var/log/nginx/$domain-access.log" --failrege
 # SECURE FILES AND DIRECTORIES
 #=================================================
 
-chown -R "$app": "$final_path"
+chown -R $app: "$final_path"
 chmod -R 755 "$final_path/code/front/dist/"
 
 mkdir -p "/var/log/$app"
-chown -R "$app": "/var/log/$app"
+chown -R $app: "/var/log/$app"
 
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
@@ -274,7 +274,7 @@ ynh_systemd_action --service_name=nginx --action=reload
 # REMOVE CODE MIGRATION FLAG
 #=================================================
 
-ynh_app_setting_set --app="$app" --key=code_migration --value=2
+ynh_app_setting_set --app=$app --key=code_migration --value=2
 
 #=================================================
 # END OF SCRIPT

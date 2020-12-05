@@ -27,12 +27,12 @@ ynh_script_progression --message="Loading settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get --app="$app" --key=domain)
-path_url=$(ynh_app_setting_get --app="$app" --key=path)
-final_path=$(ynh_app_setting_get --app="$app" --key=final_path)
-db_name=$(ynh_app_setting_get --app="$app" --key=db_name)
-db_user="$db_name"
-db_pwd=$(ynh_app_setting_get --app="$app" --key=psqlpwd)
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+path_url=$(ynh_app_setting_get --app=$app --key=path)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+db_user=$db_name
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
@@ -58,7 +58,7 @@ ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.conf"
 #=================================================
 ynh_script_progression --message="Restoring the app main directory..."
 
-backup_core_only=$(ynh_app_setting_get --app="$app" --key=backup_core_only)
+backup_core_only=$(ynh_app_setting_get --app=$app --key=backup_core_only)
 
 # If backup_core_only have any value, then restore only code
 if [ -z "$backup_core_only" ]
@@ -69,9 +69,9 @@ else
 fi
 
 # Remove the option backup_core_only if it's in the settings.yml file
-ynh_app_setting_delete --app="$app" --key=backup_core_only
+ynh_app_setting_delete --app=$app --key=backup_core_only
 
-code_migration=$(ynh_app_setting_get --app="$app" --key=code_migration)
+code_migration=$(ynh_app_setting_get --app=$app --key=code_migration)
 
 # make sure we revert the last code organization
 if [ "$code_migration" -eq 1 ]
@@ -89,18 +89,18 @@ fi
 ynh_script_progression --message="Recreating the dedicated system user..."
 
 # Create the dedicated user (if not existing)
-ynh_system_user_create --username="$app" --home_dir="$final_path"
+ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
 # RESTORE USER RIGHTS
 #=================================================
 
 # Restore permissions on app files
-chown -R "$app": "$final_path"
+chown -R $app: "$final_path"
 chmod -R 755 "$final_path/code/front/dist/"
 
 mkdir -p "/var/log/$app"
-chown -R "$app": "/var/log/$app"
+chown -R $app: "/var/log/$app"
 
 #=================================================
 # SPECIFIC RESTORATION
@@ -118,8 +118,8 @@ ynh_install_app_dependencies $pkg_dependencies
 ynh_script_progression --message="Restoring the PostgreSQL database..."
 
 ynh_psql_test_if_first_run
-ynh_psql_setup_db --db_user="$db_user" --db_name="$db_name" --db_pwd="$db_pwd"
-ynh_psql_execute_file_as_root --file="./db.sql" --database="$db_name"
+ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
+ynh_psql_execute_file_as_root --file=./db.sql --database=$db_name
 
 #=================================================
 # RESTORE SYSTEMD

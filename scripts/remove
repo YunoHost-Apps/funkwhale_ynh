@@ -16,12 +16,12 @@ ynh_script_progression --message="Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get --app="$app" --key=domain)
-port=$(ynh_app_setting_get --app="$app" --key=port)
-db_name=$(ynh_app_setting_get --app="$app" --key=db_name)
-db_user="$db_name"
-final_path=$(ynh_app_setting_get --app="$app" --key=final_path)
-redis_db=$(ynh_app_setting_get --app="$app" --key=redis_db)
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+port=$(ynh_app_setting_get --app=$app --key=port)
+db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+db_user=$db_name
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
 
 #=================================================
 # STANDARD REMOVE
@@ -70,7 +70,7 @@ ynh_secure_remove --file="/etc/systemd/system/$app.target"
 ynh_script_progression --message="Removing the PostgreSQL database"
 
 # Remove a database if it exists, along with the associated user
-ynh_psql_remove_db --db_name="$db_name" --db_user="$db_user"
+ynh_psql_remove_db --db_name=$db_name --db_user=$db_user
 
 #=================================================
 # REMOVE THE REDIS DATABASE
@@ -78,7 +78,7 @@ ynh_psql_remove_db --db_name="$db_name" --db_user="$db_user"
 ynh_script_progression --message="Removing the Redis database"
 
 # Remove a database if it exists, along with the associated user
-ynh_redis_remove_db "$redis_db"
+ynh_redis_remove_db $redis_db
 
 #=================================================
 # REMOVE DEPENDENCIES
@@ -121,7 +121,7 @@ ynh_remove_fail2ban_config
 ynh_script_progression --message="Removing the dedicated system user"
 
 # Delete a system user
-ynh_system_user_delete --username="$app"
+ynh_system_user_delete --username=$app
 
 #=================================================
 # END OF SCRIPT

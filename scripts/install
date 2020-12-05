@@ -39,17 +39,17 @@ final_path="/var/www/$app"
 test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
 
 # Register (book) web path
-ynh_webpath_register --app="$app" --domain="$domain" --path_url="$path_url"
+ynh_webpath_register --app=$app --domain="$domain" --path_url="$path_url"
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
 ynh_script_progression --message="Storing installation settings..."
 
-ynh_app_setting_set --app="$app" --key=domain --value="$domain"
-ynh_app_setting_set --app="$app" --key=path --value="$path_url"
-ynh_app_setting_set --app="$app" --key=is_public --value="$is_public"
-ynh_app_setting_set --app="$app" --key=admin --value="$admin"
+ynh_app_setting_set --app=$app --key=domain --value=$domain
+ynh_app_setting_set --app=$app --key=path --value=$path_url
+ynh_app_setting_set --app=$app --key=is_public --value=$is_public
+ynh_app_setting_set --app=$app --key=admin --value=$admin
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -61,7 +61,7 @@ ynh_script_progression --message="Configuring firewall..."
 # Find a free port
 port=$(ynh_find_port --port=5000)
 # Open this port
-ynh_app_setting_set --app="$app" --key=port --value="$port"
+ynh_app_setting_set --app=$app --key=port --value=$port
 
 #=================================================
 # INSTALL DEPENDENCIES
@@ -77,21 +77,21 @@ ynh_script_progression --message="Creating a PostgreSQL database..."
 
 ynh_psql_test_if_first_run
 
-db_name=$(ynh_sanitize_dbid "$app")
-db_user="$db_name"
+db_name=$(ynh_sanitize_dbid --db_name=$app)
+db_user=$db_name
 db_pwd=$(ynh_string_random)
-ynh_app_setting_set --app="$app" --key=db_name --value="$db_name"
-ynh_app_setting_set --app="$app" --key=psqlpwd --value="$db_pwd"
+ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+ynh_app_setting_set --app=$app --key=psqlpwd --value=$db_pwd
 
 # Initialize database and store postgres password for upgrade
-ynh_psql_setup_db --db_name="$db_name" --db_user="$db_user" --db_pwd="$db_pwd"
+ynh_psql_setup_db --db_name=$db_name --db_user=$db_user --db_pwd=$db_pwd
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression --message="Setting up source files..."
 
-ynh_app_setting_set --app="$app" --key=final_path --value="$final_path"
+ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$final_path/code"
 ynh_setup_source --dest_dir="$final_path/code" --source_id="app-frontend"
@@ -104,9 +104,9 @@ ynh_setup_source --dest_dir="$final_path/code" --source_id="app-frontend"
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring nginx web server..."
+ynh_script_progression --message="Configuring NGINX web server..."
 
-# Create a dedicated nginx config
+# Create a dedicated NGINX config
 ynh_add_nginx_config
 
 #=================================================
@@ -115,7 +115,7 @@ ynh_add_nginx_config
 ynh_script_progression --message="Configuring system user..."
 
 # Create a system user
-ynh_system_user_create --username="$app" --home_dir="$final_path"
+ynh_system_user_create --username=$app --home_dir=$final_path
 
 #=================================================
 # SPECIFIC SETUP
@@ -126,12 +126,12 @@ ynh_system_user_create --username="$app" --home_dir="$final_path"
 virtualenv -p python3 "$final_path/code/virtualenv"
 (
 	set +o nounset
-	source "${final_path}/code/virtualenv/bin/activate"
+	source "$final_path/code/virtualenv/bin/activate"
 	set -o nounset
 	pip install --upgrade pip
 	pip install --upgrade setuptools
 	pip install wheel
-	pip install -r "${final_path}/code/api/requirements.txt"
+	pip install -r "$final_path/code/api/requirements.txt"
 )
 
 #=================================================
@@ -145,8 +145,8 @@ cp ../conf/env.prod "$configfile"
 key=$(ynh_string_random)
 redis_db=$(ynh_redis_get_free_db)
 
-ynh_app_setting_set --app="$app" --key=key --value="$key"
-ynh_app_setting_set --app="$app" --key=redis_db --value="$redis_db"
+ynh_app_setting_set --app=$app --key=key --value=$key
+ynh_app_setting_set --app=$app --key=redis_db --value=$redis_db
 
 ynh_replace_string --match_string="__REDIS_DB__"  --replace_string="$redis_db"    --target_file="$configfile"
 ynh_replace_string --match_string="__PORT__"      --replace_string="$port"        --target_file="$configfile"
@@ -164,7 +164,7 @@ ynh_replace_string --match_string="__KEY__"       --replace_string="$key"       
 admin_mail=$(ynh_user_get_info --username="$admin" --key="mail")
 (
 	set +o nounset
-	source "${final_path}/code/virtualenv/bin/activate"
+	source "$final_path/code/virtualenv/bin/activate"
 	set -o nounset
 	cd "$final_path/code/"
 
@@ -202,11 +202,11 @@ ynh_store_file_checksum --file="$configfile"
 # SECURE FILES AND DIRECTORIES
 #=================================================
 
-chown -R "$app": "$final_path"
+chown -R $app: "$final_path"
 chmod -R 755 "$final_path/code/front/dist/"
 
 mkdir -p "/var/log/$app"
-chown -R "$app": "/var/log/$app"
+chown -R $app: "/var/log/$app"
 
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
@@ -230,7 +230,7 @@ ynh_systemd_action --action="start" --service_name="${app}-worker"
 #=================================================
 ynh_script_progression --message="Configuring Fail2Ban..."
 
-# Create a dedicated fail2ban config
+# Create a dedicated Fail2Ban config
 ynh_add_fail2ban_config --logpath="/var/log/nginx/$domain-access.log" --failregex="<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" --max_retry=5
 
 #=================================================
