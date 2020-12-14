@@ -67,8 +67,7 @@ The admin interface is accessible at the address: `your.domain.fr/api/admin`
 
 ---
 
-Developers info
-----------------
+## Developers info
 
 Please do your pull request to the [testing branch](https://github.com/YunoHost-Apps/funkwhale_ynh/tree/testing).
 
