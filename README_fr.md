@@ -37,13 +37,9 @@ L'interface d'administration est accessible à l'adresse : votre.domaine.fr/api/
 
   * [x] installer/supprimer/sauvegarder/supprimer/mettre à jour avec x86_64
   * [x] importation des fichiers avec l’interface web, importations depuis youtube, interraction avec MusicBrainz
-  * [x] [API Subsonic] (https://docs.funkwhale.audio/users/apps.html)
-  * [x] [Fédération](https://docs.funkwhale.audio/federation.html) tests
+  * [x] [API Subsonic](https://docs.funkwhale.audio/users/apps.html)
+  * [x]  Tests de [Fédération](https://docs.funkwhale.audio/federation.html)
   * [x] [Import CLI](https://docs.funkwhale.audio/importing-music.html#from-music-directory-on-the-server) N'oubliez pas de `source $final_path/venv/bin/activate`, puis `source $final_path/load_env` avant de taper en utilisant manage.py. 
-  * [x] Support ARM
-
-* configuration de l'utilisateur final requise :
-  * [x] Intégration LDAP
 
 * à ajouter :
   * [ ] Stocker les fichiers dans HOME, voir https://github.com/YunoHost-Apps/funkwhale_ynh/issues/15
