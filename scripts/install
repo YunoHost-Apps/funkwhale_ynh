@@ -238,11 +238,12 @@ ynh_add_fail2ban_config --logpath="/var/log/nginx/$domain-access.log" --failrege
 #=================================================
 ynh_script_progression --message="Configuring SSOwat..."
 
-# Make app public if necessary
-if [ "$is_public" -eq 1 ]
+# Make app public if necessary or protect it
+if [ $is_public -eq 1 ]
 then
-	# makes sure no SSO credentials to be passed
-	ynh_app_setting_set --app="$app" --key=skipped_uris --value="/"
+	# Everyone can access the app.
+	# The "main" permission is automatically created before the install script.
+	ynh_permission_update --permission "main" --add "visitors"
 fi
 
 #=================================================

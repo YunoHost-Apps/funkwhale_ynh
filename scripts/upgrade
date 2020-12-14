@@ -255,18 +255,6 @@ yunohost service add "$app-worker" --log="/var/log/$app/worker.log"
 yunohost service add "$app-beat"   --log="/var/log/$app/beat.log"
 
 #=================================================
-# SETUP SSOWAT
-#=================================================
-ynh_script_progression --message="Upgrading SSOwat configuration..."
-
-# Make app public if necessary
-if [ "$is_public" -eq 1 ]
-then
-	# makes sure no SSO credentials to be passed
-	ynh_app_setting_set --app="$app" --key=skipped_uris --value="/"
-fi
-
-#=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression --message="Starting a systemd service..."
