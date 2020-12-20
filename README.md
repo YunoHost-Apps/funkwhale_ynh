@@ -1,7 +1,9 @@
 # Funkwhale for YunoHost
 
 [![Integration level](https://dash.yunohost.org/integration/funkwhale.svg)](https://dash.yunohost.org/appci/app/funkwhale) ![](https://ci-apps.yunohost.org/ci/badges/funkwhale.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/funkwhale.maintain.svg)  
-[![Install Funkwhale with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=funkwhale)
+[![Install Funkwhale with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=funkwhale)
+
+*[Lire ce readme en français.](./README_fr.md)*
 
 > *This package allows you to install Funkwhale quickly and simply on a YunoHost server.  
 If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to know how to install and enjoy it.*
@@ -16,6 +18,12 @@ Installation requires a dedicated domain or subdomain. Installing in a subpath i
 ## Screenshots
 
 ![](https://funkwhale.audio/img/desktop.5e79eb16.jpg)
+
+## Demo
+
+* [Official demo](https://demo.funkwhale.audio)
+
+**Username:** demo **Password:** demo
 
 ## Admin
 
@@ -53,7 +61,6 @@ The admin interface is accessible at the address: `your.domain.fr/api/admin`
 ## Links
 
  * Report a bug about this package: https://github.com/YunoHost-Apps/funkwhale_ynh
- * Report a bug about Funkwhale itself: https://code.eliotberriot.com/funkwhale/funkwhale/
  * App website: https://docs.funkwhale.audio
  * Upstream app repository: https://dev.funkwhale.audio/funkwhale/funkwhale
  * YunoHost website: https://yunohost.org/
