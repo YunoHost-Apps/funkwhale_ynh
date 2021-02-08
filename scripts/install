@@ -56,7 +56,7 @@ ynh_app_setting_set --app=$app --key=admin --value=$admin
 #=================================================
 # FIND AND OPEN A PORT
 #=================================================
-ynh_script_progression --message="Configuring firewall..."
+ynh_script_progression --message="Finding an available port..."
 
 # Find a free port
 port=$(ynh_find_port --port=5000)
@@ -148,20 +148,21 @@ redis_db=$(ynh_redis_get_free_db)
 ynh_app_setting_set --app=$app --key=key --value=$key
 ynh_app_setting_set --app=$app --key=redis_db --value=$redis_db
 
-ynh_replace_string --match_string="__REDIS_DB__"  --replace_string="$redis_db"    --target_file="$configfile"
-ynh_replace_string --match_string="__PORT__"      --replace_string="$port"        --target_file="$configfile"
-ynh_replace_string --match_string="__DOMAIN__"    --replace_string="$domain"      --target_file="$configfile"
-ynh_replace_string --match_string="__DBUSER__"    --replace_string="$db_name"     --target_file="$configfile"
-ynh_replace_string --match_string="__DBPWD__"     --replace_string="$db_pwd"      --target_file="$configfile"
-ynh_replace_string --match_string="__DBNAME__"    --replace_string="$app"         --target_file="$configfile"
-ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path"  --target_file="$configfile"
-ynh_replace_string --match_string="__KEY__"       --replace_string="$key"         --target_file="$configfile"
+ynh_replace_string --match_string="__REDIS_DB__"  --replace_string="$redis_db"   --target_file="$configfile"
+ynh_replace_string --match_string="__PORT__"      --replace_string="$port"       --target_file="$configfile"
+ynh_replace_string --match_string="__DOMAIN__"    --replace_string="$domain"     --target_file="$configfile"
+ynh_replace_string --match_string="__DB_USER__"   --replace_string="$db_name"    --target_file="$configfile"
+ynh_replace_string --match_string="__DB_PWD__"    --replace_string="$db_pwd"     --target_file="$configfile"
+ynh_replace_string --match_string="__DB_NAME__"   --replace_string="$db_name"    --target_file="$configfile"
+ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path" --target_file="$configfile"
+ynh_replace_string --match_string="__KEY__"       --replace_string="$key"        --target_file="$configfile"
 
 #=================================================
 # CONFIGURE ADMIN USER
 #=================================================
 
-admin_mail=$(ynh_user_get_info --username="$admin" --key="mail")
+admin_mail=$(ynh_user_get_info --username=$admin --key=mail)
+
 (
 	set +o nounset
 	source "$final_path/code/virtualenv/bin/activate"
@@ -182,7 +183,7 @@ admin_mail=$(ynh_user_get_info --username="$admin" --key="mail")
 ynh_script_progression --message="Configuring a systemd service..."
 
 cp ../conf/funkwhale.target "/etc/systemd/system/$app.target"
-ynh_replace_string --match_string="__APP__"    --replace_string="$app"   --target_file="/etc/systemd/system/$app.target"
+ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="/etc/systemd/system/$app.target"
 
 # Create a dedicated systemd config
 ynh_add_systemd_config --service="$app-server" --template="funkwhale-server.service"
@@ -236,14 +237,12 @@ ynh_add_fail2ban_config --logpath="/var/log/nginx/$domain-access.log" --failrege
 #=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_script_progression --message="Configuring SSOwat..."
+ynh_script_progression --message="Configuring permissions..."
 
 # Make app public if necessary or protect it
 if [ $is_public -eq 1 ]
 then
-	# Everyone can access the app.
-	# The "main" permission is automatically created before the install script.
-	ynh_permission_update --permission "main" --add "visitors"
+	ynh_permission_update --permission="main" --add="visitors"
 fi
 
 #=================================================

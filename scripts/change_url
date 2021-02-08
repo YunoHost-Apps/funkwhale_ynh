@@ -24,16 +24,22 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..." --time --weight=1
+ynh_script_progression --message="Loading installation settings..." --weight=1
 
 # Needed for helper "ynh_add_nginx_config"
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 port=$(ynh_app_setting_get --app=$app --key=port)
+key=$(ynh_app_setting_get --app=$app --key=key)
+redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
+port=$(ynh_app_setting_get --app=$app --key=port)
+db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+db_user=$db_name
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_script_progression --message="Backing up the app before changing its URL (may take a while)..." --time --weight=1
+ynh_script_progression --message="Backing up the app before changing its URL (may take a while)..." --weight=1
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
@@ -70,14 +76,14 @@ fi
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..." --weight=1
 
-ynh_systemd_action --service_name="$app-beat" --action="stop" --log_path="/var/log/$app/$app.log"
-ynh_systemd_action --service_name="$app-server" --action="stop" --log_path="/var/log/$app/$app.log"
-ynh_systemd_action --service_name="$app-worker" --action="stop" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="$app-beat" --action=stop --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="$app-server" --action=stop --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="$app-worker" --action=stop --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # MODIFY URL IN NGINX CONF
 #=================================================
-ynh_script_progression --message="Updating NGINX web server configuration..." --time --weight=1
+ynh_script_progression --message="Updating NGINX web server configuration..." --weight=1
 
 nginx_conf_path=/etc/nginx/conf.d/$old_domain.d/$app.conf
 
@@ -102,6 +108,23 @@ then
 	# Store file checksum for the new config file location
 	ynh_store_file_checksum --file="/etc/nginx/conf.d/$new_domain.d/$app.conf"
 fi
+
+#=================================================
+# MODIFY THE CONFIG FILE
+#=================================================
+
+configfile="$final_path/code/config/.env"
+
+cp ../conf/env.prod "$configfile"
+
+ynh_replace_string --match_string="__REDIS_DB__"  --replace_string="$redis_db"   --target_file="$configfile"
+ynh_replace_string --match_string="__PORT__"      --replace_string="$port"       --target_file="$configfile"
+ynh_replace_string --match_string="__DOMAIN__"    --replace_string="$new_domain" --target_file="$configfile"
+ynh_replace_string --match_string="__DB_USER__"   --replace_string="$db_name"    --target_file="$configfile"
+ynh_replace_string --match_string="__DB_PWD__"    --replace_string="$db_pwd"     --target_file="$configfile"
+ynh_replace_string --match_string="__DB_NAME__"   --replace_string="$db_name"    --target_file="$configfile"
+ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path" --target_file="$configfile"
+ynh_replace_string --match_string="__KEY__"       --replace_string="$key"        --target_file="$configfile"
 
 #=================================================
 # START SYSTEMD SERVICE

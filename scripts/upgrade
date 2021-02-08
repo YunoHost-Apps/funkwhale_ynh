@@ -52,6 +52,13 @@ if [ ! -d "$final_path/code/" ]; then
 	ynh_app_setting_set --app="$app" --key=code_migration --value=1
 fi
 
+# Cleaning legacy permissions
+if ynh_legacy_permissions_exists; then
+	ynh_legacy_permissions_delete_all
+
+	ynh_app_setting_delete --app=$app --key=is_public
+fi
+
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
@@ -165,9 +172,9 @@ ynh_app_setting_set --app="$app" --key=key --value="$key"
 ynh_replace_string --match_string="__REDIS_DB__"  --replace_string="$redis_db"   --target_file="$configfile"
 ynh_replace_string --match_string="__PORT__"      --replace_string="$port"       --target_file="$configfile"
 ynh_replace_string --match_string="__DOMAIN__"    --replace_string="$domain"     --target_file="$configfile"
-ynh_replace_string --match_string="__DBUSER__"    --replace_string="$db_name"    --target_file="$configfile"
-ynh_replace_string --match_string="__DBPWD__"     --replace_string="$db_pwd"     --target_file="$configfile"
-ynh_replace_string --match_string="__DBNAME__"    --replace_string="$app"        --target_file="$configfile"
+ynh_replace_string --match_string="__DB_USER__"   --replace_string="$db_name"    --target_file="$configfile"
+ynh_replace_string --match_string="__DB_PWD__"    --replace_string="$db_pwd"     --target_file="$configfile"
+ynh_replace_string --match_string="__DB_NAME__"   --replace_string="$db_name"    --target_file="$configfile"
 ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path" --target_file="$configfile"
 ynh_replace_string --match_string="__KEY__"       --replace_string="$key"        --target_file="$configfile"
 
@@ -220,7 +227,7 @@ ynh_store_file_checksum --file="$configfile"
 ynh_script_progression --message="Upgrading systemd configuration..."
 
 cp ../conf/funkwhale.target "/etc/systemd/system/$app.target"
-ynh_replace_string --match_string="__APP__"    --replace_string="$app"   --target_file="/etc/systemd/system/$app.target"
+ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="/etc/systemd/system/$app.target"
 
 # Create a dedicated systemd config
 ynh_add_systemd_config --service="$app-server" --template="funkwhale-server.service"
@@ -259,9 +266,9 @@ yunohost service add "$app-beat"   --log="/var/log/$app/beat.log"
 #=================================================
 ynh_script_progression --message="Starting a systemd service..."
 
-ynh_systemd_action --service_name="$app-beat" --action="start" --log_path="/var/log/$app/$app.log"
-ynh_systemd_action --service_name="$app-server" --action="start" --log_path="/var/log/$app/$app.log"
-ynh_systemd_action --service_name="$app-worker" --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="$app-beat" --action=start --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="$app-server" --action=start --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="$app-worker" --action=start --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # RELOAD NGINX
