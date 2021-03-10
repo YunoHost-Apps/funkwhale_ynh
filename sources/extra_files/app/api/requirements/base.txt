@@ -34,6 +34,8 @@ django-rest-auth~=0.9
 ipython~=7.10
 mutagen~=1.45
 
+Twisted==20.3.0 #there is a bug with higher versions of twisted. I assume it’s temporary.
+
 pymemoize~=1.0
 
 django-dynamic-preferences~=1.10
