@@ -126,6 +126,13 @@ ynh_replace_string --match_string="__DB_NAME__"   --replace_string="$db_name"   
 ynh_replace_string --match_string="__FINALPATH__" --replace_string="$final_path" --target_file="$configfile"
 ynh_replace_string --match_string="__KEY__"       --replace_string="$key"        --target_file="$configfile"
 
+
+#=================================================
+# MODIFY THE FEDERATION 
+#=================================================
+
+$final_path/code/virtualenv/bin/python $final_path/code/api/manage.py fix_federation_ids https://$domain https://$new_domain --no-dry-run --no-input
+
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
