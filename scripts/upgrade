@@ -18,7 +18,6 @@ app=$YNH_APP_INSTANCE_NAME
 
 domain=$(ynh_app_setting_get --app="$app" --key=domain)
 path_url=$(ynh_app_setting_get --app="$app" --key=path)
-is_public=$(ynh_app_setting_get --app="$app" --key=is_public)
 final_path=$(ynh_app_setting_get --app="$app" --key=final_path)
 db_name=$(ynh_app_setting_get --app="$app" --key=db_name)
 db_user="$db_name"
@@ -50,6 +49,13 @@ if [ ! -d "$final_path/code/" ]; then
 
 	ynh_secure_remove --file="$final_path-tmp/"
 	ynh_app_setting_set --app="$app" --key=code_migration --value=1
+fi
+
+# Cleaning legacy permissions
+if ynh_legacy_permissions_exists; then
+	ynh_legacy_permissions_delete_all
+
+	ynh_app_setting_delete --app=$app --key=is_public
 fi
 
 #=================================================
