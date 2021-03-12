@@ -131,7 +131,7 @@ ynh_replace_string --match_string="__KEY__"       --replace_string="$key"       
 # MODIFY THE FEDERATION 
 #=================================================
 
-$final_path/code/virtualenv/bin/python $final_path/code/api/manage.py fix_federation_ids https://$domain https://$new_domain --no-dry-run --no-input
+$final_path/code/virtualenv/bin/python $final_path/code/api/manage.py fix_federation_ids https://$old_domain https://$new_domain --no-dry-run --no-input
 
 #=================================================
 # START SYSTEMD SERVICE
