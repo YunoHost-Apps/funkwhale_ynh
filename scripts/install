@@ -25,8 +25,8 @@ ynh_abort_if_errors
 
 domain=$YNH_APP_ARG_DOMAIN
 path_url="/"
-is_public=$YNH_APP_ARG_IS_PUBLIC
 admin=$YNH_APP_ARG_ADMIN
+is_public=$YNH_APP_ARG_IS_PUBLIC
 
 admin_mail=$(ynh_user_get_info --username="$admin" --key="mail")
 
@@ -114,7 +114,7 @@ popd
 ynh_script_progression --message="Configuring NGINX web server..."
 
 # Create a dedicated NGINX config
-ynh_add_nginx_config
+ynh_add_nginx_config "datadir"
 
 #=================================================
 # CREATE DEDICATED USER
@@ -148,8 +148,8 @@ ynh_script_progression --message="Modifying a config file..."
 key=$(ynh_string_random --length=45 | base64)
 redis_db=$(ynh_redis_get_free_db)
 
-ynh_app_setting_set --app="$app" --key=key --value="$key"
-ynh_app_setting_set --app="$app" --key=redis_db --value="$redis_db"
+ynh_app_setting_set --app=$app --key=key --value=$key
+ynh_app_setting_set --app=$app --key=redis_db --value=$redis_db
 
 ynh_add_config --template="../conf/env.prod" --destination="$final_path/config/.env"
 
@@ -190,11 +190,13 @@ ynh_add_systemd_config --service="$app-beat"   --template="funkwhale-beat.servic
 ynh_script_progression --message="Securing files and directories..."
 
 # Set permissions to app files
-chown -R "$app": $final_path
+chown -R $app: $final_path
 chmod -R 755 "$final_path/front/dist/"
 
+chown -R $app: $datadir
+
 mkdir -p "/var/log/$app"
-chown -R "$app": "/var/log/$app"
+chown -R $app: "/var/log/$app"
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
@@ -220,7 +222,7 @@ ynh_systemd_action --service_name="${app}-worker" --action="start" --log_path="s
 #=================================================
 ynh_script_progression --message="Configuring Fail2Ban..."
 
-# Create a dedicated fail2ban config
+# Create a dedicated Fail2Ban config
 ynh_add_fail2ban_config --logpath="/var/log/nginx/$domain-access.log" --failregex="<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" --max_retry=5
 
 #=================================================

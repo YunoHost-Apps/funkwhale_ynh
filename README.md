@@ -37,19 +37,6 @@ The admin uses the login you provided at installation. The password is the same 
 
 The admin interface is accessible at the address: `your.domain.fr/api/admin`
 
-# State of this package
-
-* The following have been tested with this package and work fine:
-
-  * [x] install/remove/backup/remove/upgrade with x86_64 and ARM
-  * [x] import file with web interface, imports from YouTube, interraction with MusicBrainz
-  * [x] [Subsonic API](https://docs.funkwhale.audio/users/apps.html)
-  * [x] [Federation](https://docs.funkwhale.audio/federation.html) tests
-  * [x] [CLI Import](https://docs.funkwhale.audio/importing-music.html#from-music-directory-on-the-server) Remember to `source $final_path/venv/bin/activate`, then `source $final_path/load_env` before typinh using manage.py.
-
-* to be added:
-  * [ ] Store files in HOME, see https://github.com/YunoHost-Apps/funkwhale_ynh/issues/15
-
 ## Documentation
 
  * Official documentation: https://docs.funkwhale.audio

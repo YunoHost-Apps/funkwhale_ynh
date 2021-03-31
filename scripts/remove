@@ -30,21 +30,21 @@ redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
 #=================================================
 
 # Remove the service from the list of services known by YunoHost (added from `yunohost service add`)
-if yunohost service status "$app-server" >/dev/null
+if ynh_exec_warn_less yunohost service status "$app-server" >/dev/null
 then
-	ynh_script_progression --message="Remove $app-server service integration..."
+	ynh_script_progression --message="Removing $app-server service integration..."
 	yunohost service remove "$app-server"
 fi
 
-if yunohost service status "$app-worker" >/dev/null
+if ynh_exec_warn_less yunohost service status "$app-worker" >/dev/null
 then
-	ynh_script_progression --message="Remove $app-worker service integration..."
+	ynh_script_progression --message="Removing $app-worker service integration..."
 	yunohost service remove "$app-worker"
 fi
 
-if yunohost service status "$app-beat" >/dev/null
+if ynh_exec_warn_less yunohost service status "$app-beat" >/dev/null
 then
-	ynh_script_progression --message="Remove $app-beat service integration..."
+	ynh_script_progression --message="Removing $app-beat service integration..."
 	yunohost service remove "$app-beat"
 fi
 
