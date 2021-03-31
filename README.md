@@ -25,6 +25,12 @@ Installation requires a dedicated domain or subdomain. Installing in a subpath i
 
 **Username:** demo **Password:** demo
 
+## Demo
+
+* [Official demo](https://demo.funkwhale.audio)
+
+**Username:** demo **Password:** demo
+
 ## Admin
 
 The admin uses the login you provided at installation. The password is the same you use for YunoHost.
