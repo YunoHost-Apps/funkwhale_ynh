@@ -167,7 +167,7 @@ pushd $final_path
 	python api/manage.py migrate
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
 	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | python api/manage.py shell
-	python api/manage.py collectstatic
+	echo "yes" | python api/manage.py collectstatic
 popd
 
 #=================================================
@@ -178,9 +178,9 @@ ynh_script_progression --message="Configuring a systemd service..."
 ynh_add_config --template="../conf/funkwhale.target" --destination="/etc/systemd/system/$app.target"
 
 # Create a dedicated systemd config
-ynh_add_systemd_config --service="$app-server" --template="funkwhale-server.service"
-ynh_add_systemd_config --service="$app-worker" --template="funkwhale-worker.service"
-ynh_add_systemd_config --service="$app-beat"   --template="funkwhale-beat.service"
+ynh_add_systemd_config --service="$app-server" --template="funkwhale-server.service" --others_var="datadir"
+ynh_add_systemd_config --service="$app-worker" --template="funkwhale-worker.service" --others_var="datadir"
+ynh_add_systemd_config --service="$app-beat"   --template="funkwhale-beat.service" --others_var="datadir"
 
 #=================================================
 # GENERIC FINALIZATION
@@ -211,9 +211,9 @@ yunohost service add "${app}-worker" --log="/var/log/$app/worker.log"
 ynh_script_progression --message="Starting a systemd service..."
 
 # Start a systemd service
-ynh_systemd_action --service_name="${app}-beat" --action="start" --log_path="/var/log/$app/beat.log"
-ynh_systemd_action --service_name="${app}-server" --action="start" --log_path="/var/log/$app/server.log"
-ynh_systemd_action --service_name="${app}-worker" --action="start" --log_path="/var/log/$app/worker.log"
+ynh_systemd_action --service_name="${app}-beat" --action="start" --log_path="systemd" --line_match="Running with the following plugins enabled"
+ynh_systemd_action --service_name="${app}-server" --action="start" --log_path="systemd" --line_match="Application startup complete"
+ynh_systemd_action --service_name="${app}-worker" --action="start" --log_path="systemd" --line_match="Running with the following plugins enabled"
 
 #=================================================
 # SETUP FAIL2BAN
