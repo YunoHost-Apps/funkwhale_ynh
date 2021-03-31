@@ -17,6 +17,8 @@
 		setup_public=1
 		upgrade=1
 		upgrade=1   from_commit=4d4bf0981e2d3a00eaae6b19bd54344fe55d6530
+		# 1.1~ynh1
+		upgrade=1   from_commit=8172790fb461d16f09089593fdac380f0d499c83
 		backup_restore=1
 		multi_instance=1
 		incorrect_path=0
@@ -29,3 +31,5 @@ Notification=all
 	; commit=4d4bf0981e2d3a00eaae6b19bd54344fe55d6530
 		name=Upgrade to 0.19.1 and fix channels-redis bug
 		manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
+	; commit=8172790fb461d16f09089593fdac380f0d499c83
+		name=1.1~ynh1

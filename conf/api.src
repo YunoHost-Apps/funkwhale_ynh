@@ -1,0 +1,7 @@
+SOURCE_URL=https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/1.1/download?job=build_api
+SOURCE_SUM=ab51c0bfafc07ef0de9e53b699d4b2e211aa69ddfce62e3534c3c89a83789073
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=zip
+SOURCE_IN_SUBDIR=true
+SOURCE_FILENAME=api-1.1.zip
+SOURCE_EXTRACT=true

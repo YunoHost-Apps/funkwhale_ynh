@@ -16,42 +16,42 @@ ynh_script_progression --message="Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get --app="$app" --key=domain)
-port=$(ynh_app_setting_get --app="$app" --key=port)
-db_name=$(ynh_app_setting_get --app="$app" --key=db_name)
-db_user="$db_name"
-final_path=$(ynh_app_setting_get --app="$app" --key=final_path)
-redis_db=$(ynh_app_setting_get --app="$app" --key=redis_db)
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+port=$(ynh_app_setting_get --app=$app --key=port)
+db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+db_user=$db_name
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
 
 #=================================================
 # STANDARD REMOVE
 #=================================================
-# REMOVE SERVICE FROM ADMIN PANEL
+# REMOVE SERVICE INTEGRATION IN YUNOHOST
 #=================================================
 
-# Remove a service from the admin panel, added by `yunohost service add`
-if yunohost service status "$app-server" >/dev/null 2>&1
+# Remove the service from the list of services known by YunoHost (added from `yunohost service add`)
+if yunohost service status "$app-server" >/dev/null
 then
-	ynh_script_progression --message="Remove $app-server service"
+	ynh_script_progression --message="Remove $app-server service integration..."
 	yunohost service remove "$app-server"
 fi
 
-if yunohost service status "$app-worker" >/dev/null 2>&1
+if yunohost service status "$app-worker" >/dev/null
 then
-	ynh_script_progression --message="Remove $app-worker service"
+	ynh_script_progression --message="Remove $app-worker service integration..."
 	yunohost service remove "$app-worker"
 fi
 
-if yunohost service status "$app-beat" >/dev/null 2>&1
+if yunohost service status "$app-beat" >/dev/null
 then
-	ynh_script_progression --message="Remove $app-beat service"
+	ynh_script_progression --message="Remove $app-beat service integration..."
 	yunohost service remove "$app-beat"
 fi
 
 #=================================================
 # STOP AND REMOVE SERVICE
 #=================================================
-ynh_script_progression --message="Stopping and removing the systemd service"
+ynh_script_progression --message="Stopping and removing the systemd service..."
 
 ynh_systemd_action --action="stop" --service_name="${app}-beat"
 ynh_systemd_action --action="stop" --service_name="${app}-server"
@@ -67,23 +67,23 @@ ynh_secure_remove --file="/etc/systemd/system/$app.target"
 #=================================================
 # REMOVE THE POSTGRESQL DATABASE
 #=================================================
-ynh_script_progression --message="Removing the PostgreSQL database"
+ynh_script_progression --message="Removing the PostgreSQL database..."
 
 # Remove a database if it exists, along with the associated user
-ynh_psql_remove_db --db_name="$db_name" --db_user="$db_user"
+ynh_psql_remove_db --db_user=$db_user --db_name=$db_name
 
 #=================================================
 # REMOVE THE REDIS DATABASE
 #=================================================
-ynh_script_progression --message="Removing the Redis database"
+ynh_script_progression --message="Removing the Redis database..."
 
 # Remove a database if it exists, along with the associated user
-ynh_redis_remove_db "$redis_db"
+ynh_redis_remove_db $redis_db
 
 #=================================================
 # REMOVE DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Removing dependencies"
+ynh_script_progression --message="Removing dependencies..."
 
 # Remove metapackage and its dependencies
 ynh_remove_app_dependencies
@@ -91,37 +91,46 @@ ynh_remove_app_dependencies
 #=================================================
 # REMOVE APP MAIN DIR
 #=================================================
-ynh_script_progression --message="Removing app main directory"
+ynh_script_progression --message="Removing app main directory..."
 
 # Remove the app directory securely
 ynh_secure_remove --file="$final_path"
 
-ynh_secure_remove --file="/var/log/$app"
-
 #=================================================
 # REMOVE NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Removing NGINX web server configuration"
+ynh_script_progression --message="Removing NGINX web server configuration..."
 
-# Remove the dedicated nginx config
+# Remove the dedicated NGINX config
 ynh_remove_nginx_config
 
 #=================================================
 # REMOVE FAIL2BAN CONFIGURATION
 #=================================================
-ynh_script_progression --message="Removing Fail2Ban configuration..."
+ynh_script_progression --message="Removing Fail2ban configuration..."
 
+# Remove the dedicated Fail2Ban config
 ynh_remove_fail2ban_config
+
+#=================================================
+# SPECIFIC REMOVE
+#=================================================
+# REMOVE VARIOUS FILES
+#=================================================
+ynh_script_progression --message="Removing various files..."
+
+# Remove the log files
+ynh_secure_remove --file="/var/log/$app"
 
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
 # REMOVE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Removing the dedicated system user"
+ynh_script_progression --message="Removing the dedicated system user..."
 
 # Delete a system user
-ynh_system_user_delete --username="$app"
+ynh_system_user_delete --username=$app
 
 #=================================================
 # END OF SCRIPT

@@ -6,7 +6,7 @@
 *[Lire ce readme en français.](./README_fr.md)*
 
 > *This package allows you to install Funkwhale quickly and simply on a YunoHost server.  
-If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to know how to install and enjoy it.*
+If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/install) to learn how to install it.*
 
 ## Overview
 A modern, convivial and free music server on YunoHost
@@ -17,7 +17,7 @@ Installation requires a dedicated domain or subdomain. Installing in a subpath i
 
 ## Screenshots
 
-![](https://funkwhale.audio/img/desktop.5e79eb16.jpg)
+![](https://upload.wikimedia.org/wikipedia/commons/d/d8/Capture_d%27%C3%A9cran_de_la_page_d%27accueil_de_Funkwhale.png)
 
 ## Demo
 
@@ -60,16 +60,16 @@ The admin interface is accessible at the address: `your.domain.fr/api/admin`
 
 ## Links
 
- * Report a bug about this package: https://github.com/YunoHost-Apps/funkwhale_ynh
+ * Report a bug: https://github.com/YunoHost-Apps/funkwhale_ynh/issues
  * App website: https://docs.funkwhale.audio
  * Upstream app repository: https://dev.funkwhale.audio/funkwhale/funkwhale
  * YunoHost website: https://yunohost.org/
 
 ---
 
-## Developers info
+## Developer info
 
-Please do your pull request to the [testing branch](https://github.com/YunoHost-Apps/funkwhale_ynh/tree/testing).
+Please send your pull request to the [testing branch](https://github.com/YunoHost-Apps/funkwhale_ynh/tree/testing).
 
 To try the testing branch, please proceed like that.
 ```

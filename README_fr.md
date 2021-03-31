@@ -1,7 +1,7 @@
 # Funkwhale pour YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/funkwhale.svg)](https://dash.yunohost.org/appci/app/funkwhale) ![](https://ci-apps.yunohost.org/ci/badges/funkwhale.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/funkwhale.maintain.svg)   
-[![Install Funkwhale with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=funkwhale)
+[![Niveau d'intégration](https://dash.yunohost.org/integration/funkwhale.svg)](https://dash.yunohost.org/appci/app/funkwhale) ![](https://ci-apps.yunohost.org/ci/badges/funkwhale.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/funkwhale.maintain.svg)  
+[![Installer Funkwhale avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=funkwhale)
 
 *[Read this readme in english.](./README.md)* 
 
@@ -17,13 +17,13 @@ L'installation nécessite un domaine ou un sous-domaine dédié. L'installation 
 
 ## Captures d'écran
 
-![](https://funkwhale.audio/img/desktop.5e79eb16.jpg)
+![](https://upload.wikimedia.org/wikipedia/commons/d/d8/Capture_d%27%C3%A9cran_de_la_page_d%27accueil_de_Funkwhale.png)
 
 ## Démo
 
 * [Démo officielle](https://demo.funkwhale.audio)
 
-**Nom d’utilisateur :** demo  **Mot de passe :** demo
+**Nom d’utilisateur :** demo  **Mot de passe :** demo
 
 ## Admin
 
@@ -62,8 +62,8 @@ L'interface d'administration est accessible à l'adresse : votre.domaine.fr/api/
 
 ## Liens
 
- * Signaler un bug : https://github.com/YunoHost-Apps/funkwhale_ynh
- * Site de l’application : https://docs.funkwhale.audio
+ * Signaler un bug : https://github.com/YunoHost-Apps/funkwhale_ynh/issues
+ * Site de l'application : https://docs.funkwhale.audio
  * Dépôt de l'application principale : https://dev.funkwhale.audio/funkwhale/funkwhale
  * Site web YunoHost : https://yunohost.org/
 
@@ -76,6 +76,6 @@ Merci de faire vos pull request sur la [branche testing](https://github.com/Yuno
 Pour essayer la branche testing, procédez comme suit.
 ```
 sudo yunohost app install https://github.com/YunoHost-Apps/funkwhale_ynh/tree/testing --debug
-or
+ou
 sudo yunohost app upgrade funkwhale -u https://github.com/YunoHost-Apps/funkwhale_ynh/tree/testing --debug
 ```

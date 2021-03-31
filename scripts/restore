@@ -6,7 +6,7 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
-#Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
+# Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
 source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
@@ -27,21 +27,22 @@ ynh_script_progression --message="Loading settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get --app="$app" --key=domain)
-path_url=$(ynh_app_setting_get --app="$app" --key=path)
-final_path=$(ynh_app_setting_get --app="$app" --key=final_path)
-db_name=$(ynh_app_setting_get --app="$app" --key=db_name)
-db_user="$db_name"
-db_pwd=$(ynh_app_setting_get --app="$app" --key=psqlpwd)
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+path_url=$(ynh_app_setting_get --app=$app --key=path)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+db_user=$db_name
+db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
+datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
 #=================================================
 ynh_script_progression --message="Validating restoration parameters..."
 
-ynh_webpath_available --domain="$domain" --path_url="$path_url" \
+ynh_webpath_available --domain=$domain --path_url=$path_url \
 	|| ynh_die --message="Path not available: ${domain}${path_url}"
-test ! -d "$final_path" \
+test ! -d $final_path \
 	|| ynh_die --message="There is already a directory: $final_path "
 
 #=================================================
@@ -49,39 +50,31 @@ test ! -d "$final_path" \
 #=================================================
 # RESTORE THE NGINX CONFIGURATION
 #=================================================
+ynh_script_progression --message="Restoring the NGINX web server configuration..."
 
 ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
-ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.conf"
 
 #=================================================
 # RESTORE THE APP MAIN DIR
 #=================================================
 ynh_script_progression --message="Restoring the app main directory..."
 
-backup_core_only=$(ynh_app_setting_get --app="$app" --key=backup_core_only)
+backup_core_only=$(ynh_app_setting_get --app=$app --key=backup_core_only)
 
 # If backup_core_only have any value, then restore only code
-if [ -z "$backup_core_only" ]
+if [ "$backup_core_only" ]
 then
-	ynh_restore_file --origin_path="$final_path/code"
-else
-	ynh_restore_file --origin_path="$final_path"
+	ynh_restore_file --origin_path="$datadir"
 fi
+
+ynh_restore_file --origin_path="$final_path"
 
 # Remove the option backup_core_only if it's in the settings.yml file
 ynh_app_setting_delete --app="$app" --key=backup_core_only
 
-code_migration=$(ynh_app_setting_get --app="$app" --key=code_migration)
-
-# make sure we revert the last code organization
-if [ "$code_migration" -eq 1 ]
-then
-	mv "$final_path/code/"* "$final_path"
-	mv "$final_path/media" "$final_path/code/data/media"
-	mv "$final_path/import" "$final_path/code/data/music"
-	ynh_secure_remove --file="$final_path/code"
-	ynh_app_setting_delete --app="$app" --key=code_migration
-fi
+pushd $datadir
+	mkdir -p static media music
+popd
 
 #=================================================
 # RECREATE THE DEDICATED USER
@@ -89,14 +82,15 @@ fi
 ynh_script_progression --message="Recreating the dedicated system user..."
 
 # Create the dedicated user (if not existing)
-ynh_system_user_create --username="$app" --home_dir="$final_path"
+ynh_system_user_create --username=$app --home_dir=$final_path
 
 #=================================================
 # RESTORE USER RIGHTS
 #=================================================
+ynh_script_progression --message="Restoring user rights..."
 
 # Restore permissions on app files
-chown -R "$app": "$final_path"
+chown -R $app: $final_path
 chmod -R 755 "$final_path/code/front/dist/"
 
 mkdir -p "/var/log/$app"
@@ -118,8 +112,8 @@ ynh_install_app_dependencies $pkg_dependencies
 ynh_script_progression --message="Restoring the PostgreSQL database..."
 
 ynh_psql_test_if_first_run
-ynh_psql_setup_db --db_user="$db_user" --db_name="$db_name" --db_pwd="$db_pwd"
-ynh_psql_execute_file_as_root --file="./db.sql" --database="$db_name"
+ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
+ynh_psql_execute_file_as_root --file="./db.sql" --database=$db_name
 
 #=================================================
 # RESTORE SYSTEMD
@@ -136,21 +130,22 @@ systemctl enable "$app-server.service" --quiet
 systemctl enable "$app-worker.service" --quiet
 
 #=================================================
-# ADVERTISE SERVICE IN ADMIN PANEL
+# INTEGRATE SERVICE IN YUNOHOST
 #=================================================
+ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add "$app-server" --log="/var/log/$app/server.log"
-yunohost service add "$app-worker" --log="/var/log/$app/worker.log"
-yunohost service add "$app-beat"   --log="/var/log/$app/beat.log"
+yunohost service add "${app}-beat"   --log="/var/log/$app/beat.log"
+yunohost service add "${app}-server" --log="/var/log/$app/server.log"
+yunohost service add "${app}-worker" --log="/var/log/$app/worker.log"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression --message="Starting a systemd service..."
 
-ynh_systemd_action --action="start" --service_name="${app}-beat"
-ynh_systemd_action --action="start" --service_name="${app}-server"
-ynh_systemd_action --action="start" --service_name="${app}-worker"
+ynh_systemd_action --service_name="${app}-beat" --action="start" --log_path="/var/log/$app/beat.log"
+ynh_systemd_action --service_name="${app}-server" --action="start" --log_path="/var/log/$app/server.log"
+ynh_systemd_action --service_name="${app}-worker" --action="start" --log_path="/var/log/$app/worker.log"
 
 #=================================================
 # GENERIC FINALIZATION
