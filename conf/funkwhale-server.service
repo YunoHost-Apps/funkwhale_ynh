@@ -1,5 +1,5 @@
 [Unit]
-Description=Funkwhale (__APP__) application server
+Description=__APP__ application server
 After=redis.service postgresql.service
 PartOf=__APP__.target
 
@@ -9,20 +9,6 @@ Group=__APP__
 WorkingDirectory=__FINALPATH__/api
 EnvironmentFile=__FINALPATH__/config/.env
 ExecStart=__FINALPATH__/virtualenv/bin/gunicorn config.asgi:application -w ${FUNKWHALE_WEB_WORKERS} -k uvicorn.workers.UvicornWorker -b ${FUNKWHALE_API_IP}:${FUNKWHALE_API_PORT}
-
-#NoNewPrivileges=true
-#PrivateDevices=true
-#PrivateTmp=true
-#ProtectHome=true
-#ProtectSystem=strict
-#ProtectControlGroups=yes
-#ProtectKernelModules=yes
-#ReadOnlyPaths=__FINALPATH__/config/.env __FINALPATH__/
-#ReadWritePaths=__DATADIR__/media __DATADIR__/music /var/log/__APP__
-
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=__APP__-server
 
 [Install]
 WantedBy=multi-user.target

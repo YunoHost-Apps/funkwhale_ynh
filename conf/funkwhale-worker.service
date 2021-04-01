@@ -1,5 +1,5 @@
 [Unit]
-Description=Funkwhale (__APP__) celery worker
+Description=__APP__ celery worker
 After=redis.service postgresql.service
 PartOf=__APP__.target
 
@@ -8,21 +8,7 @@ User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/api
 EnvironmentFile=__FINALPATH__/config/.env
-ExecStart=__FINALPATH__/virtualenv/bin/celery -A funkwhale_api.taskapp worker --loglevel INFO --logfile=/var/log/__APP__/worker.log
-
-#NoNewPrivileges=true
-#PrivateDevices=true
-#PrivateTmp=true
-#ProtectHome=true
-#ProtectSystem=strict
-#ProtectControlGroups=yes
-#ProtectKernelModules=yes
-#ReadOnlyPaths=__FINALPATH__/config/.env __FINALPATH__/
-#ReadWritePaths=__DATADIR__/media __DATADIR__/music /var/log/__APP__
-
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=__APP__-worker
+ExecStart=__FINALPATH__/virtualenv/bin/celery -A funkwhale_api.taskapp worker -l INFO --concurrency=0
 
 [Install]
 WantedBy=multi-user.target

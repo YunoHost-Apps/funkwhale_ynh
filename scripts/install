@@ -152,6 +152,7 @@ ynh_app_setting_set --app=$app --key=key --value=$key
 ynh_app_setting_set --app=$app --key=redis_db --value=$redis_db
 
 ynh_add_config --template="../conf/env.prod" --destination="$final_path/config/.env"
+chmod 600 $final_path/config/.env
 
 #=================================================
 # BUILDING FUNKWHALE
@@ -191,21 +192,16 @@ ynh_script_progression --message="Securing files and directories..."
 
 # Set permissions to app files
 chown -R $app: $final_path
-chmod -R 755 "$final_path/front/dist/"
-
 chown -R $app: $datadir
-
-mkdir -p "/var/log/$app"
-chown -R $app: "/var/log/$app"
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add "${app}-beat"   --log="/var/log/$app/beat.log"
-yunohost service add "${app}-server" --log="/var/log/$app/server.log"
-yunohost service add "${app}-worker" --log="/var/log/$app/worker.log"
+yunohost service add "${app}-beat" --log_type systemd
+yunohost service add "${app}-server" --log_type systemd
+yunohost service add "${app}-worker" --log_type systemd
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -223,7 +219,7 @@ ynh_systemd_action --service_name="${app}-worker" --action="start" --log_path="s
 ynh_script_progression --message="Configuring Fail2Ban..."
 
 # Create a dedicated Fail2Ban config
-ynh_add_fail2ban_config --logpath="/var/log/nginx/$domain-access.log" --failregex="<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" --max_retry=5
+ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-access.log" --failregex="<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" --max_retry=5
 
 #=================================================
 # SETUP SSOWAT

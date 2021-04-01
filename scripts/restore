@@ -92,12 +92,7 @@ ynh_script_progression --message="Restoring user rights..."
 
 # Restore permissions on app files
 chown -R $app: $final_path
-chmod -R 755 "$final_path/front/dist/"
-
 chown -R $app: $datadir
-
-mkdir -p "/var/log/$app"
-chown -R $app: "/var/log/$app"
 
 #=================================================
 # SPECIFIC RESTORATION
@@ -137,9 +132,9 @@ systemctl enable "$app-worker.service" --quiet
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add "${app}-beat"   --log="/var/log/$app/beat.log"
-yunohost service add "${app}-server" --log="/var/log/$app/server.log"
-yunohost service add "${app}-worker" --log="/var/log/$app/worker.log"
+yunohost service add "${app}-beat" --log_type systemd
+yunohost service add "${app}-server" --log_type systemd
+yunohost service add "${app}-worker" --log_type systemd
 
 #=================================================
 # START SYSTEMD SERVICE
