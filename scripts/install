@@ -199,9 +199,9 @@ chown -R $app: $datadir
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add "${app}-beat" --log_type systemd
-yunohost service add "${app}-server" --log_type systemd
-yunohost service add "${app}-worker" --log_type systemd
+yunohost service add "${app}-beat"
+yunohost service add "${app}-server"
+yunohost service add "${app}-worker"
 
 #=================================================
 # START SYSTEMD SERVICE
