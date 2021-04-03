@@ -212,9 +212,6 @@ ynh_script_progression --message="Starting a systemd service..."
 ynh_systemd_action --service_name="${app}-beat" --action="start" --log_path="systemd" --line_match="Running with the following plugins enabled"
 ynh_systemd_action --service_name="${app}-server" --action="start" --log_path="systemd" --line_match="Application startup complete"
 ynh_systemd_action --service_name="${app}-worker" --action="start" --log_path="systemd" --line_match="Running with the following plugins enabled"
-if [ ${PACKAGE_CHECK_EXEC:-0} -eq 1 ]; then
-	sleep 60
-fi
 
 #=================================================
 # SETUP FAIL2BAN
@@ -243,6 +240,9 @@ fi
 ynh_script_progression --message="Reloading NGINX web server..."
 
 ynh_systemd_action --service_name=nginx --action=reload
+if [ ${PACKAGE_CHECK_EXEC:-0} -eq 1 ]; then
+	sleep 60
+fi
 
 #=================================================
 # END OF SCRIPT
