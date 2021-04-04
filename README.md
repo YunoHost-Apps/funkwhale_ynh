@@ -31,8 +31,11 @@ The admin uses the login you provided at installation. The password is the same 
 The admin interface is accessible at the address: `your.domain.fr/api/admin`
 
 To add a collection of music files to a library in your Yunohost installation of Funkwhale, create a symlink to your collection titled "import" in /var/www/funkwhale
-'''ln -s /your/music/collection /var/www/funkwhale/import
-The files can be uploaded from the *uploading* tab in a music library under the heading **Import music from your server**.
+```console
+foo@bar:~$sudo ln -s /your/music/collection /var/www/funkwhale/import
+```
+The files can then be added to your library from the *uploading* tab in a music library under the heading **Import music from your server**.
+
 
 # State of this package
 
