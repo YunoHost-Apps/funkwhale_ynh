@@ -240,11 +240,6 @@ fi
 ynh_script_progression --message="Reloading NGINX web server..."
 
 ynh_systemd_action --service_name=nginx --action=reload
-if [ ${PACKAGE_CHECK_EXEC:-0} -eq 1 ]; then
-	ynh_systemd_action --service_name="${app}-server" --action="restart" --log_path="systemd" --line_match="Application startup complete"
-	ynh_script_progression --message="PACKAGE_CHECK_EXEC sleep 60s..."
-	sleep 60
-fi
 
 #=================================================
 # END OF SCRIPT
