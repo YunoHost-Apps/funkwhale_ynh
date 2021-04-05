@@ -69,9 +69,9 @@ ynh_backup --src_path="/etc/fail2ban/filter.d/$app.conf"
 # BACKUP SYSTEMD
 #=================================================
 
-ynh_backup --src_path="/etc/systemd/system/$app-beat.service"
-ynh_backup --src_path="/etc/systemd/system/$app-server.service"
-ynh_backup --src_path="/etc/systemd/system/$app-worker.service"
+ynh_backup --src_path="/etc/systemd/system/${app}-beat.service"
+ynh_backup --src_path="/etc/systemd/system/${app}-server.service"
+ynh_backup --src_path="/etc/systemd/system/${app}-worker.service"
 ynh_backup --src_path="/etc/systemd/system/$app.target"
 
 #=================================================

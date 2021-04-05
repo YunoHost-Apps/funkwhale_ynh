@@ -75,9 +75,9 @@ ynh_abort_if_errors
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..."
 
-ynh_systemd_action --action="stop" --service_name="${app}-beat" --log_path="systemd" --line_match="Stopped Funkwhale"
-ynh_systemd_action --action="stop" --service_name="${app}-server" --log_path="systemd" --line_match="Stopped Funkwhale"
-ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="systemd" --line_match="Stopped Funkwhale"
+ynh_systemd_action --action="stop" --service_name="${app}-beat" --log_path="systemd" --line_match="Stopped $app"
+ynh_systemd_action --action="stop" --service_name="${app}-server" --log_path="systemd" --line_match="Stopped $app"
+ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="systemd" --line_match="Stopped $app"
 
 #=================================================
 # MOVE DATAS
@@ -208,9 +208,9 @@ ynh_script_progression --message="Upgrading systemd configuration..."
 ynh_add_config --template="../conf/funkwhale.target" --destination="/etc/systemd/system/$app.target"
 
 # Create a dedicated systemd config
-ynh_add_systemd_config --service="$app-server" --template="funkwhale-server.service" --others_var="datadir"
-ynh_add_systemd_config --service="$app-worker" --template="funkwhale-worker.service" --others_var="datadir"
-ynh_add_systemd_config --service="$app-beat"   --template="funkwhale-beat.service" --others_var="datadir"
+ynh_add_systemd_config --service="${app}-server" --template="funkwhale-server.service" --others_var="datadir"
+ynh_add_systemd_config --service="${app}-worker" --template="funkwhale-worker.service" --others_var="datadir"
+ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.service" --others_var="datadir"
 
 #=================================================
 # GENERIC FINALIZATION

@@ -30,22 +30,22 @@ redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
 #=================================================
 
 # Remove the service from the list of services known by YunoHost (added from `yunohost service add`)
-if ynh_exec_warn_less yunohost service status "$app-server" >/dev/null
+if ynh_exec_warn_less yunohost service status "${app}-server" >/dev/null
 then
-	ynh_script_progression --message="Removing $app-server service integration..."
-	yunohost service remove "$app-server"
+	ynh_script_progression --message="Removing ${app}-server service integration..."
+	yunohost service remove "${app}-server"
 fi
 
-if ynh_exec_warn_less yunohost service status "$app-worker" >/dev/null
+if ynh_exec_warn_less yunohost service status "${app}-worker" >/dev/null
 then
-	ynh_script_progression --message="Removing $app-worker service integration..."
-	yunohost service remove "$app-worker"
+	ynh_script_progression --message="Removing ${app}-worker service integration..."
+	yunohost service remove "${app}-worker"
 fi
 
-if ynh_exec_warn_less yunohost service status "$app-beat" >/dev/null
+if ynh_exec_warn_less yunohost service status "${app}-beat" >/dev/null
 then
-	ynh_script_progression --message="Removing $app-beat service integration..."
-	yunohost service remove "$app-beat"
+	ynh_script_progression --message="Removing ${app}-beat service integration..."
+	yunohost service remove "${app}-beat"
 fi
 
 #=================================================
@@ -53,14 +53,14 @@ fi
 #=================================================
 ynh_script_progression --message="Stopping and removing the systemd service..."
 
-ynh_systemd_action --action="stop" --service_name="${app}-beat" --log_path="systemd" --line_match="Stopped Funkwhale"
-ynh_systemd_action --action="stop" --service_name="${app}-server" --log_path="systemd" --line_match="Stopped Funkwhale"
-ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="systemd" --line_match="Stopped Funkwhale"
+ynh_systemd_action --service_name="${app}-beat" --action="stop" --log_path="systemd" --line_match="Stopped $app"
+ynh_systemd_action --service_name="${app}-server" --action="stop" --log_path="systemd" --line_match="Stopped $app"
+ynh_systemd_action --service_name="${app}-worker" --action="stop" --log_path="systemd" --line_match="Stopped $app"
 
 # Remove the dedicated systemd config
-ynh_remove_systemd_config --service="$app-server"
-ynh_remove_systemd_config --service="$app-worker"
-ynh_remove_systemd_config --service="$app-beat"
+ynh_remove_systemd_config --service="${app}-beat"
+ynh_remove_systemd_config --service="${app}-server"
+ynh_remove_systemd_config --service="${app}-worker"
 
 ynh_secure_remove --file="/etc/systemd/system/$app.target"
 
