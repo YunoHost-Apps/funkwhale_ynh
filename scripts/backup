@@ -41,13 +41,6 @@ ynh_print_info --message="Declaring files to be backed up..."
 # BACKUP THE APP MAIN DIR
 #=================================================
 
-backup_core_only=$(ynh_app_setting_get --app="$app" --key=backup_core_only)
-# If backup_core_only have any value in the settings.yml file, do not backup the data directory
-if [ ! "$backup_core_only" ]
-then
-	ynh_backup --src_path="$datadir"
-fi
-
 ynh_backup --src_path="$final_path"
 
 #=================================================
@@ -73,6 +66,12 @@ ynh_backup --src_path="/etc/systemd/system/${app}-beat.service"
 ynh_backup --src_path="/etc/systemd/system/${app}-server.service"
 ynh_backup --src_path="/etc/systemd/system/${app}-worker.service"
 ynh_backup --src_path="/etc/systemd/system/$app.target"
+
+#=================================================
+# BACKUP VARIOUS FILES
+#=================================================
+
+ynh_backup --src_path="$datadir" --is_big
 
 #=================================================
 # BACKUP THE POSTGRESQL DATABASE

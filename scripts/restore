@@ -59,23 +59,7 @@ ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 #=================================================
 ynh_script_progression --message="Restoring the app main directory..."
 
-backup_core_only=$(ynh_app_setting_get --app=$app --key=backup_core_only)
-
-# If backup_core_only have any value, then restore only code
-if [ ! "$backup_core_only" ]
-then
-	ynh_restore_file --origin_path="$datadir"
-fi
-
 ynh_restore_file --origin_path="$final_path"
-
-# Remove the option backup_core_only if it's in the settings.yml file
-ynh_app_setting_delete --app=$app --key=backup_core_only
-
-mkdir -p $datadir
-pushd $datadir
-	mkdir -p static media music
-popd
 
 #=================================================
 # RECREATE THE DEDICATED USER
@@ -92,7 +76,6 @@ ynh_script_progression --message="Restoring user rights..."
 
 # Restore permissions on app files
 chown -R $app: $final_path
-chown -R $app: $datadir
 
 #=================================================
 # SPECIFIC RESTORATION
@@ -144,6 +127,20 @@ ynh_script_progression --message="Starting a systemd service..."
 ynh_systemd_action --service_name="${app}-beat" --action="start" --log_path="systemd" --line_match="Running with the following plugins enabled"
 ynh_systemd_action --service_name="${app}-server" --action="start" --log_path="systemd" --line_match="Application startup complete"
 ynh_systemd_action --service_name="${app}-worker" --action="start" --log_path="systemd" --line_match="Running with the following plugins enabled"
+
+#=================================================
+# RESTORE VARIOUS FILES
+#=================================================
+ynh_script_progression --message="Restoring the various files..."
+
+ynh_restore_file --origin_path="$datadir" --not_mandatory
+
+mkdir -p $datadir
+pushd $datadir
+	mkdir -p static media music
+popd
+
+chown -R $app: $datadir
 
 #=================================================
 # GENERIC FINALIZATION
