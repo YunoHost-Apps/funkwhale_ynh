@@ -108,21 +108,28 @@ if [ -z "$datadir" ]; then
 	ynh_store_file_checksum --file="$final_path/config/.env"
 	ynh_delete_file_checksum --file="$final_path/code/config/.env"
 	
-	rsync -a $final_path/code/data/static/ $datadir/static/
-	rsync -a $final_path/media/ $datadir/media/
-	rsync -a $final_path/import/ $datadir/music/
+	if [ -d "$final_path/code/data/static/" ]; then
+		rsync -a $final_path/code/data/static/ $datadir/static/
+	fi
+	if [ -d "$final_path/media/" ]; then
+		rsync -a $final_path/media/ $datadir/media/
+	fi
+	if [ -d "$final_path/import/" ]; then
+		rsync -a $final_path/import/ $datadir/music/
+	fi
 	
 	ynh_secure_remove --file="$final_path/code"
 	ynh_secure_remove --file="$final_path/media"
 	ynh_secure_remove --file="$final_path/import"
 
 	ynh_app_setting_set --app=$app --key=datadir --value=$datadir
+	
+	upgrade_type="UPGRADE_APP"
 fi
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Upgrading source files..."
 
 if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
@@ -184,9 +191,9 @@ ynh_add_config --template="../conf/env.prod" --destination="$final_path/config/.
 chmod 600 $final_path/config/.env
 
 #=================================================
-# MIGRATE FUNKWHALE
+# UPGRADE FUNKWHALE
 #=================================================
-ynh_script_progression --message="Migrating Funkwhale..."
+ynh_script_progression --message="Upgrading Funkwhale..."
 
 pushd $final_path
 	source $final_path/virtualenv/bin/activate
@@ -237,7 +244,7 @@ ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.serv
 ynh_script_progression --message="Securing files and directories..."
 
 # Set permissions on app files
-chown -R $app: "$final_path"
+chown -R $app: $final_path
 chown -R $app: $datadir
 
 #=================================================
