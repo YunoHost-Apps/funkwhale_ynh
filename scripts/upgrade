@@ -90,21 +90,33 @@ ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="sy
 
 # If datadir doesn't exist, create it
 if [ -z "$datadir" ]; then
-	ynh_script_progression --message="Moving datas..."
+	# Do a full backup before moving datas
+	yunohost backup create --apps $app
+
 	datadir="/home/yunohost.app/${app}/data"
-	ynh_app_setting_set --app=$app --key=datadir --value=$datadir
-	mv $final_path/code/data/static $datadir/static
-	mv $final_path/media $datadir/media
-	mv $final_path/import $datadir/music
+	ynh_script_progression --message="Moving datas to $datadir..."	
+
+	mkdir -p $datadir
+	pushd $datadir
+		mkdir -p static media music
+	popd
 	
 	ynh_backup_if_checksum_is_different --file="$final_path/code/config/.env"
-	mv $final_path/code/config $final_path/config
+	mkdir -p $final_path/config
+	rsync -a $final_path/code/config/ $final_path/config/
 	chmod 600 $final_path/config/.env
 	ynh_store_file_checksum --file="$final_path/config/.env"
 	ynh_delete_file_checksum --file="$final_path/code/config/.env"
 	
+	rsync -a $final_path/code/data/static/ $datadir/static/
+	rsync -a $final_path/media/ $datadir/media/
+	rsync -a $final_path/import/ $datadir/music/
+	
 	ynh_secure_remove --file="$final_path/code"
-	configfile="$final_path/code/config/.env"
+	ynh_secure_remove --file="$final_path/media"
+	ynh_secure_remove --file="$final_path/import"
+
+	ynh_app_setting_set --app=$app --key=datadir --value=$datadir
 fi
 
 #=================================================
