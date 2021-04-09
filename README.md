@@ -48,8 +48,8 @@ The admin interface is accessible at the address: `your.domain.fr/api/admin`
 
 #### Supported architectures
 
-* x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/funkwhale%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/funkwhale/)
-* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/funkwhale%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/funkwhale/)
+* x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/funkwhale.svg)](https://ci-apps.yunohost.org/ci/apps/funkwhale/)
+* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/funkwhale.svg)](https://ci-apps-arm.yunohost.org/ci/apps/funkwhale/)
 
 ## Links
 

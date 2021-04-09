@@ -128,6 +128,14 @@ if [ -z "$datadir" ]; then
 fi
 
 #=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Making sure dedicated system user exists..."
+
+# Create a dedicated user (if not existing)
+ynh_system_user_create --username=$app --home_dir="$final_path"
+
+#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
@@ -156,14 +164,6 @@ ynh_add_nginx_config "datadir"
 ynh_script_progression --message="Upgrading dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Making sure dedicated system user exists..."
-
-# Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir=$final_path
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -238,15 +238,6 @@ ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.serv
 
 #=================================================
 # GENERIC FINALIZATION
-#=================================================
-# SECURE FILES AND DIRECTORIES
-#=================================================
-ynh_script_progression --message="Securing files and directories..."
-
-# Set permissions on app files
-chown -R $app: $final_path
-chown -R $app: $datadir
-
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================

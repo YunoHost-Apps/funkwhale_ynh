@@ -44,8 +44,8 @@ L'interface d'administration est accessible à l'adresse : votre.domaine.fr/api/
 
 #### Architectures supportées
 
-* x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/funkwhale%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/funkwhale/)
-* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/funkwhale%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/funkwhale/)
+* x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/funkwhale.svg)](https://ci-apps.yunohost.org/ci/apps/funkwhale/)
+* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/funkwhale.svg)](https://ci-apps-arm.yunohost.org/ci/apps/funkwhale/)
 
 ## Liens
 

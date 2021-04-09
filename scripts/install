@@ -73,6 +73,14 @@ ynh_script_progression --message="Installing dependencies..."
 ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..."
+
+# Create a system user
+ynh_system_user_create --username=$app --home_dir="$final_path"
+
+#=================================================
 # CREATE A POSTGRESQL DATABASE
 #=================================================
 ynh_script_progression --message="Creating a PostgreSQL database..."
@@ -103,10 +111,18 @@ pushd $final_path
 	mkdir -p config
 popd
 
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R root:$app "$final_path"
+
 mkdir -p $datadir
 pushd $datadir
 	mkdir -p static media music
 popd
+
+chmod 750 "$datadir"
+chmod -R o-rwx "$datadir"
+chown -R root:$app "$datadir"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -115,14 +131,6 @@ ynh_script_progression --message="Configuring NGINX web server..."
 
 # Create a dedicated NGINX config
 ynh_add_nginx_config "datadir"
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Configuring system user..."
-
-# Create a system user
-ynh_system_user_create --username=$app --home_dir=$final_path
 
 #=================================================
 # SPECIFIC SETUP
@@ -185,15 +193,6 @@ ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.serv
 
 #=================================================
 # GENERIC FINALIZATION
-#=================================================
-# SECURE FILES AND DIRECTORIES
-#=================================================
-ynh_script_progression --message="Securing files and directories..."
-
-# Set permissions to app files
-chown -R $app: $final_path
-chown -R $app: $datadir
-
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
