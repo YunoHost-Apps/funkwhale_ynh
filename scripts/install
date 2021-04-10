@@ -135,6 +135,34 @@ ynh_add_nginx_config "datadir"
 #=================================================
 # SPECIFIC SETUP
 #=================================================
+# ADD A CONFIGURATION
+#=================================================
+ynh_script_progression --message="Adding a config file..."
+
+key=$(ynh_string_random --length=45 | base64)
+redis_db=$(ynh_redis_get_free_db)
+
+ynh_app_setting_set --app=$app --key=key --value=$key
+ynh_app_setting_set --app=$app --key=redis_db --value=$redis_db
+
+ynh_add_config --template="../conf/env.prod" --destination="$final_path/config/.env"
+
+chmod 400 "$final_path/config/.env"
+chown $app:$app "$final_path/config/.env"
+
+#=================================================
+# SETUP SYSTEMD
+#=================================================
+ynh_script_progression --message="Configuring a systemd service..."
+
+ynh_add_config --template="../conf/funkwhale.target" --destination="/etc/systemd/system/$app.target"
+
+# Create a dedicated systemd config
+ynh_add_systemd_config --service="${app}-server" --template="funkwhale-server.service" --others_var="datadir"
+ynh_add_systemd_config --service="${app}-worker" --template="funkwhale-worker.service" --others_var="datadir"
+ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.service" --others_var="datadir"
+
+#=================================================
 # INSTALL PYTHON DEPENDENCIES
 #=================================================
 ynh_script_progression --message="Installing Python dependencies..."
@@ -147,20 +175,6 @@ pushd $final_path
 	pip install wheel
 	pip install -r api/requirements.txt
 popd
-
-#=================================================
-# MODIFY THE CONFIG FILE
-#=================================================
-ynh_script_progression --message="Modifying a config file..."
-
-key=$(ynh_string_random --length=45 | base64)
-redis_db=$(ynh_redis_get_free_db)
-
-ynh_app_setting_set --app=$app --key=key --value=$key
-ynh_app_setting_set --app=$app --key=redis_db --value=$redis_db
-
-ynh_add_config --template="../conf/env.prod" --destination="$final_path/config/.env"
-chmod 600 $final_path/config/.env
 
 #=================================================
 # BUILDING FUNKWHALE
@@ -178,18 +192,6 @@ pushd $final_path
 	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | python api/manage.py shell
 	echo "yes" | python api/manage.py collectstatic
 popd
-
-#=================================================
-# SETUP SYSTEMD
-#=================================================
-ynh_script_progression --message="Configuring a systemd service..."
-
-ynh_add_config --template="../conf/funkwhale.target" --destination="/etc/systemd/system/$app.target"
-
-# Create a dedicated systemd config
-ynh_add_systemd_config --service="${app}-server" --template="funkwhale-server.service" --others_var="datadir"
-ynh_add_systemd_config --service="${app}-worker" --template="funkwhale-worker.service" --others_var="datadir"
-ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.service" --others_var="datadir"
 
 #=================================================
 # GENERIC FINALIZATION

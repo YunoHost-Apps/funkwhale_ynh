@@ -76,6 +76,22 @@ chown -R root:$app "$final_path"
 #=================================================
 # SPECIFIC RESTORATION
 #=================================================
+# RESTORE VARIOUS FILES
+#=================================================
+ynh_script_progression --message="Restoring various files..."
+
+ynh_restore_file --origin_path="$datadir" --not_mandatory
+
+mkdir -p $datadir
+pushd $datadir
+	mkdir -p static media music
+popd
+
+chmod 750 "$datadir"
+chmod -R o-rwx "$datadir"
+chown -R root:$app "$datadir"
+
+#=================================================
 # REINSTALL DEPENDENCIES
 #=================================================
 ynh_script_progression --message="Reinstalling dependencies..."
@@ -123,20 +139,6 @@ ynh_script_progression --message="Starting a systemd service..."
 ynh_systemd_action --service_name="${app}-beat" --action="start" --log_path="systemd" --line_match="Running with the following plugins enabled"
 ynh_systemd_action --service_name="${app}-server" --action="start" --log_path="systemd" --line_match="Application startup complete"
 ynh_systemd_action --service_name="${app}-worker" --action="start" --log_path="systemd" --line_match="Running with the following plugins enabled"
-
-#=================================================
-# RESTORE VARIOUS FILES
-#=================================================
-ynh_script_progression --message="Restoring various files..."
-
-ynh_restore_file --origin_path="$datadir" --not_mandatory
-
-mkdir -p $datadir
-pushd $datadir
-	mkdir -p static media music
-popd
-
-chown -R $app: $datadir
 
 #=================================================
 # GENERIC FINALIZATION

@@ -183,12 +183,14 @@ pushd $final_path
 popd
 
 #=================================================
-# MODIFY THE CONFIG FILE
+# UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Modifying a config file..."
+ynh_script_progression --message="Updating a config file..."
 
 ynh_add_config --template="../conf/env.prod" --destination="$final_path/config/.env"
-chmod 600 $final_path/config/.env
+
+chmod 400 "$final_path/config/.env"
+chown $app:$app "$final_path/config/.env"
 
 #=================================================
 # UPGRADE FUNKWHALE
