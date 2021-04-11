@@ -113,7 +113,7 @@ popd
 
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
-chown -R root:$app "$final_path"
+chown -R $app:$app "$final_path"
 
 mkdir -p $datadir
 pushd $datadir
@@ -122,7 +122,7 @@ popd
 
 chmod 750 "$datadir"
 chmod -R o-rwx "$datadir"
-chown -R root:$app "$datadir"
+chown -R $app:$app "$datadir"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -180,7 +180,6 @@ popd
 # BUILDING FUNKWHALE
 #=================================================
 ynh_script_progression --message="Building funkwhale..."
-
 
 pushd $final_path
 	source $final_path/virtualenv/bin/activate
