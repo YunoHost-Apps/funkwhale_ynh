@@ -111,7 +111,7 @@ pushd $final_path
 	mkdir -p config
 popd
 
-chmod 750 "$final_path"
+chmod -R 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:$app "$final_path"
 
@@ -120,7 +120,7 @@ pushd $datadir
 	mkdir -p static media music
 popd
 
-chmod 750 "$datadir"
+chmod -R 750 "$datadir"
 chmod -R o-rwx "$datadir"
 chown -R $app:$app "$datadir"
 
