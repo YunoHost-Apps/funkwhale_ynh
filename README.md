@@ -25,17 +25,16 @@ Installation requires a dedicated domain or subdomain. Installing in a subpath i
 
 **Username:** demo **Password:** demo
 
-## Demo
-
-* [Official demo](https://demo.funkwhale.audio)
-
-**Username:** demo **Password:** demo
-
 ## Admin
 
 The admin uses the login you provided at installation. The password is the same you use for YunoHost.
-
 The admin interface is accessible at the address: `your.domain.fr/api/admin`
+
+To add a collection of music files to a library in your YunoHost installation of Funkwhale, create a symlink to your collection titled "import" in `/var/www/funkwhale`
+```console
+foo@bar:~$sudo ln -s /your/music/collection /var/www/funkwhale/import
+```
+The files can then be added to your library from the *uploading* tab in a music library under the heading **Import music from your server**.
 
 ## Documentation
 
