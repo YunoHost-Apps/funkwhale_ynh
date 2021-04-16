@@ -152,7 +152,7 @@ fi
 
 chmod -R 750 "$final_path"
 chmod -R o-rwx "$final_path"
-chown -R $app:$app "$final_path"
+chown -R $app:www-data "$final_path"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -229,6 +229,10 @@ pushd $final_path
 	ynh_secure_remove --file="$final_path/media/__sized__"
 	python api/manage.py fw media generate-thumbnails
 popd
+
+chmod -R 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
 
 #=================================================
 # SETUP SYSTEMD

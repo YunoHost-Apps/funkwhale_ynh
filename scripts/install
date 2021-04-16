@@ -113,7 +113,7 @@ popd
 
 chmod -R 750 "$final_path"
 chmod -R o-rwx "$final_path"
-chown -R $app:$app "$final_path"
+chown -R $app:www-data "$final_path"
 
 mkdir -p $datadir
 pushd $datadir
@@ -122,7 +122,7 @@ popd
 
 chmod -R 750 "$datadir"
 chmod -R o-rwx "$datadir"
-chown -R $app:$app "$datadir"
+chown -R $app:www-data "$datadir"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -191,6 +191,10 @@ pushd $final_path
 	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | python api/manage.py shell
 	echo "yes" | python api/manage.py collectstatic
 popd
+
+chmod -R 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
 
 #=================================================
 # GENERIC FINALIZATION
