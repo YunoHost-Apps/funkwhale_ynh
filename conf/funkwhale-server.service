@@ -1,32 +1,14 @@
 [Unit]
-Description=Funkwhale (__APP__) application server
+Description=__APP__ application server
 After=redis.service postgresql.service
 PartOf=__APP__.target
 
 [Service]
 User=__APP__
 Group=__APP__
-WorkingDirectory=__FINALPATH__/code/api
-EnvironmentFile=__FINALPATH__/code/config/.env
-
-ExecStart=__FINALPATH__/code/virtualenv/bin/gunicorn config.asgi:application \
-	-w ${FUNKWHALE_WEB_WORKERS} \
-	-k uvicorn.workers.UvicornWorker \
-	-b ${FUNKWHALE_API_IP}:${FUNKWHALE_API_PORT}
-
-#NoNewPrivileges=true
-#PrivateDevices=true
-#PrivateTmp=true
-#ProtectHome=true
-#ProtectSystem=strict
-#ProtectControlGroups=yes
-#ProtectKernelModules=yes
-#ReadOnlyPaths=__FINALPATH__/code/config/.env __FINALPATH__/code/
-#ReadWritePaths=__FINALPATH__/media __FINALPATH__/import /var/log/__APP__
-
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=__APP__-server
+WorkingDirectory=__FINALPATH__/api
+EnvironmentFile=__FINALPATH__/config/.env
+ExecStart=__FINALPATH__/virtualenv/bin/gunicorn config.asgi:application -w ${FUNKWHALE_WEB_WORKERS} -k uvicorn.workers.UvicornWorker -b ${FUNKWHALE_API_IP}:${FUNKWHALE_API_PORT}
 
 [Install]
 WantedBy=multi-user.target
