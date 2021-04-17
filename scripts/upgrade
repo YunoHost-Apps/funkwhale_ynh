@@ -108,7 +108,7 @@ if [ -z "$datadir" ]; then
 		mkdir -p static media music
 	popd
 
-	chmod -R 750 "$datadir"
+	chmod 750 "$datadir"
 	chmod -R o-rwx "$datadir"
 	chown -R $app:www-data "$datadir"
 	
@@ -135,7 +135,7 @@ if [ -z "$datadir" ]; then
 
 	ynh_app_setting_set --app=$app --key=datadir --value=$datadir
 
-	chmod -R 750 "$datadir"
+	chmod 750 "$datadir"
 	chmod -R o-rwx "$datadir"
 	chown -R $app:www-data "$datadir"
 	
@@ -165,7 +165,7 @@ then
 	ynh_setup_source --dest_dir="$final_path/front" --source_id="front"
 fi
 
-chmod -R 750 "$final_path"
+chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:www-data "$final_path"
 
@@ -245,7 +245,7 @@ pushd $final_path
 	python api/manage.py fw media generate-thumbnails
 popd
 
-chmod -R 750 "$final_path"
+chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:www-data "$final_path"
 

@@ -111,7 +111,7 @@ pushd $final_path
 	mkdir -p config
 popd
 
-chmod -R 750 "$final_path"
+chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:www-data "$final_path"
 
@@ -120,7 +120,7 @@ pushd $datadir
 	mkdir -p static media music
 popd
 
-chmod -R 750 "$datadir"
+chmod 750 "$datadir"
 chmod -R o-rwx "$datadir"
 chown -R $app:www-data "$datadir"
 
@@ -192,7 +192,7 @@ pushd $final_path
 	echo "yes" | python api/manage.py collectstatic
 popd
 
-chmod -R 750 "$final_path"
+chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:www-data "$final_path"
 
