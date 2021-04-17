@@ -134,6 +134,10 @@ if [ -z "$datadir" ]; then
 	ynh_secure_remove --file="$final_path/import"
 
 	ynh_app_setting_set --app=$app --key=datadir --value=$datadir
+
+	chmod -R 750 "$datadir"
+	chmod -R o-rwx "$datadir"
+	chown -R $app:www-data "$datadir"
 	
 	upgrade_type="UPGRADE_APP"
 fi
