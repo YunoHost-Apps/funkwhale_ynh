@@ -125,13 +125,21 @@ if [ -z "$datadir" ]; then
 	if [ -d "$final_path/media/" ]; then
 		rsync -a $final_path/media/ $datadir/media/
 	fi
+	if [ -d "$final_path/code/data/media/" ]; then
+		rsync -a $final_path/code/data/media/ $datadir/media/
+	fi
 	if [ -d "$final_path/import/" ]; then
 		rsync -a $final_path/import/ $datadir/music/
+	fi
+	if [ -d "$final_path/code/data/music/" ]; then
+		rsync -a $final_path/code/data/music/ $datadir/music/
 	fi
 	
 	ynh_secure_remove --file="$final_path/code"
 	ynh_secure_remove --file="$final_path/media"
+	ynh_secure_remove --file="$final_path/code/data/media"
 	ynh_secure_remove --file="$final_path/import"
+	ynh_secure_remove --file="$final_path/code/data/music"
 
 	ynh_app_setting_set --app=$app --key=datadir --value=$datadir
 
