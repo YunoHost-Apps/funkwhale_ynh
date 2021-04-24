@@ -1,7 +1,7 @@
 # Funkwhale pour YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/funkwhale.svg)](https://dash.yunohost.org/appci/app/funkwhale) ![](https://ci-apps.yunohost.org/ci/badges/funkwhale.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/funkwhale.maintain.svg)   
-[![Install Funkwhale with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=funkwhale)
+[![Niveau d'intégration](https://dash.yunohost.org/integration/funkwhale.svg)](https://dash.yunohost.org/appci/app/funkwhale) ![](https://ci-apps.yunohost.org/ci/badges/funkwhale.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/funkwhale.maintain.svg)  
+[![Installer Funkwhale avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=funkwhale)
 
 *[Read this readme in english.](./README.md)* 
 
@@ -13,37 +13,26 @@ Un serveur de musique moderne, convivial et gratuit sur YunoHost
 
 L'installation nécessite un domaine ou un sous-domaine dédié. L'installation dans un chemin du domaine n'est pas prise en charge par le projet en amont en raison des exigences de dépendance.
 
-**Version incluse :** 1.1
+**Version incluse :** 1.1.1
 
 ## Captures d'écran
 
-![](https://funkwhale.audio/img/desktop.5e79eb16.jpg)
+![](https://upload.wikimedia.org/wikipedia/commons/d/d8/Capture_d%27%C3%A9cran_de_la_page_d%27accueil_de_Funkwhale.png)
 
 ## Démo
 
 * [Démo officielle](https://demo.funkwhale.audio)
 
-**Nom d’utilisateur :** demo  **Mot de passe :** demo
+**Nom d’utilisateur :** demo  **Mot de passe :** demo
 
 ## Admin
 
 L'administrateur utilise le login que vous avez fourni lors de l'installation. Le mot de passe est le même que celui que vous utilisez pour YunoHost.
 
 L'interface d'administration est accessible à l'adresse : votre.domaine.fr/api/admin
-
-# État de ce paquet
-
-* Les éléments suivants ont été testés avec ce paquet et fonctionnent :
-
-  * [x] installer/supprimer/sauvegarder/supprimer/mettre à jour avec x86_64
-  * [x] importation des fichiers avec l’interface web, importations depuis youtube, interraction avec MusicBrainz
-  * [x] [API Subsonic](https://docs.funkwhale.audio/users/apps.html)
-  * [x]  Tests de [Fédération](https://docs.funkwhale.audio/federation.html)
-  * [x] [Import CLI](https://docs.funkwhale.audio/importing-music.html#from-music-directory-on-the-server) N'oubliez pas de `source $final_path/venv/bin/activate`, puis `source $final_path/load_env` avant de taper en utilisant manage.py. 
-
-* à ajouter :
-  * [ ] Stocker les fichiers dans HOME, voir https://github.com/YunoHost-Apps/funkwhale_ynh/issues/15
-
+Pour ajouter une collection de fichiers musicaux à une bibliothèque dans votre installation YunoHost de Funkwhale, créez un lien symbolique vers votre collection intitulée "music" dans `/home/yunohost.app/funkwhale/data/`.
+`foo@bar:~$sudo ln -s /your/music/collection /home/yunohost.app/funkwhale/data/music`
+Les fichiers peuvent ensuite être ajoutés à votre bibliothèque à partir de l'onglet *Envoi* dans une bibliothèque musicale sous la rubrique **Importer de la musique de votre serveur**.
 ## Documentation
 
  * Documentation officielle : https://docs.funkwhale.audio
@@ -57,13 +46,13 @@ L'interface d'administration est accessible à l'adresse : votre.domaine.fr/api/
 
 #### Architectures supportées
 
-* x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/funkwhale%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/funkwhale/)
-* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/funkwhale%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/funkwhale/)
+* x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/funkwhale.svg)](https://ci-apps.yunohost.org/ci/apps/funkwhale/)
+* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/funkwhale.svg)](https://ci-apps-arm.yunohost.org/ci/apps/funkwhale/)
 
 ## Liens
 
- * Signaler un bug : https://github.com/YunoHost-Apps/funkwhale_ynh
- * Site de l’application : https://docs.funkwhale.audio
+ * Signaler un bug : https://github.com/YunoHost-Apps/funkwhale_ynh/issues
+ * Site de l'application : https://docs.funkwhale.audio
  * Dépôt de l'application principale : https://dev.funkwhale.audio/funkwhale/funkwhale
  * Site web YunoHost : https://yunohost.org/
 
@@ -76,6 +65,6 @@ Merci de faire vos pull request sur la [branche testing](https://github.com/Yuno
 Pour essayer la branche testing, procédez comme suit.
 ```
 sudo yunohost app install https://github.com/YunoHost-Apps/funkwhale_ynh/tree/testing --debug
-or
+ou
 sudo yunohost app upgrade funkwhale -u https://github.com/YunoHost-Apps/funkwhale_ynh/tree/testing --debug
 ```

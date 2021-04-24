@@ -5,16 +5,15 @@
 #=================================================
 
 # dependencies used by the app
-pkg_dependencies="build-essential curl ffmpeg \
-	libjpeg-dev libmagic-dev libpq-dev postgresql postgresql-contrib python3-dev virtualenv \
-	redis-server libldap2-dev libsasl2-dev \
+pkg_dependencies="curl python3-pip python3-venv git unzip libldap2-dev libsasl2-dev gettext-base zlib1g-dev libffi-dev libssl-dev \
+	build-essential ffmpeg libjpeg-dev libmagic-dev libpq-dev postgresql postgresql-contrib python3-dev make \
+	redis-server \
 	`# add arm support` \
 	zlib1g-dev libffi-dev libssl-dev"
 
 #=================================================
 # PERSONAL HELPERS
 #=================================================
-
 
 #=================================================
 # EXPERIMENTAL HELPERS
