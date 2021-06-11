@@ -35,6 +35,9 @@ port=$(ynh_app_setting_get --app=$app --key=port)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
 db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
+datadir=$(ynh_app_setting_get --app=$app --key=datadir)
+redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
+key=$(ynh_app_setting_get --app=$app --key=key)
 
 #=================================================
 # BACKUP BEFORE CHANGE URL THEN ACTIVE TRAP
