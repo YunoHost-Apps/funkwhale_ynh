@@ -124,7 +124,8 @@ ynh_add_config --template="../conf/env.prod" --destination="$final_path/config/.
 # MODIFY THE FEDERATION 
 #=================================================
 
-$final_path/code/virtualenv/bin/python $final_path/code/api/manage.py fix_federation_ids https://$old_domain https://$new_domain --no-dry-run --no-input
+source $final_path/virtualenv/bin/activate
+python3 $final_path/api/manage.py fix_federation_ids https://$old_domain https://$new_domain --no-dry-run --no-input
 
 #=================================================
 # START SYSTEMD SERVICE
