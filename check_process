@@ -26,7 +26,7 @@
 		multi_instance=1
 		incorrect_path=0
 		port_already_use=0
-		change_url=0
+		change_url=1
 ;;; Options
 Email=cda@rootkey.co.uk
 Notification=all
