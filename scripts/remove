@@ -73,14 +73,6 @@ ynh_script_progression --message="Removing the PostgreSQL database..."
 ynh_psql_remove_db --db_user=$db_user --db_name=$db_name
 
 #=================================================
-# REMOVE THE REDIS DATABASE
-#=================================================
-ynh_script_progression --message="Removing the Redis database..."
-
-# Remove a database if it exists, along with the associated user
-ynh_redis_remove_db $redis_db
-
-#=================================================
 # REMOVE DEPENDENCIES
 #=================================================
 ynh_script_progression --message="Removing dependencies..."
@@ -107,10 +99,20 @@ ynh_remove_nginx_config
 #=================================================
 # REMOVE FAIL2BAN CONFIGURATION
 #=================================================
-ynh_script_progression --message="Removing Fail2ban configuration..."
+ynh_script_progression --message="Removing Fail2Ban configuration..."
 
 # Remove the dedicated Fail2Ban config
 ynh_remove_fail2ban_config
+
+#=================================================
+# SPECIFIC REMOVE
+#=================================================
+# REMOVE THE REDIS DATABASE
+#=================================================
+ynh_script_progression --message="Removing the Redis database..."
+
+# Remove a database if it exists, along with the associated user
+ynh_redis_remove_db $redis_db
 
 #=================================================
 # GENERIC FINALIZATION

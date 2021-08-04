@@ -8,6 +8,14 @@
     },
     "version": "1.1.4~ynh1",
     "url": "https://funkwhale.audio",
+    "upstream": {
+        "license": "AGPL-3.0-or-later",
+        "website": "https://funkwhale.audio/",
+        "demo": "https://demo.funkwhale.audio",
+        "admindoc": "https://docs.funkwhale.audio/admin/index.html",
+        "userdoc": "https://docs.funkwhale.audio/users/index.html",
+        "code": "https://dev.funkwhale.audio/funkwhale"
+    },
     "license": "AGPL-3.0-or-later",
     "maintainer": {
         "name": "Ciarán Ainsworth",
