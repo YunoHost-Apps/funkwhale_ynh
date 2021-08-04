@@ -13,7 +13,7 @@ Un serveur de musique moderne, convivial et gratuit sur YunoHost
 
 L'installation nécessite un domaine ou un sous-domaine dédié. L'installation dans un chemin du domaine n'est pas prise en charge par le projet en amont en raison des exigences de dépendance.
 
-**Version incluse :** 1.1.2
+**Version incluse :** 1.1.4
 
 ## Captures d'écran
 

@@ -22,6 +22,8 @@
 		upgrade=1	from_commit=8172790fb461d16f09089593fdac380f0d499c83
 		# 1.1.1~ynh1
 		upgrade=1	from_commit=fa9587f61e4bb4f9db8667b1c6701ede37ac8e91
+		# 1.1.2~ynh1
+		upgrade=1	from_commit=74255c1c278562eb174fb13ce538d4754f01186c
 		backup_restore=1
 		multi_instance=1
 		incorrect_path=0
@@ -38,3 +40,5 @@ Notification=all
 		name=1.1~ynh1
 	; commit=fa9587f61e4bb4f9db8667b1c6701ede37ac8e91
 		name=1.1.1~ynh1
+	; commit=74255c1c278562eb174fb13ce538d4754f01186c
+		name=1.1.2~ynh1
