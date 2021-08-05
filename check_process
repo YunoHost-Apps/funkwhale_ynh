@@ -1,13 +1,8 @@
-# See here for more information
-# https://github.com/YunoHost/package_check#syntax-check_process-file
-
-# Move this file from check_process.default to check_process when you have filled it.
-
 ;; Test complet
 	; Manifest
-		domain="domain.tld"	(DOMAIN)
-		admin="john"	(USER)
-		is_public=1	(PUBLIC|public=1|private=0)
+		domain="domain.tld"
+		admin="john"
+		is_public=1
 	; Checks
 		pkg_linter=1
 		setup_sub_dir=0
@@ -22,11 +17,12 @@
 		upgrade=1	from_commit=8172790fb461d16f09089593fdac380f0d499c83
 		# 1.1.1~ynh1
 		upgrade=1	from_commit=fa9587f61e4bb4f9db8667b1c6701ede37ac8e91
+		# 1.1.2~ynh1
+		upgrade=1	from_commit=74255c1c278562eb174fb13ce538d4754f01186c
 		backup_restore=1
 		multi_instance=1
-		incorrect_path=0
 		port_already_use=0
-		change_url=0
+		change_url=1
 ;;; Options
 Email=cda@rootkey.co.uk
 Notification=all
@@ -38,3 +34,5 @@ Notification=all
 		name=1.1~ynh1
 	; commit=fa9587f61e4bb4f9db8667b1c6701ede37ac8e91
 		name=1.1.1~ynh1
+	; commit=74255c1c278562eb174fb13ce538d4754f01186c
+		name=1.1.2~ynh1

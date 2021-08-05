@@ -78,7 +78,7 @@ ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 ynh_script_progression --message="Configuring system user..."
 
 # Create a system user
-ynh_system_user_create --username=$app --home_dir="$final_path"
+ynh_system_user_create --username=$app --home_dir=$final_path
 
 #=================================================
 # CREATE A POSTGRESQL DATABASE
@@ -86,7 +86,6 @@ ynh_system_user_create --username=$app --home_dir="$final_path"
 ynh_script_progression --message="Creating a PostgreSQL database..."
 
 ynh_psql_test_if_first_run
-
 db_name=$(ynh_sanitize_dbid --db_name=$app)
 db_user=$db_name
 db_pwd=$(ynh_string_random)
@@ -102,7 +101,6 @@ ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
 ynh_script_progression --message="Setting up source files..."
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
-ynh_app_setting_set --app=$app --key=datadir --value=$datadir
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$final_path/api" --source_id="api"
 ynh_setup_source --dest_dir="$final_path/front" --source_id="front"
@@ -115,7 +113,26 @@ chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:www-data "$final_path"
 
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Configuring NGINX web server..."
+
+# Create a dedicated NGINX config
+ynh_add_nginx_config
+
+#=================================================
+# SPECIFIC SETUP
+#=================================================
+# CREATE DATA DIRECTORY
+#=================================================
+ynh_script_progression --message="Creating a data directory..."
+
+datadir=/home/yunohost.app/$app
+ynh_app_setting_set --app=$app --key=datadir --value=$datadir
+
 mkdir -p $datadir
+
 pushd $datadir
 	mkdir -p static media music
 popd
@@ -125,19 +142,9 @@ chmod -R o-rwx "$datadir"
 chown -R $app:www-data "$datadir"
 
 #=================================================
-# NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Configuring NGINX web server..."
-
-# Create a dedicated NGINX config
-ynh_add_nginx_config "datadir"
-
-#=================================================
-# SPECIFIC SETUP
-#=================================================
 # ADD A CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding a config file..."
+ynh_script_progression --message="Adding a configuration file..."
 
 key=$(ynh_string_random --length=45 | base64)
 redis_db=$(ynh_redis_get_free_db)
