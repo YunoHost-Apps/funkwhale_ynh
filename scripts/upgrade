@@ -21,7 +21,7 @@ path_url=$(ynh_app_setting_get --app=$app --key=path)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
-db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 port=$(ynh_app_setting_get --app=$app --key=port)
 redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
@@ -96,10 +96,7 @@ if [ -z "$datadir" ]; then
 	datadir="/home/yunohost.app/${app}/data"
 	ynh_script_progression --message="Moving datas to $datadir..."	
 
-	mkdir -p $datadir
-	pushd $datadir
-		mkdir -p static media music
-	popd
+	mkdir -p $datadir/{static,media,music}
 
 	chmod 750 "$datadir"
 	chmod -R o-rwx "$datadir"

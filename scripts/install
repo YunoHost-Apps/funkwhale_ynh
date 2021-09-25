@@ -40,8 +40,6 @@ ynh_script_progression --message="Validating installation parameters..."
 final_path=/var/www/$app
 test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
 
-datadir="/home/yunohost.app/${app}/data"
-
 # Register (book) web path
 ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
 
@@ -85,15 +83,10 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 #=================================================
 ynh_script_progression --message="Creating a PostgreSQL database..."
 
-ynh_psql_test_if_first_run
 db_name=$(ynh_sanitize_dbid --db_name=$app)
-db_user=$db_name
-db_pwd=$(ynh_string_random)
 ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-ynh_app_setting_set --app=$app --key=db_pwd --value=$db_pwd
-
-# Initialize database and store postgres password for upgrade
-ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
+ynh_psql_test_if_first_run
+ynh_psql_setup_db --db_user=$db_name --db_name=$db_name
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -105,9 +98,7 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 ynh_setup_source --dest_dir="$final_path/api" --source_id="api"
 ynh_setup_source --dest_dir="$final_path/front" --source_id="front"
 
-pushd $final_path
-	mkdir -p config
-popd
+mkdir -p $final_path/config
 
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
@@ -128,14 +119,12 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Creating a data directory..."
 
-datadir=/home/yunohost.app/$app
+datadir="/home/yunohost.app/${app}/data"
 ynh_app_setting_set --app=$app --key=datadir --value=$datadir
 
-mkdir -p $datadir
+#mkdir -p $datadir
 
-pushd $datadir
-	mkdir -p static media music
-popd
+mkdir -p $datadir/{static,media,music}
 
 chmod 750 "$datadir"
 chmod -R o-rwx "$datadir"
@@ -240,8 +229,6 @@ ynh_script_progression --message="Configuring permissions..."
 # Make app public if necessary
 if [ $is_public -eq 1 ]
 then
-	# Everyone can access the app.
-	# The "main" permission is automatically created before the install script.
 	ynh_permission_update --permission="main" --add="visitors"
 fi
 

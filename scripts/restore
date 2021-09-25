@@ -39,8 +39,6 @@ datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 #=================================================
 ynh_script_progression --message="Validating restoration parameters..."
 
-ynh_webpath_available --domain=$domain --path_url=$path_url \
-	|| ynh_die --message="Path not available: ${domain}${path_url}"
 test ! -d $final_path \
 	|| ynh_die --message="There is already a directory: $final_path "
 
@@ -79,11 +77,7 @@ ynh_script_progression --message="Restoring the data directory..."
 
 ynh_restore_file --origin_path="$datadir" --not_mandatory
 
-mkdir -p $datadir
-
-pushd $datadir
-	mkdir -p static media music
-popd
+mkdir -p $datadir/{static,media,music}
 
 chmod 750 "$datadir"
 chmod -R o-rwx "$datadir"
@@ -102,7 +96,7 @@ ynh_install_app_dependencies $pkg_dependencies
 #=================================================
 ynh_script_progression --message="Restoring the PostgreSQL database..."
 
-db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 ynh_psql_test_if_first_run
 ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
 ynh_psql_execute_file_as_root --file="./db.sql" --database=$db_name
