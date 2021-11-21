@@ -30,7 +30,6 @@ key=$(ynh_app_setting_get --app=$app --key=key)
 #=================================================
 # CHECK VERSION
 #=================================================
-ynh_script_progression --message="Checking version..."
 
 upgrade_type=$(ynh_check_app_version_changed)
 
