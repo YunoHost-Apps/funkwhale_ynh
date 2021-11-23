@@ -1,0 +1,1 @@
+Funkwhale est un projet communautaire qui vous permet d'écouter et de partager de la musique et de l'audio au sein d'un réseau ouvert et décentralisé. 
