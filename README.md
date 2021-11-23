@@ -15,7 +15,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 ## Overview
 
-Modern, convivial and free music server
+Funkwhale is a community-driven project that lets you listen and share music and audio within a decentralized, open network. 
 
 **Shipped version:** 1.1.4~ynh1
 
