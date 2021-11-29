@@ -6,7 +6,7 @@
         "en": "Modern, convivial and free music server",
         "fr": "Serveur de musique moderne, convivial et gratuit"
     },
-    "version": "1.1.4~ynh1",
+    "version": "1.1.4~ynh2",
     "url": "https://funkwhale.audio",
     "upstream": {
         "license": "AGPL-3.0-or-later",
@@ -36,13 +36,11 @@
         "install" : [
             {
                 "name": "domain",
-                "type": "domain",
-                "example": "example.com"
+                "type": "domain"
             },
             {
                 "name": "admin",
-                "type": "user",
-                "example": "johndoe"
+                "type": "user"
             },
             {
                 "name": "is_public",
