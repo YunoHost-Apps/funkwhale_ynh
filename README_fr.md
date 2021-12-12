@@ -11,9 +11,9 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 ## Vue d'ensemble
 
-Serveur de musique moderne, convivial et gratuit
+Funkwhale est un projet communautaire qui vous permet d'écouter et de partager de la musique et de l'audio au sein d'un réseau ouvert et décentralisé. 
 
-**Version incluse :** 1.1.4~ynh1
+**Version incluse :** 1.1.4~ynh2
 
 **Démo :** https://demo.funkwhale.audio
 
