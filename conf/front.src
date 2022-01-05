@@ -1,7 +1,7 @@
-SOURCE_URL=https://dev.funkwhale.audio/funkwhale/funkwhale/builds/artifacts/1.1.4/download?job=build_front
-SOURCE_SUM=83e11273159dd617d16483168300768583b14ffb93cbceec5c4dccdfe2d3fb44
+SOURCE_URL=https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/81303/artifacts/download
+SOURCE_SUM=700d4967c2d512dccf6c0cff0ca392f2582429faabb76c24563b9490a3f15714
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip
 SOURCE_IN_SUBDIR=true
-SOURCE_FILENAME=front_master.zip
+SOURCE_FILENAME=front_stable.zip
 SOURCE_EXTRACT=true
