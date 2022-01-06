@@ -46,7 +46,7 @@ The files can then be added to your library from the *uploading* tab in a music 
 * Official app website: https://funkwhale.audio/
 * Official user documentation: https://docs.funkwhale.audio/users/index.html
 * Official admin documentation: https://docs.funkwhale.audio/admin/index.html
-* Upstream app code repository: https://dev.funkwhale.audio/funkwhale
+* Upstream app code repository: https://dev.funkwhale.audio/funkwhale/funkwhale
 * YunoHost documentation for this app: https://yunohost.org/app_funkwhale
 * Report a bug: https://github.com/YunoHost-Apps/funkwhale_ynh/issues
 

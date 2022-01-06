@@ -39,7 +39,7 @@ Les fichiers peuvent ensuite être ajoutés à votre bibliothèque à partir de 
 * Site officiel de l'app : https://funkwhale.audio/
 * Documentation officielle utilisateur : https://docs.funkwhale.audio/users/index.html
 * Documentation officielle de l'admin : https://docs.funkwhale.audio/admin/index.html
-* Dépôt de code officiel de l'app : https://dev.funkwhale.audio/funkwhale
+* Dépôt de code officiel de l'app : https://dev.funkwhale.audio/funkwhale/funkwhale
 * Documentation YunoHost pour cette app : https://yunohost.org/app_funkwhale
 * Signaler un bug : https://github.com/YunoHost-Apps/funkwhale_ynh/issues
 
