@@ -97,9 +97,7 @@ if [ -z "$datadir" ]; then
 	ynh_script_progression --message="Moving datas to $datadir..."	
 
 	mkdir -p $datadir
-	pushd $datadir
-		mkdir -p static media music
-	popd
+	mkdir -p $datadir/{static,media,music}
 
 	chmod 750 "$datadir"
 	chmod -R o-rwx "$datadir"

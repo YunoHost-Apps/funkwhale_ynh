@@ -14,7 +14,7 @@
         "demo": "https://demo.funkwhale.audio",
         "admindoc": "https://docs.funkwhale.audio/admin/index.html",
         "userdoc": "https://docs.funkwhale.audio/users/index.html",
-        "code": "https://dev.funkwhale.audio/funkwhale"
+        "code": "https://dev.funkwhale.audio/funkwhale/funkwhale"
     },
     "license": "AGPL-3.0-or-later",
     "maintainer": {
@@ -26,7 +26,7 @@
         "email": "jean-baptiste@holcroft.fr"
     }],
     "requirements": {
-        "yunohost": ">= 4.2.0"
+        "yunohost": ">= 4.3.0"
     },
     "multi_instance": true,
     "services": [
