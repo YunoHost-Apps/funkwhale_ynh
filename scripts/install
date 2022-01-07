@@ -173,8 +173,8 @@ pushd $final_path
 	source $final_path/virtualenv/bin/activate
 	pip install --upgrade pip
 	pip install --upgrade setuptools
-	pip install wheel
-	pip install -r api/requirements.txt
+	ynh_exec_warn_less pip install wheel
+	ynh_exec_warn_less pip install -r api/requirements.txt
 popd
 
 #=================================================
@@ -187,10 +187,10 @@ pushd $final_path
 
 	# needed for enabling the 'unaccent' extension
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
-	python api/manage.py migrate
+	ynh_exec_warn_less python api/manage.py migrate
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
-	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | python api/manage.py shell
-	echo "yes" | python api/manage.py collectstatic
+	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | ynh_exec_warn_less python api/manage.py shell
+	echo "yes" | ynh_exec_warn_less python api/manage.py collectstatic
 popd
 
 chmod 750 "$final_path"

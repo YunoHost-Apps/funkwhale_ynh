@@ -196,8 +196,8 @@ pushd $final_path
 	source $final_path/virtualenv/bin/activate
 	pip install --upgrade pip
 	pip install --upgrade setuptools
-	pip install wheel
-	pip install -r api/requirements.txt
+	ynh_exec_warn_less pip install wheel
+	ynh_exec_warn_less pip install -r api/requirements.txt
 popd
 
 #=================================================
@@ -220,10 +220,10 @@ pushd $final_path
 
 	# needed for enabling the 'unaccent' extension
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
-	python api/manage.py migrate
+	ynh_exec_warn_less python api/manage.py migrate
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
 
-	echo "yes" | python api/manage.py collectstatic --clear --noinput
+	echo "yes" | ynh_exec_warn_less python api/manage.py collectstatic --clear --noinput
 
 	# https://code.eliotberriot.com/funkwhale/funkwhale/tags/0.16 # users-now-have-an-activitypub-actor-manual-action-required
 	# python api/manage.py script create_actors --no-input
@@ -241,7 +241,7 @@ pushd $final_path
 	# higher quality images
 	# https://docs.funkwhale.audio/changelog.html#increased-quality-of-jpeg-thumbnails-manual-action-required
 	ynh_secure_remove --file="$final_path/media/__sized__"
-	python api/manage.py fw media generate-thumbnails
+	ynh_exec_warn_less python api/manage.py fw media generate-thumbnails
 popd
 
 chmod 750 "$final_path"
