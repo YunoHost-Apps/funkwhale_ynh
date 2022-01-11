@@ -40,7 +40,7 @@ ynh_script_progression --message="Validating installation parameters..."
 final_path=/var/www/$app
 test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
 
-datadir="/home/yunohost.app/${app}/data"
+datadir=/home/yunohost.app/$app/data
 
 # Register (book) web path
 ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
@@ -105,9 +105,7 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 ynh_setup_source --dest_dir="$final_path/api" --source_id="api"
 ynh_setup_source --dest_dir="$final_path/front" --source_id="front"
 
-pushd $final_path
-	mkdir -p config
-popd
+mkdir -p $final_path/config
 
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
@@ -131,10 +129,7 @@ ynh_script_progression --message="Creating a data directory..."
 ynh_app_setting_set --app=$app --key=datadir --value=$datadir
 
 mkdir -p $datadir
-
-pushd $datadir
-	mkdir -p static media music
-popd
+mkdir -p $datadir/{static,media,music}
 
 chmod 750 "$datadir"
 chmod -R o-rwx "$datadir"
@@ -178,8 +173,8 @@ pushd $final_path
 	source $final_path/virtualenv/bin/activate
 	pip install --upgrade pip
 	pip install --upgrade setuptools
-	pip install wheel
-	pip install -r api/requirements.txt
+	ynh_exec_warn_less pip install wheel
+	ynh_exec_warn_less pip install -r api/requirements.txt
 popd
 
 #=================================================
@@ -192,10 +187,10 @@ pushd $final_path
 
 	# needed for enabling the 'unaccent' extension
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
-	python api/manage.py migrate
+	ynh_exec_warn_less python api/manage.py migrate
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
-	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | python api/manage.py shell
-	echo "yes" | python api/manage.py collectstatic
+	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | ynh_exec_warn_less python api/manage.py shell
+	echo "yes" | ynh_exec_warn_less python api/manage.py collectstatic
 popd
 
 chmod 750 "$final_path"

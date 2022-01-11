@@ -24,7 +24,7 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..." --weight=1
+ynh_script_progression --message="Loading installation settings..."
 
 # Needed for helper "ynh_add_nginx_config"
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
@@ -34,7 +34,7 @@ redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
 port=$(ynh_app_setting_get --app=$app --key=port)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
-db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
+db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
 datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
 key=$(ynh_app_setting_get --app=$app --key=key)
@@ -42,7 +42,7 @@ key=$(ynh_app_setting_get --app=$app --key=key)
 #=================================================
 # BACKUP BEFORE CHANGE URL THEN ACTIVE TRAP
 #=================================================
-ynh_script_progression --message="Backing up the app before changing its URL (may take a while)..." --weight=1
+ynh_script_progression --message="Backing up the app before changing its URL (may take a while)..."
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
@@ -77,7 +77,7 @@ fi
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Stopping a systemd service..." --weight=1
+ynh_script_progression --message="Stopping a systemd service..."
 
 ynh_systemd_action --service_name="$app-beat" --action=stop --log_path="/var/log/$app/$app.log"
 ynh_systemd_action --service_name="$app-server" --action=stop --log_path="/var/log/$app/$app.log"
@@ -86,7 +86,7 @@ ynh_systemd_action --service_name="$app-worker" --action=stop --log_path="/var/l
 #=================================================
 # MODIFY URL IN NGINX CONF
 #=================================================
-ynh_script_progression --message="Updating NGINX web server configuration..." --weight=1
+ynh_script_progression --message="Updating NGINX web server configuration..."
 
 nginx_conf_path=/etc/nginx/conf.d/$old_domain.d/$app.conf
 
@@ -147,7 +147,7 @@ ynh_add_fail2ban_config --logpath="/var/log/nginx/$new_domain-access.log" --fail
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server..." --weight=1
+ynh_script_progression --message="Reloading NGINX web server..."
 
 ynh_systemd_action --service_name=nginx --action=reload
 
@@ -155,4 +155,4 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Change of URL completed for $app" --last
+ynh_script_progression --message="Change of URL completed for $app"

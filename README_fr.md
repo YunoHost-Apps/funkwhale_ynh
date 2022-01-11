@@ -13,7 +13,7 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 Funkwhale est un projet communautaire qui vous permet d'écouter et de partager de la musique et de l'audio au sein d'un réseau ouvert et décentralisé. 
 
-**Version incluse :** 1.1.4~ynh2
+**Version incluse :** 1.2.1~ynh1
 
 **Démo :** https://demo.funkwhale.audio
 
@@ -39,7 +39,7 @@ Les fichiers peuvent ensuite être ajoutés à votre bibliothèque à partir de 
 * Site officiel de l'app : https://funkwhale.audio/
 * Documentation officielle utilisateur : https://docs.funkwhale.audio/users/index.html
 * Documentation officielle de l'admin : https://docs.funkwhale.audio/admin/index.html
-* Dépôt de code officiel de l'app : https://dev.funkwhale.audio/funkwhale
+* Dépôt de code officiel de l'app : https://dev.funkwhale.audio/funkwhale/funkwhale
 * Documentation YunoHost pour cette app : https://yunohost.org/app_funkwhale
 * Signaler un bug : https://github.com/YunoHost-Apps/funkwhale_ynh/issues
 
