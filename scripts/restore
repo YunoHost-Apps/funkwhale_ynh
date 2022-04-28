@@ -131,9 +131,9 @@ yunohost service add "${app}-worker"
 #=================================================
 ynh_script_progression --message="Starting a systemd service..."
 
-ynh_systemd_action --service_name="${app}-beat" --action="start" --log_path="systemd" --line_match="Running with the following plugins enabled"
+ynh_systemd_action --service_name="${app}-beat" --action="start" --log_path="systemd" --line_match="Started"
 ynh_systemd_action --service_name="${app}-server" --action="start" --log_path="systemd" --line_match="Application startup complete"
-ynh_systemd_action --service_name="${app}-worker" --action="start" --log_path="systemd" --line_match="Running with the following plugins enabled"
+ynh_systemd_action --service_name="${app}-worker" --action="start" --log_path="systemd" --line_match="ready"
 
 #=================================================
 # GENERIC FINALIZATION
