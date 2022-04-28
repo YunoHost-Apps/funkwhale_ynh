@@ -197,6 +197,8 @@ pushd $final_path
 	pip install --upgrade pip
 	pip install --upgrade setuptools
 	ynh_exec_warn_less pip install wheel
+	# Workaround for error AttributeError: module 'lib' has no attribute 'X509_V_FLAG_CB_ISSUER_CHECK'
+	ynh_replace_string --match_string="pyOpenSSL~=20.0.1" --replace_string="pyOpenSSL~=21.0.0" --target_file="$final_path/api/requirements/base.txt"
 	ynh_exec_warn_less pip install -r api/requirements.txt
 popd
 
@@ -277,9 +279,9 @@ yunohost service add "${app}-worker"
 ynh_script_progression --message="Starting a systemd service..."
 
 # Start a systemd service
-ynh_systemd_action --service_name="${app}-beat" --action="start" --log_path="systemd" --line_match="Running with the following plugins enabled"
+ynh_systemd_action --service_name="${app}-beat" --action="start" --log_path="systemd" --line_match="Started"
 ynh_systemd_action --service_name="${app}-server" --action="start" --log_path="systemd" --line_match="Application startup complete"
-ynh_systemd_action --service_name="${app}-worker" --action="start" --log_path="systemd" --line_match="Running with the following plugins enabled"
+ynh_systemd_action --service_name="${app}-worker" --action="start" --log_path="systemd" --line_match="ready"
 
 #=================================================
 # UPGRADE FAIL2BAN
