@@ -11,8 +11,6 @@
 		setup_private=1
 		setup_public=1
 		upgrade=1
-		# 0.19.1
-		upgrade=1	from_commit=4d4bf0981e2d3a00eaae6b19bd54344fe55d6530
 		# 1.1~ynh1
 		upgrade=1	from_commit=8172790fb461d16f09089593fdac380f0d499c83
 		# 1.1.1~ynh1
@@ -29,6 +27,8 @@
 		upgrade=1	from_commit=1c1b64b8b04ee917a63580dce21d149182ee319d
 		# 1.2.4~ynh1	
 		upgrade=1	from_commit=5961e7283e52963329e30ca22df4d5505adfc256
+		#1.2.5~ynh1
+		upgrade=1	from_commit=a070baf105a94ac6fefc280f0335b044db643ec8
 		backup_restore=1
 		multi_instance=1
 		port_already_use=0
@@ -37,9 +37,6 @@
 Email=cda@rootkey.co.uk
 Notification=all
 ;;; Upgrade options
-	; commit=4d4bf0981e2d3a00eaae6b19bd54344fe55d6530
-		name=Upgrade to 0.19.1 and fix channels-redis bug
-		manifest_arg=domain=DOMAIN&path=/&admin=USER&is_public=1
 	; commit=8172790fb461d16f09089593fdac380f0d499c83
 		name=1.1~ynh1
 	; commit=fa9587f61e4bb4f9db8667b1c6701ede37ac8e91
@@ -56,3 +53,5 @@ Notification=all
 		name=1.2.3~ynh1
 	; commit=5961e7283e52963329e30ca22df4d5505adfc256
 		name=1.2.4~ynh1
+	; commit=a070baf105a94ac6fefc280f0335b044db643ec8
+		name=1.2.5~ynh1
