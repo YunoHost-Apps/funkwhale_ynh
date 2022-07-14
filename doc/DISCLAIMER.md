@@ -1,5 +1,4 @@
-* Any known limitations, constrains or stuff not working, such as (but not limited to):
-    * Installation requires a dedicated domain or subdomain. Installing in a subpath is not supported by the upstream project due to dependency requirements.
+* Installation requires a dedicated domain or subdomain. Installing in a subpath is not supported by the upstream project due to dependency requirements.
 
 * Admin
 
