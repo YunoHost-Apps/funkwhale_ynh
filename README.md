@@ -24,6 +24,7 @@ Funkwhale is a community-driven project that lets you listen and share music and
 ## Screenshots
 
 ![Screenshot of Funkwhale](./doc/screenshots/screenshot1.png)
+![Screenshot of Funkwhale](./doc/screenshots/screenshot-min.png)
 
 ## Disclaimers / important information
 

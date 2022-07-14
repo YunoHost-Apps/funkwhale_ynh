@@ -24,6 +24,7 @@ Funkwhale est un projet communautaire qui vous permet d'écouter et de partager 
 ## Captures d'écran
 
 ![Capture d'écran de Funkwhale](./doc/screenshots/screenshot1.png)
+![Capture d'écran de Funkwhale](./doc/screenshots/screenshot-min.png)
 
 ## Avertissements / informations importantes
 
