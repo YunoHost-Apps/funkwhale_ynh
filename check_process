@@ -27,6 +27,8 @@
 		upgrade=1	from_commit=1c1b64b8b04ee917a63580dce21d149182ee319d
 		# 1.2.4~ynh1	
 		upgrade=1	from_commit=5961e7283e52963329e30ca22df4d5505adfc256
+		#1.2.5~ynh1
+		upgrade=1	from_commit=a070baf105a94ac6fefc280f0335b044db643ec8
 		backup_restore=1
 		multi_instance=1
 		port_already_use=0
@@ -51,3 +53,5 @@ Notification=all
 		name=1.2.3~ynh1
 	; commit=5961e7283e52963329e30ca22df4d5505adfc256
 		name=1.2.4~ynh1
+	; commit=a070baf105a94ac6fefc280f0335b044db643ec8
+		name=1.2.5~ynh1
