@@ -20,11 +20,6 @@ Funkwhale is a community-driven project that lets you listen and share music and
 **Shipped version:** 1.2.7~ynh1
 
 **Demo:** https://demo.funkwhale.audio
-
-## Screenshots
-
-![Screenshot of Funkwhale](./doc/screenshots/screenshot-min.png)
-
 ## Disclaimers / important information
 
 * Any known limitations, constrains or stuff not working, such as (but not limited to):

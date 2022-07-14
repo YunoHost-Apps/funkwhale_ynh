@@ -20,11 +20,6 @@ Funkwhale est un projet communautaire qui vous permet d'écouter et de partager 
 **Version incluse :** 1.2.7~ynh1
 
 **Démo :** https://demo.funkwhale.audio
-
-## Captures d'écran
-
-![Capture d'écran de Funkwhale](./doc/screenshots/screenshot-min.png)
-
 ## Avertissements / informations importantes
 
 * L'installation nécessite un domaine ou un sous-domaine dédié. L'installation dans un chemin du domaine n'est pas prise en charge par le projet en amont en raison des exigences de dépendance.
