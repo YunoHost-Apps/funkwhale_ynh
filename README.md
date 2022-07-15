@@ -17,7 +17,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 Funkwhale is a community-driven project that lets you listen and share music and audio within a decentralized, open network. 
 
-**Shipped version:** 1.2.6~ynh1
+**Shipped version:** 1.2.7~ynh1
 
 **Demo:** https://demo.funkwhale.audio
 
@@ -27,8 +27,7 @@ Funkwhale is a community-driven project that lets you listen and share music and
 
 ## Disclaimers / important information
 
-* Any known limitations, constrains or stuff not working, such as (but not limited to):
-    * Installation requires a dedicated domain or subdomain. Installing in a subpath is not supported by the upstream project due to dependency requirements.
+* Installation requires a dedicated domain or subdomain. Installing in a subpath is not supported by the upstream project due to dependency requirements.
 
 * Admin
 
