@@ -6,7 +6,7 @@
         "en": "Modern, convivial and free music server",
         "fr": "Serveur de musique moderne, convivial et gratuit"
     },
-    "version": "1.2.6~ynh1",
+    "version": "1.2.7~ynh1",
     "url": "https://funkwhale.audio",
     "upstream": {
         "license": "AGPL-3.0-or-later",
@@ -45,6 +45,10 @@
             {
                 "name": "is_public",
                 "type": "boolean",
+                "help": {
+                    "en": "If enabled, Funkwhale will be accessible by Funkwhale for Android and by users without a YunoHost account. This can be changed later in the webadmin.",
+                    "fr": "Si cette case est cochée, Funkwhale sera accessible par Funkwhale for Android et par les utilisateurs n’ayant pas de compte YunoHost. Vous pourrez changer cela dans la webadmin."
+                },
                 "default": true
             }
         ]
