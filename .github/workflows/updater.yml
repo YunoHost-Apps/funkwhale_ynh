@@ -1,0 +1,40 @@
+# This workflow allows GitHub Actions to automagically update your app whenever a new upstream release is detected.
+# You need to enable Actions in your repository settings, and fetch this Action from the YunoHost-Apps organization.
+# This file should be enough by itself, but feel free to tune it to your needs.
+# It calls updater.sh, which is where you should put the app-specific update steps.
+name: Check for new upstream releases
+on:
+  # Allow to manually trigger the workflow
+  workflow_dispatch:
+  # Run it every day at 6:00 UTC
+  schedule:
+    - cron: '0 6 * * *'
+
+jobs:
+  updater:
+    # Maintainer should customize the updater script then comment this line.
+    if: ${{ false }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch the source code
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run the updater script
+        run: .github/workflows/updater.py
+
+      - name: Create Pull Request
+        if: ${{ env.PROCEED == 'true' }}
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: Upgrade ${{ env.APP_NAME }} to version ${{ env.VERSION }}
+          body: Upgrade ${{ env.APP_NAME }} to version ${{ env.VERSION }}
+          commit-message: Upgrade ${{ env.APP_NAME }} to version ${{ env.VERSION }}
+          committer: 'yunohost-bot <yunohost-bot@users.noreply.github.com>'
+          author: 'yunohost-bot <yunohost-bot@users.noreply.github.com>'
+          base: testing
+          branch: ${{ env.BRANCH }}
+          delete-branch: true
