@@ -9,9 +9,6 @@
 # Since each app is different, maintainers can adapt its contents so as to perform
 # automatic actions when a new upstream release is detected.
 
-# Remove this exit command when you are ready to run this Action
-exit 1
-
 #=================================================
 # FETCHING LATEST RELEASE AND ITS ASSETS
 #=================================================
