@@ -19,6 +19,7 @@ Funkwhale is a community-driven project that lets you listen and share music and
 
 **Shipped version:** 1.2.8~ynh1
 
+
 **Demo:** https://demo.funkwhale.audio
 
 ## Screenshots
