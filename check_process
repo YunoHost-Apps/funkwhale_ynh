@@ -14,21 +14,23 @@
 		# 1.1~ynh1
 		upgrade=1	from_commit=8172790fb461d16f09089593fdac380f0d499c83
 		# 1.1.1~ynh1
-		upgrade=1	from_commit=fa9587f61e4bb4f9db8667b1c6701ede37ac8e91
+		upgrade=0	from_commit=fa9587f61e4bb4f9db8667b1c6701ede37ac8e91
 		# 1.1.2~ynh1
 		upgrade=1	from_commit=74255c1c278562eb174fb13ce538d4754f01186c
 		# 1.1.4~ynh2
 		upgrade=1	from_commit=313335d5aa851a497fa92cd7ac264f989e1052d9
 		# 1.2.1~ynh1	
-		upgrade=1	from_commit=9fc8b84ba24260e28f791aa9c47688c1a1f085c2
+		upgrade=0	from_commit=9fc8b84ba24260e28f791aa9c47688c1a1f085c2
 		# 1.2.2~ynh2
-		upgrade=1	from_commit=192afe93f66bb08cc7d487db02dc4d187e5b29e2
+		upgrade=0	from_commit=192afe93f66bb08cc7d487db02dc4d187e5b29e2
 		# 1.2.3~ynh1	
-		upgrade=1	from_commit=1c1b64b8b04ee917a63580dce21d149182ee319d
+		upgrade=0	from_commit=1c1b64b8b04ee917a63580dce21d149182ee319d
 		# 1.2.4~ynh1	
-		upgrade=1	from_commit=5961e7283e52963329e30ca22df4d5505adfc256
+		upgrade=0	from_commit=5961e7283e52963329e30ca22df4d5505adfc256
 		#1.2.5~ynh1
-		upgrade=1	from_commit=a070baf105a94ac6fefc280f0335b044db643ec8
+		upgrade=0	from_commit=a070baf105a94ac6fefc280f0335b044db643ec8
+		#1.2.7~ynh1
+		upgrade=1	from_commit=557386e0c1306f78c43ccf2e5ec7b3b46a07ab56
 		backup_restore=1
 		multi_instance=1
 		port_already_use=0
@@ -55,3 +57,5 @@ Notification=all
 		name=1.2.4~ynh1
 	; commit=a070baf105a94ac6fefc280f0335b044db643ec8
 		name=1.2.5~ynh1
+	; commit=557386e0c1306f78c43ccf2e5ec7b3b46a07ab56
+		name=1.2.7~ynh1
