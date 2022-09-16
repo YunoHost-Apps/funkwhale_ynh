@@ -30,7 +30,7 @@
 		#1.2.5~ynh1
 		upgrade=0	from_commit=a070baf105a94ac6fefc280f0335b044db643ec8
 		#1.2.7~ynh1
-		upgrade=1	from_commit=557386e0c1306f78c43ccf2e5ec7b3b46a07ab56
+		upgrade=0	from_commit=557386e0c1306f78c43ccf2e5ec7b3b46a07ab56
 		backup_restore=1
 		multi_instance=1
 		port_already_use=0
