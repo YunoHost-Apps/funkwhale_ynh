@@ -33,14 +33,10 @@
         "nginx"
     ],
     "arguments": {
-        "install" : [
+        "install": [
             {
                 "name": "domain",
                 "type": "domain"
-            },
-            {
-                "name": "admin",
-                "type": "user"
             },
             {
                 "name": "is_public",
@@ -50,6 +46,10 @@
                     "fr": "Si cette case est cochée, Funkwhale sera accessible par Funkwhale for Android et par les utilisateurs n’ayant pas de compte YunoHost. Vous pourrez changer cela dans la webadmin."
                 },
                 "default": true
+            },
+            {
+                "name": "admin",
+                "type": "user"
             }
         ]
     }

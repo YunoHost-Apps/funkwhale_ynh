@@ -12,7 +12,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..."
+ynh_script_progression --message="Loading installation settings..." --weight=1
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -30,20 +30,19 @@ key=$(ynh_app_setting_get --app=$app --key=key)
 #=================================================
 # CHECK VERSION
 #=================================================
-ynh_script_progression --message="Checking version..."
+ynh_script_progression --message="Checking version..." --weight=1
 
 upgrade_type=$(ynh_check_app_version_changed)
 
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..."
+ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=1
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
 ynh_clean_setup () {
 	# Restore it if the upgrade fails
-	ynh_clean_check_starting
 	ynh_restore_upgradebackup
 }
 # Exit if an error occurs during the execution of the script
@@ -54,7 +53,7 @@ ynh_abort_if_errors
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Stopping a systemd service..."
+ynh_script_progression --message="Stopping a systemd service..." --weight=1
 
 ynh_systemd_action --action="stop" --service_name="${app}-beat" --log_path="systemd" --line_match="Stopped"
 ynh_systemd_action --action="stop" --service_name="${app}-server" --log_path="systemd" --line_match="Stopped"
@@ -63,7 +62,7 @@ ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="sy
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
-ynh_script_progression --message="Ensuring downward compatibility..."
+ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 
 # If redis_db doesn't exist, create it
 if [ -z "$redis_db" ]; then
@@ -94,7 +93,7 @@ if [ -z "$datadir" ]; then
 	yunohost backup create --apps $app
 
 	datadir="/home/yunohost.app/${app}/data"
-	ynh_script_progression --message="Moving datas to $datadir..."	
+	ynh_script_progression --message="Moving datas to $datadir..." --weight=1
 
 	mkdir -p $datadir
 	mkdir -p $datadir/{static,media,music}
@@ -144,10 +143,10 @@ fi
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Making sure dedicated system user exists..."
+ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
 
 # Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir=$final_path
+ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -155,7 +154,7 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 
 if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
-	ynh_script_progression --message="Upgrading source files..."
+	ynh_script_progression --message="Upgrading source files..." --weight=1
 
 	ynh_secure_remove --file="$final_path/api"
 	ynh_secure_remove --file="$final_path/front"
@@ -169,26 +168,26 @@ chmod -R o-rwx "$final_path"
 chown -R $app:www-data "$final_path"
 
 #=================================================
+# UPGRADE DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Upgrading dependencies..." --weight=1
+
+ynh_install_app_dependencies $pkg_dependencies
+
+#=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Upgrading NGINX web server configuration..."
+ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=1
 
 # Create a dedicated NGINX config
 ynh_add_nginx_config
-
-#=================================================
-# UPGRADE DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Upgrading dependencies..."
-
-ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # SPECIFIC UPGRADE
 #=================================================
 # INSTALL PYTHON DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Installing Python dependencies..."
+ynh_script_progression --message="Installing Python dependencies..." --weight=1
 
 pushd $final_path
 	ynh_secure_remove --file="$final_path/virtualenv"
@@ -205,7 +204,7 @@ popd
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Updating a configuration file..."
+ynh_script_progression --message="Updating a configuration file..." --weight=1
 
 ynh_add_config --template="../conf/env.prod" --destination="$final_path/config/.env"
 
@@ -215,7 +214,7 @@ chown $app:$app "$final_path/config/.env"
 #=================================================
 # UPGRADE FUNKWHALE
 #=================================================
-ynh_script_progression --message="Upgrading Funkwhale..."
+ynh_script_progression --message="Upgrading Funkwhale..." --weight=1
 
 pushd $final_path
 	source $final_path/virtualenv/bin/activate
@@ -253,7 +252,7 @@ chown -R $app:www-data "$final_path"
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-ynh_script_progression --message="Upgrading systemd configuration..."
+ynh_script_progression --message="Upgrading systemd configuration..." --weight=1
 
 ynh_add_config --template="../conf/funkwhale.target" --destination="/etc/systemd/system/$app.target"
 
@@ -267,7 +266,7 @@ ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.serv
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-ynh_script_progression --message="Integrating service in YunoHost..."
+ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
 yunohost service add "${app}-beat"
 yunohost service add "${app}-server"
@@ -276,7 +275,7 @@ yunohost service add "${app}-worker"
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..."
+ynh_script_progression --message="Starting a systemd service..." --weight=1
 
 # Start a systemd service
 ynh_systemd_action --service_name="${app}-beat" --action="start" --log_path="systemd" --line_match="Started"
@@ -286,7 +285,7 @@ ynh_systemd_action --service_name="${app}-worker" --action="start" --log_path="s
 #=================================================
 # UPGRADE FAIL2BAN
 #=================================================
-ynh_script_progression --message="Reconfiguring Fail2Ban..."
+ynh_script_progression --message="Reconfiguring Fail2Ban..." --weight=1
 
 # Create a dedicated Fail2Ban config
 ynh_add_fail2ban_config --logpath="/var/log/nginx/$domain-access.log" --failregex="<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" --max_retry=5
@@ -294,7 +293,7 @@ ynh_add_fail2ban_config --logpath="/var/log/nginx/$domain-access.log" --failrege
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server..."
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 
@@ -302,4 +301,4 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Upgrade of $app completed"
+ynh_script_progression --message="Upgrade of $app completed" --last

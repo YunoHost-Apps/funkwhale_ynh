@@ -24,7 +24,7 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..."
+ynh_script_progression --message="Loading installation settings..." --weight=1
 
 # Needed for helper "ynh_add_nginx_config"
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
@@ -34,7 +34,7 @@ redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
 port=$(ynh_app_setting_get --app=$app --key=port)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
-db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
 key=$(ynh_app_setting_get --app=$app --key=key)
@@ -42,7 +42,7 @@ key=$(ynh_app_setting_get --app=$app --key=key)
 #=================================================
 # BACKUP BEFORE CHANGE URL THEN ACTIVE TRAP
 #=================================================
-ynh_script_progression --message="Backing up the app before changing its URL (may take a while)..."
+ynh_script_progression --message="Backing up the app before changing its URL (may take a while)..." --weight=1
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
@@ -77,7 +77,7 @@ fi
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Stopping a systemd service..."
+ynh_script_progression --message="Stopping a systemd service..." --weight=1
 
 ynh_systemd_action --service_name="$app-beat" --action=stop --log_path="/var/log/$app/$app.log"
 ynh_systemd_action --service_name="$app-server" --action=stop --log_path="/var/log/$app/$app.log"
@@ -86,7 +86,7 @@ ynh_systemd_action --service_name="$app-worker" --action=stop --log_path="/var/l
 #=================================================
 # MODIFY URL IN NGINX CONF
 #=================================================
-ynh_script_progression --message="Updating NGINX web server configuration..."
+ynh_script_progression --message="Updating NGINX web server configuration..." --weight=1
 
 nginx_conf_path=/etc/nginx/conf.d/$old_domain.d/$app.conf
 
@@ -115,7 +115,7 @@ fi
 #=================================================
 # MODIFY THE CONFIG FILE
 #=================================================
-ynh_script_progression --message="Modifying a config file..."
+ynh_script_progression --message="Modifying a config file..." --weight=1
 
 domain=$new_domain
 ynh_add_config --template="../conf/env.prod" --destination="$final_path/config/.env"
@@ -130,7 +130,7 @@ python3 $final_path/api/manage.py fix_federation_ids https://$old_domain https:/
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..."
+ynh_script_progression --message="Starting a systemd service..." --weight=1
 
 ynh_systemd_action --service_name="$app-beat" --action="start" --log_path="/var/log/$app/$app.log"
 ynh_systemd_action --service_name="$app-server" --action="start" --log_path="/var/log/$app/$app.log"
@@ -139,7 +139,7 @@ ynh_systemd_action --service_name="$app-worker" --action="start" --log_path="/va
 #=================================================
 # SETUP FAIL2BAN
 #=================================================
-ynh_script_progression --message="Configuring Fail2Ban..."
+ynh_script_progression --message="Configuring Fail2Ban..." --weight=1
 
 # Create a dedicated Fail2Ban config
 ynh_add_fail2ban_config --logpath="/var/log/nginx/$new_domain-access.log" --failregex="<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" --max_retry=5
@@ -147,7 +147,7 @@ ynh_add_fail2ban_config --logpath="/var/log/nginx/$new_domain-access.log" --fail
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server..."
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 
@@ -155,4 +155,4 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Change of URL completed for $app"
+ynh_script_progression --message="Change of URL completed for $app" --last
