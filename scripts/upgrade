@@ -219,30 +219,12 @@ ynh_script_progression --message="Upgrading Funkwhale..." --weight=1
 pushd $final_path
 	source $final_path/virtualenv/bin/activate
 
+	echo "yes" | ynh_exec_warn_less python api/manage.py collectstatic --clear --noinput
+
 	# needed for enabling the 'unaccent' extension
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
 	ynh_exec_warn_less python api/manage.py migrate
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
-
-	echo "yes" | ynh_exec_warn_less python api/manage.py collectstatic --clear --noinput
-
-	# https://code.eliotberriot.com/funkwhale/funkwhale/tags/0.16 # users-now-have-an-activitypub-actor-manual-action-required
-	# python api/manage.py script create_actors --no-input
-	# https://code.eliotberriot.com/funkwhale/funkwhale/tags/0.16 #image-thumbnails-manual-action-required
-	# python api/manage.py script create_image_variations --no-input
-
-	# https://docs.funkwhale.audio/upgrading/0.17.html#upgrade-instructions
-	# python api/manage.py script migrate_to_user_libraries --no-input
-
-	# Delete pre 0.17 federated tracks [manual action suggested]
-	# https://dev.funkwhale.audio/funkwhale/funkwhale/tags/0.18
-	# python api/manage.py script delete_pre_017_federated_uploads --no-input
-
-	# Delete the original thumbnails and generate new ones for
-	# higher quality images
-	# https://docs.funkwhale.audio/changelog.html#increased-quality-of-jpeg-thumbnails-manual-action-required
-	ynh_secure_remove --file="$final_path/media/__sized__"
-	ynh_exec_warn_less python api/manage.py fw media generate-thumbnails
 popd
 
 chmod 750 "$final_path"
