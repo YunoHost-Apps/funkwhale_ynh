@@ -4,7 +4,7 @@
 # COMMON VARIABLES
 #=================================================
 
-# dependencies used by the app
+# dependencies used by the app (must be on a single line)
 pkg_dependencies="curl python3-pip python3-venv git unzip libldap2-dev libsasl2-dev gettext-base zlib1g-dev libffi-dev libssl-dev \
 	build-essential ffmpeg libjpeg-dev libmagic-dev libpq-dev postgresql postgresql-contrib python3-dev make \
 	redis-server \

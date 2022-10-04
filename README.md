@@ -17,7 +17,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 Funkwhale is a community-driven project that lets you listen and share music and audio within a decentralized, open network. 
 
-**Shipped version:** 1.2.8~ynh1
+**Shipped version:** 1.2.8~ynh2 *(:warning: This is the `testing` branch. The [`master` branch](https://github.com/YunoHost-Apps/funkwhale_ynh/tree/master) used in the catalog is currently on version 1.2.8\~ynh1.)*
 
 
 **Demo:** https://demo.funkwhale.audio
@@ -31,9 +31,8 @@ Funkwhale is a community-driven project that lets you listen and share music and
 * Installation requires a dedicated domain or subdomain. Installing in a subpath is not supported by the upstream project due to dependency requirements.
 
 * Admin
-
-The admin uses the login you provided at installation. The password is the same you use for YunoHost.
-The admin interface is accessible at the address: `your.domain.fr/api/admin`
+  * The admin uses the login you provided at installation. The password is the same you use for YunoHost.
+  * The admin interface is accessible at the address: `your.domain.fr/api/admin`
 
 To add a collection of music files to a library in your YunoHost installation of Funkwhale, create a symlink to your collection titled "music" in `/home/yunohost.app/funkwhale/data`
 ```console
