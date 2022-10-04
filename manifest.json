@@ -6,7 +6,7 @@
         "en": "Modern, convivial and free music server",
         "fr": "Serveur de musique moderne, convivial et gratuit"
     },
-    "version": "1.2.8~ynh1",
+    "version": "1.2.8~ynh2",
     "url": "https://funkwhale.audio",
     "upstream": {
         "license": "AGPL-3.0-or-later",
@@ -21,10 +21,12 @@
         "name": "Ciarán Ainsworth",
         "email": "cda@rootkey.co.uk"
     },
-    "previous_maintainers": [{
-        "name": "Jean-Baptiste Holcroft",
-        "email": "jean-baptiste@holcroft.fr"
-    }],
+    "previous_maintainers": [
+        {
+            "name": "Jean-Baptiste Holcroft",
+            "email": "jean-baptiste@holcroft.fr"
+        }
+    ],
     "requirements": {
         "yunohost": ">= 4.3.0"
     },
@@ -33,14 +35,10 @@
         "nginx"
     ],
     "arguments": {
-        "install" : [
+        "install": [
             {
                 "name": "domain",
                 "type": "domain"
-            },
-            {
-                "name": "admin",
-                "type": "user"
             },
             {
                 "name": "is_public",
@@ -50,6 +48,10 @@
                     "fr": "Si cette case est cochée, Funkwhale sera accessible par Funkwhale for Android et par les utilisateurs n’ayant pas de compte YunoHost. Vous pourrez changer cela dans la webadmin."
                 },
                 "default": true
+            },
+            {
+                "name": "admin",
+                "type": "user"
             }
         ]
     }
