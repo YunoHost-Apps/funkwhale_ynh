@@ -1,5 +1,5 @@
-SOURCE_URL=https://dev.funkwhale.audio/funkwhale/funkwhale/builds/artifacts/1.2.8/download?job=build_front
-SOURCE_SUM=bd110dee284f5332aa00a3be53a61a65dbd8a20c10d4229287dec9f0bfd8c2f7
+SOURCE_URL=https://dev.funkwhale.audio/funkwhale/funkwhale/builds/artifacts/1.2.9/download?job=build_front
+SOURCE_SUM=2faee2b31b5d717e4e5f34f3d4a6de8341a659d93a967bfeccab02d38580a6fd
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=zip
 SOURCE_IN_SUBDIR=true
