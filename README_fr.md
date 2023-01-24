@@ -5,7 +5,7 @@ It shall NOT be edited by hand.
 
 # Funkwhale pour YunoHost
 
-[![Niveau d’intégration](https://dash.yunohost.org/integration/funkwhale.svg)](https://dash.yunohost.org/appci/app/funkwhale) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/funkwhale.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/funkwhale.maintain.svg)  
+[![Niveau d’intégration](https://dash.yunohost.org/integration/funkwhale.svg)](https://dash.yunohost.org/appci/app/funkwhale) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/funkwhale.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/funkwhale.maintain.svg)
 [![Installer Funkwhale avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=funkwhale)
 
 *[Read this readme in english.](./README.md)*
@@ -17,7 +17,7 @@ Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) po
 
 Funkwhale est un projet communautaire qui vous permet d'écouter et de partager de la musique et de l'audio au sein d'un réseau ouvert et décentralisé. 
 
-**Version incluse :** 1.2.9~ynh1
+**Version incluse :** 1.3.0-rc3~ynh1
 
 **Démo :** https://demo.funkwhale.audio
 
