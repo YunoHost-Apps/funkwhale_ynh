@@ -16,7 +16,7 @@
 # Fetching information
 current_version=$(cat manifest.json | jq -j '.version|split("~")[0]')
 # Some jq magic is needed, because the latest upstream release is not always the latest version (e.g. security patches for older versions)
-version=$(curl --silent "https://dev.funkwhale.audio/api/v4/projects/17/repository/tags" | jq -r '.[] | select( .prerelease != true ) | .name' | sort -V | tail -1)
+version=$(curl --silent "https://dev.funkwhale.audio/api/v4/projects/17/repository/tags" | jq -r '.[] | select( .prerelease != true )| select( .name | contains("start") or contains("rc") or contains("beta") or contains("alpha") | not ) | .name' | sort -V | tail -1)
 assets=("https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/$version/download?job=build_api" "https://dev.funkwhale.audio/funkwhale/funkwhale/builds/artifacts/$version/download?job=build_front")
 
 # Later down the script, we assume the version has only digits and dots
