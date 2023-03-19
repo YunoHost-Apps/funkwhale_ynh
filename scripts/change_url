@@ -118,14 +118,14 @@ fi
 ynh_script_progression --message="Modifying a config file..." --weight=1
 
 domain=$new_domain
-ynh_exec_warn_less ynh_add_config --template="../conf/env.prod" --destination="$final_path/config/.env"
+ynh_add_config --template="../conf/env.prod" --destination="$final_path/config/.env"
 
 #=================================================
 # MODIFY THE FEDERATION 
 #=================================================
 
 source $final_path/virtualenv/bin/activate
-python3 $final_path/api/manage.py fix_federation_ids https://$old_domain https://$new_domain --no-dry-run --no-input
+ynh_exec_warn_less python3 $final_path/api/manage.py fix_federation_ids https://$old_domain https://$new_domain --no-dry-run --no-input
 
 #=================================================
 # START SYSTEMD SERVICE
