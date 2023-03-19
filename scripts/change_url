@@ -118,7 +118,7 @@ fi
 ynh_script_progression --message="Modifying a config file..." --weight=1
 
 domain=$new_domain
-ynh_add_config --template="../conf/env.prod" --destination="$final_path/config/.env"
+ynh_exec_warn_less ynh_add_config --template="../conf/env.prod" --destination="$final_path/config/.env"
 
 #=================================================
 # MODIFY THE FEDERATION 
