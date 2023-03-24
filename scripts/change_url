@@ -10,18 +10,6 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# RETRIEVE ARGUMENTS
-#=================================================
-
-#REMOVEME? old_domain=$YNH_APP_OLD_DOMAIN
-#REMOVEME? old_path=$YNH_APP_OLD_PATH
-
-#REMOVEME? new_domain=$YNH_APP_NEW_DOMAIN
-#REMOVEME? new_path=$YNH_APP_NEW_PATH
-
-#REMOVEME? app=$YNH_APP_INSTANCE_NAME
-
-#=================================================
 # LOAD SETTINGS
 #=================================================
 #REMOVEME? ynh_script_progression --message="Loading installation settings..." --weight=1
@@ -40,39 +28,6 @@ source /usr/share/yunohost/helpers
 #REMOVEME? key=$(ynh_app_setting_get --app=$app --key=key)
 
 #=================================================
-# BACKUP BEFORE CHANGE URL THEN ACTIVE TRAP
-#=================================================
-#REMOVEME? ynh_script_progression --message="Backing up the app before changing its URL (may take a while)..." --weight=1
-
-# Backup the current version of the app
-#REMOVEME? ynh_backup_before_upgrade
-#REMOVEME? ynh_clean_setup () {
-	# Remove the new domain config file, the remove script won't do it as it doesn't know yet its location.
-#REMOVEME? 	ynh_secure_remove --file="/etc/nginx/conf.d/$new_domain.d/$app.conf"
-
-	# Restore it if the upgrade fails
-#REMOVEME? 	ynh_restore_upgradebackup
-}
-# Exit if an error occurs during the execution of the script
-#REMOVEME? ynh_abort_if_errors
-
-#=================================================
-# CHECK WHICH PARTS SHOULD BE CHANGED
-#=================================================
-
-#REMOVEME? change_domain=0
-#REMOVEME? if [ "$old_domain" != "$new_domain" ]
-then
-	#REMOVEME? change_domain=1
-fi
-
-#REMOVEME? change_path=0
-#REMOVEME? if [ "$old_path" != "$new_path" ]
-then
-	#REMOVEME? change_path=1
-fi
-
-#=================================================
 # STANDARD MODIFICATIONS
 #=================================================
 # STOP SYSTEMD SERVICE
@@ -89,30 +44,6 @@ ynh_systemd_action --service_name="$app-worker" --action=stop --log_path="/var/l
 ynh_script_progression --message="Updating NGINX web server configuration..." --weight=1
 
 ynh_change_url_nginx_config
-
-#REMOVEME? nginx_conf_path=/etc/nginx/conf.d/$old_domain.d/$app.conf
-
-# Change the path in the NGINX config file
-if [ $change_path -eq 1 ]
-then
-	# Make a backup of the original NGINX config file if modified
-#REMOVEME? 	ynh_backup_if_checksum_is_different --file="$nginx_conf_path"
-	# Set global variables for NGINX helper
-#REMOVEME? 	domain="$old_domain"
-#REMOVEME? 	path="$new_path"
-	# Create a dedicated NGINX config
-#REMOVEME? 	ynh_add_nginx_config
-fi
-
-# Change the domain for NGINX
-if [ $change_domain -eq 1 ]
-then
-	# Delete file checksum for the old conf file location
-#REMOVEME? 	ynh_delete_file_checksum --file="$nginx_conf_path"
-#REMOVEME? 	mv $nginx_conf_path /etc/nginx/conf.d/$new_domain.d/$app.conf
-	# Store file checksum for the new config file location
-#REMOVEME? 	ynh_store_file_checksum --file="/etc/nginx/conf.d/$new_domain.d/$app.conf"
-fi
 
 #=================================================
 # MODIFY THE CONFIG FILE
@@ -145,13 +76,6 @@ ynh_script_progression --message="Configuring Fail2Ban..." --weight=1
 
 # Create a dedicated Fail2Ban config
 #REMOVEME? ynh_add_fail2ban_config --logpath="/var/log/nginx/$new_domain-access.log" --failregex="<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" --max_retry=5
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-#REMOVEME? ynh_script_progression --message="Reloading NGINX web server..." --weight=1
-
-#REMOVEME? #REMOVEME? ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT
