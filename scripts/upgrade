@@ -10,43 +10,10 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# LOAD SETTINGS
-#=================================================
-#REMOVEME? ynh_script_progression --message="Loading installation settings..." --weight=1
-
-#REMOVEME? app=$YNH_APP_INSTANCE_NAME
-
-#REMOVEME? domain=$(ynh_app_setting_get --app=$app --key=domain)
-#REMOVEME? path=$(ynh_app_setting_get --app=$app --key=path)
-#REMOVEME? #REMOVEME? install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
-#REMOVEME? db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-#REMOVEME? db_user=$db_name
-#REMOVEME? db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
-#REMOVEME? data_dir=$(ynh_app_setting_get --app=$app --key=data_dir)
-#REMOVEME? port=$(ynh_app_setting_get --app=$app --key=port)
-#REMOVEME? redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
-#REMOVEME? key=$(ynh_app_setting_get --app=$app --key=key)
-
-#=================================================
 # CHECK VERSION
 #=================================================
-ynh_script_progression --message="Checking version..." --weight=1
 
 upgrade_type=$(ynh_check_app_version_changed)
-
-#=================================================
-# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
-#=================================================
-#REMOVEME? ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=1
-
-# Backup the current version of the app
-#REMOVEME? ynh_backup_before_upgrade
-#REMOVEME? ynh_clean_setup () {
-	# Restore it if the upgrade fails
-#REMOVEME? 	ynh_restore_upgradebackup
-}
-# Exit if an error occurs during the execution of the script
-#REMOVEME? ynh_abort_if_errors
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -58,30 +25,6 @@ ynh_script_progression --message="Stopping a systemd service..." --weight=1
 ynh_systemd_action --action="stop" --service_name="${app}-beat" --log_path="systemd" --line_match="Stopped"
 ynh_systemd_action --action="stop" --service_name="${app}-server" --log_path="systemd" --line_match="Stopped"
 ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="systemd" --line_match="Stopped"
-
-#=================================================
-# ENSURE DOWNWARD COMPATIBILITY
-#=================================================
-ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
-
-# If redis_db doesn't exist, create it
-if [ -z "$redis_db" ]; then
-	redis_db=$(ynh_redis_get_free_db)
-	ynh_app_setting_set --app=$app --key=redis_db --value=$redis_db
-fi
-
-# If db_pwd doesn't exist, create it
-if [ -z "$db_pwd" ]; then
-#REMOVEME? 	db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
-#REMOVEME? 	ynh_app_setting_set --app=$app --key=db_pwd --value=$db_pwd
-fi
-
-# Cleaning legacy permissions
-#REMOVEME? if ynh_legacy_permissions_exists; then
-#REMOVEME? 	ynh_legacy_permissions_delete_all
-
-	ynh_app_setting_delete --app=$app --key=is_public
-fi
 
 #=================================================
 # MOVE DATAS
@@ -141,14 +84,6 @@ if [ -z "$data_dir" ]; then
 fi
 
 #=================================================
-# CREATE DEDICATED USER
-#=================================================
-#REMOVEME? ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
-
-# Create a dedicated user (if not existing)
-#REMOVEME? ynh_system_user_create --username=$app --home_dir="$install_dir"
-
-#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
@@ -156,8 +91,6 @@ if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
 	ynh_script_progression --message="Upgrading source files..." --weight=1
 
-#REMOVEME? 	ynh_secure_remove --file="$install_dir/api"
-#REMOVEME? 	ynh_secure_remove --file="$install_dir/front"
 	# Download, check integrity, uncompress and patch the source from app.src
 	ynh_setup_source --dest_dir="$install_dir/api" --source_id="api"
 	ynh_setup_source --dest_dir="$install_dir/front" --source_id="front"
@@ -166,13 +99,6 @@ fi
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
 chown -R $app:www-data "$install_dir"
-
-#=================================================
-# UPGRADE DEPENDENCIES
-#=================================================
-#REMOVEME? ynh_script_progression --message="Upgrading dependencies..." --weight=1
-
-#REMOVEME? ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # NGINX CONFIGURATION
@@ -187,10 +113,10 @@ ynh_add_nginx_config
 #=================================================
 # INSTALL PYTHON DEPENDENCIES
 #=================================================
-#REMOVEME? ynh_script_progression --message="Installing Python dependencies..." --weight=1
+ynh_script_progression --message="Installing Python dependencies..." --weight=1
 
 pushd $install_dir
-#REMOVEME? 	ynh_secure_remove --file="$install_dir/virtualenv"
+ynh_secure_remove --file="$install_dir/virtualenv"
 	python3 -m venv $install_dir/virtualenv
 	source $install_dir/virtualenv/bin/activate
 	pip install --upgrade pip
@@ -271,13 +197,6 @@ ynh_script_progression --message="Reconfiguring Fail2Ban..." --weight=1
 
 # Create a dedicated Fail2Ban config
 ynh_add_fail2ban_config --logpath="/var/log/nginx/$domain-access.log" --failregex="<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" --max_retry=5
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-#REMOVEME? ynh_script_progression --message="Reloading NGINX web server..." --weight=1
-
-#REMOVEME? ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT
