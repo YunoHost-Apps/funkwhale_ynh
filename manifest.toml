@@ -45,11 +45,11 @@ ram.runtime = "50M"
     [resources.sources]
         [resources.sources.api]
         url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/1.2.10/download?job=build_api"
-        sha256 = "2544fa01bc64c7481dbd03faaa777ff6d2006e6a36cb79c694e13f6e2761f025"
+        sha256 = "4a0c0cdd8afc72b3fa9be7019392b3c27d819cf240509234b355231e1c59a11d"
 
         [resources.sources.front]
         url = "https://dev.funkwhale.audio/funkwhale/funkwhale/builds/artifacts/1.2.10/download?job=build_front"
-        sha256 = "6471722068ac6586194ee2c28d0691a2acdcb1eae881625fcf15c10a750bb51a"
+        sha256 = "9fa6b373fd1baf0f4509eece67380c092dfb8889972db8018f9acc840284b011"
 
     [resources.ports]
 
