@@ -90,6 +90,10 @@ pushd $install_dir
 	pip install --upgrade pip
 	pip install --upgrade setuptools
 	ynh_exec_warn_less pip install wheel
+
+	ls -lah /$install_dir/
+	ls -lah /$install_dir/api/
+	ls -lah /$install_dir/front/
 	# Workaround for error AttributeError: module 'lib' has no attribute 'X509_V_FLAG_CB_ISSUER_CHECK'
 	# ynh_replace_string --match_string="pyOpenSSL~=20.0.1" --replace_string="pyOpenSSL~=21.0.0" --target_file="$install_dir/api/requirements/base.txt"
 	ynh_exec_warn_less pip install -r api/requirements.txt
