@@ -68,13 +68,11 @@ if [ -z "$data_dir" ]; then
 		rsync -a $install_dir/code/data/music/ $data_dir/music/
 	fi
 	
-#REMOVEME? 	ynh_secure_remove --file="$install_dir/code"
-#REMOVEME? 	ynh_secure_remove --file="$install_dir/media"
-#REMOVEME? 	ynh_secure_remove --file="$install_dir/code/data/media"
-#REMOVEME? 	ynh_secure_remove --file="$install_dir/import"
-#REMOVEME? 	ynh_secure_remove --file="$install_dir/code/data/music"
-
-#REMOVEME? 	ynh_app_setting_set --app=$app --key=data_dir --value=$data_dir
+	ynh_secure_remove --file="$install_dir/code"
+	ynh_secure_remove --file="$install_dir/media"
+	ynh_secure_remove --file="$install_dir/code/data/media"
+	ynh_secure_remove --file="$install_dir/import"
+	ynh_secure_remove --file="$install_dir/code/data/music"
 
 	chmod 750 "$data_dir"
 	chmod -R o-rwx "$data_dir"

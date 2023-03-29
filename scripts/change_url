@@ -10,24 +10,6 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# LOAD SETTINGS
-#=================================================
-#REMOVEME? ynh_script_progression --message="Loading installation settings..." --weight=1
-
-#REMOVEME? # Needed for helper "ynh_add_nginx_config"
-#REMOVEME? #REMOVEME? install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
-#REMOVEME? port=$(ynh_app_setting_get --app=$app --key=port)
-#REMOVEME? key=$(ynh_app_setting_get --app=$app --key=key)
-#REMOVEME? redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
-#REMOVEME? port=$(ynh_app_setting_get --app=$app --key=port)
-#REMOVEME? db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-#REMOVEME? db_user=$db_name
-#REMOVEME? db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
-#REMOVEME? data_dir=$(ynh_app_setting_get --app=$app --key=data_dir)
-#REMOVEME? redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
-#REMOVEME? key=$(ynh_app_setting_get --app=$app --key=key)
-
-#=================================================
 # STANDARD MODIFICATIONS
 #=================================================
 # STOP SYSTEMD SERVICE
@@ -49,7 +31,7 @@ ynh_change_url_nginx_config
 # MODIFY THE CONFIG FILE
 #=================================================
 ynh_script_progression --message="Modifying a config file..." --weight=1
-#REMOVEME? 
+
 domain=$new_domain
 ynh_add_config --template="../conf/env.prod" --destination="$install_dir/config/.env"
 
@@ -68,14 +50,6 @@ ynh_script_progression --message="Starting a systemd service..." --weight=1
 ynh_systemd_action --service_name="$app-beat" --action="start" --log_path="/var/log/$app/$app.log"
 ynh_systemd_action --service_name="$app-server" --action="start" --log_path="/var/log/$app/$app.log"
 ynh_systemd_action --service_name="$app-worker" --action="start" --log_path="/var/log/$app/$app.log"
-
-#=================================================
-# SETUP FAIL2BAN
-#=================================================
-ynh_script_progression --message="Configuring Fail2Ban..." --weight=1
-
-# Create a dedicated Fail2Ban config
-#REMOVEME? ynh_add_fail2ban_config --logpath="/var/log/nginx/$new_domain-access.log" --failregex="<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" --max_retry=5
 
 #=================================================
 # END OF SCRIPT
