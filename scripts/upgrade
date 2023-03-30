@@ -31,18 +31,19 @@ ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="sy
 #=================================================
 
 # If data_dir doesn't exist, create it
-if [ -z "$data_dir/data/" ]; then
+if [ -z "$data_dir/" ]; then
 	# Do a full backup before moving datas
 	yunohost backup create --apps $app
 
+	data_dir="/home/yunohost.app/${app}/data"
 	ynh_script_progression --message="Moving datas to $data_dir..." --weight=1
 
-	mkdir -p /home/yunohost.app/${app}/data
-	mkdir -p /home/yunohost.app/${app}/data/{static,media,music}
+	mkdir -p $data_dir
+	mkdir -p $data_dir/{static,media,music}
 
-	chmod 750 "/home/yunohost.app/${app}/data"
-	chmod -R o-rwx "/home/yunohost.app/${app}/data"
-	chown -R $app:www-data "/home/yunohost.app/${app}/data"
+	chmod 750 "$data_dir"
+	chmod -R o-rwx "$data_dir"
+	chown -R $app:www-data "$data_dir"
 	
 	ynh_backup_if_checksum_is_different --file="$install_dir/code/config/.env"
 	mkdir -p $install_dir/config
@@ -52,19 +53,19 @@ if [ -z "$data_dir/data/" ]; then
 	ynh_delete_file_checksum --file="$install_dir/code/config/.env"
 	
 	if [ -d "$install_dir/code/data/static/" ]; then
-		rsync -a $install_dir/code/data/static/ "/home/yunohost.app/${app}/data/static/"
+		rsync -a $install_dir/code/data/static/ $data_dir/static/
 	fi
 	if [ -d "$install_dir/media/" ]; then
-		rsync -a $install_dir/media/ "/home/yunohost.app/${app}/data/media/"
+		rsync -a $install_dir/media/ $data_dir/media/
 	fi
 	if [ -d "$install_dir/code/data/media/" ]; then
-		rsync -a $install_dir/code/data/media/ "/home/yunohost.app/${app}/data/media/"
+		rsync -a $install_dir/code/data/media/ $data_dir/media/
 	fi
 	if [ -d "$install_dir/import/" ]; then
-		rsync -a $install_dir/import/ "/home/yunohost.app/${app}/data/music/"
+		rsync -a $install_dir/import/ $data_dir/music/
 	fi
 	if [ -d "$install_dir/code/data/music/" ]; then
-		rsync -a $install_dir/code/data/music/ "/home/yunohost.app/${app}/data/music/"
+		rsync -a $install_dir/code/data/music/ $data_dir/music/
 	fi
 	
 	ynh_secure_remove --file="$install_dir/code"

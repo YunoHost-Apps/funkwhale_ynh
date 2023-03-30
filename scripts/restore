@@ -25,13 +25,13 @@ chown -R $app:www-data "$install_dir"
 #=================================================
 ynh_script_progression --message="Restoring the data directory..." --weight=1
 
-ynh_restore_file --origin_path="$data_dir/data/" --not_mandatory
+ynh_restore_file --origin_path="$data_dir/" --not_mandatory
 
-mkdir -p $data_dir/data/{static,media,music}
+mkdir -p $data_dir/{static,media,music}
 
-chmod 750 "$data_dir/data/"
-chmod -R o-rwx "$data_dir/data/"
-chown -R $app:www-data "$data_dir/data/"
+chmod 750 "$data_dir/"
+chmod -R o-rwx "$data_dir/"
+chown -R $app:www-data "$data_dir/"
 
 #=================================================
 # RESTORE THE NGINX CONFIGURATION
