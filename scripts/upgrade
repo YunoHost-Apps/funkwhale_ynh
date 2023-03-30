@@ -31,7 +31,7 @@ ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="sy
 #=================================================
 
 # If data_dir doesn't exist, create it
-if [ -z "$data_dir" ]; then
+if [ -z "$data_dir/data/" ]; then
 	# Do a full backup before moving datas
 	yunohost backup create --apps $app
 
@@ -74,9 +74,9 @@ if [ -z "$data_dir" ]; then
 	ynh_secure_remove --file="$install_dir/import"
 	ynh_secure_remove --file="$install_dir/code/data/music"
 
-	chmod 750 "$data_dir"
-	chmod -R o-rwx "$data_dir"
-	chown -R $app:www-data "$data_dir"
+	chmod 750 "$data_dir/data/"
+	chmod -R o-rwx "$data_dir/data/"
+	chown -R $app:www-data "$data_dir/data/"
 	
 	upgrade_type="UPGRADE_APP"
 fi

@@ -64,8 +64,6 @@ ram.runtime = "50M"
     [resources.install_dir]
 
     [resources.data_dir]
-    dir = "/home/yunohost.app/__APP__/data"
-    owner = "__APP__:www-data"
     
     [resources.permissions]
     main.url = "/"
