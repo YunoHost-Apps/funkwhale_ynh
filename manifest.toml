@@ -62,7 +62,7 @@ ram.runtime = "50M"
     [resources.system_user]
 
     [resources.install_dir]
-    owner = __APP__:www-data
+    owner = "__APP__:www-data"
 
     [resources.data_dir]
     
