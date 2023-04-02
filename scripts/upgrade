@@ -10,43 +10,10 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# LOAD SETTINGS
-#=================================================
-ynh_script_progression --message="Loading installation settings..." --weight=1
-
-app=$YNH_APP_INSTANCE_NAME
-
-domain=$(ynh_app_setting_get --app=$app --key=domain)
-path_url=$(ynh_app_setting_get --app=$app --key=path)
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-db_user=$db_name
-db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
-datadir=$(ynh_app_setting_get --app=$app --key=datadir)
-port=$(ynh_app_setting_get --app=$app --key=port)
-redis_db=$(ynh_app_setting_get --app=$app --key=redis_db)
-key=$(ynh_app_setting_get --app=$app --key=key)
-
-#=================================================
 # CHECK VERSION
 #=================================================
-ynh_script_progression --message="Checking version..." --weight=1
 
 upgrade_type=$(ynh_check_app_version_changed)
-
-#=================================================
-# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
-#=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --weight=1
-
-# Backup the current version of the app
-ynh_backup_before_upgrade
-ynh_clean_setup () {
-	# Restore it if the upgrade fails
-	ynh_restore_upgradebackup
-}
-# Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -60,93 +27,60 @@ ynh_systemd_action --action="stop" --service_name="${app}-server" --log_path="sy
 ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="systemd" --line_match="Stopped"
 
 #=================================================
-# ENSURE DOWNWARD COMPATIBILITY
-#=================================================
-ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
-
-# If redis_db doesn't exist, create it
-if [ -z "$redis_db" ]; then
-	redis_db=$(ynh_redis_get_free_db)
-	ynh_app_setting_set --app=$app --key=redis_db --value=$redis_db
-fi
-
-# If db_pwd doesn't exist, create it
-if [ -z "$db_pwd" ]; then
-	db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
-	ynh_app_setting_set --app=$app --key=db_pwd --value=$db_pwd
-fi
-
-# Cleaning legacy permissions
-if ynh_legacy_permissions_exists; then
-	ynh_legacy_permissions_delete_all
-
-	ynh_app_setting_delete --app=$app --key=is_public
-fi
-
-#=================================================
 # MOVE DATAS
 #=================================================
 
-# If datadir doesn't exist, create it
-if [ -z "$datadir" ]; then
+# If data_dir doesn't exist, create it
+if [ -z "$data_dir/" ]; then
 	# Do a full backup before moving datas
 	yunohost backup create --apps $app
 
-	datadir="/home/yunohost.app/${app}/data"
-	ynh_script_progression --message="Moving datas to $datadir..." --weight=1
+	data_dir="/home/yunohost.app/${app}/data"
+	ynh_script_progression --message="Moving datas to $data_dir..." --weight=1
 
-	mkdir -p $datadir
-	mkdir -p $datadir/{static,media,music}
+	mkdir -p $data_dir
+	mkdir -p $data_dir/{static,media,music}
 
-	chmod 750 "$datadir"
-	chmod -R o-rwx "$datadir"
-	chown -R $app:www-data "$datadir"
+	chmod 750 "$data_dir"
+	chmod -R o-rwx "$data_dir"
+	chown -R $app:www-data "$data_dir"
 	
-	ynh_backup_if_checksum_is_different --file="$final_path/code/config/.env"
-	mkdir -p $final_path/config
-	rsync -a $final_path/code/config/ $final_path/config/
-	chmod 400 $final_path/config/.env
-	ynh_store_file_checksum --file="$final_path/config/.env"
-	ynh_delete_file_checksum --file="$final_path/code/config/.env"
+	ynh_backup_if_checksum_is_different --file="$install_dir/code/config/.env"
+	mkdir -p $install_dir/config
+	rsync -a $install_dir/code/config/ $install_dir/config/
+	chmod 400 $install_dir/config/.env
+	ynh_store_file_checksum --file="$install_dir/config/.env"
+	ynh_delete_file_checksum --file="$install_dir/code/config/.env"
 	
-	if [ -d "$final_path/code/data/static/" ]; then
-		rsync -a $final_path/code/data/static/ $datadir/static/
+	if [ -d "$install_dir/code/data/static/" ]; then
+		rsync -a $install_dir/code/data/static/ $data_dir/static/
 	fi
-	if [ -d "$final_path/media/" ]; then
-		rsync -a $final_path/media/ $datadir/media/
+	if [ -d "$install_dir/media/" ]; then
+		rsync -a $install_dir/media/ $data_dir/media/
 	fi
-	if [ -d "$final_path/code/data/media/" ]; then
-		rsync -a $final_path/code/data/media/ $datadir/media/
+	if [ -d "$install_dir/code/data/media/" ]; then
+		rsync -a $install_dir/code/data/media/ $data_dir/media/
 	fi
-	if [ -d "$final_path/import/" ]; then
-		rsync -a $final_path/import/ $datadir/music/
+	if [ -d "$install_dir/import/" ]; then
+		rsync -a $install_dir/import/ $data_dir/music/
 	fi
-	if [ -d "$final_path/code/data/music/" ]; then
-		rsync -a $final_path/code/data/music/ $datadir/music/
+	if [ -d "$install_dir/code/data/music/" ]; then
+		rsync -a $install_dir/code/data/music/ $data_dir/music/
 	fi
 	
-	ynh_secure_remove --file="$final_path/code"
-	ynh_secure_remove --file="$final_path/media"
-	ynh_secure_remove --file="$final_path/code/data/media"
-	ynh_secure_remove --file="$final_path/import"
-	ynh_secure_remove --file="$final_path/code/data/music"
+	ynh_secure_remove --file="$install_dir/code"
+	ynh_secure_remove --file="$install_dir/media"
+	ynh_secure_remove --file="$install_dir/static"
+	ynh_secure_remove --file="$install_dir/code/data/media"
+	ynh_secure_remove --file="$install_dir/import"
+	ynh_secure_remove --file="$install_dir/code/data/music"
 
-	ynh_app_setting_set --app=$app --key=datadir --value=$datadir
-
-	chmod 750 "$datadir"
-	chmod -R o-rwx "$datadir"
-	chown -R $app:www-data "$datadir"
+	chmod 750 "$data_dir/data/"
+	chmod -R o-rwx "$data_dir/data/"
+	chown -R $app:www-data "$data_dir/data/"
 	
 	upgrade_type="UPGRADE_APP"
 fi
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Making sure dedicated system user exists..." --weight=1
-
-# Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -156,23 +90,14 @@ if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
 	ynh_script_progression --message="Upgrading source files..." --weight=1
 
-	ynh_secure_remove --file="$final_path/api"
-	ynh_secure_remove --file="$final_path/front"
 	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$final_path/api" --source_id="api"
-	ynh_setup_source --dest_dir="$final_path/front" --source_id="front"
+	ynh_setup_source --dest_dir="$install_dir/api" --source_id="api"
+	ynh_setup_source --dest_dir="$install_dir/front" --source_id="front"
 fi
 
-chmod 750 "$final_path"
-chmod -R o-rwx "$final_path"
-chown -R $app:www-data "$final_path"
-
-#=================================================
-# UPGRADE DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Upgrading dependencies..." --weight=1
-
-ynh_install_app_dependencies $pkg_dependencies
+chmod 750 "$install_dir"
+chmod -R o-rwx "$install_dir"
+chown -R $app:www-data "$install_dir"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -189,15 +114,15 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Installing Python dependencies..." --weight=1
 
-pushd $final_path
-	ynh_secure_remove --file="$final_path/virtualenv"
-	python3 -m venv $final_path/virtualenv
-	source $final_path/virtualenv/bin/activate
+pushd $install_dir
+ynh_secure_remove --file="$install_dir/virtualenv"
+	python3 -m venv $install_dir/virtualenv
+	source $install_dir/virtualenv/bin/activate
 	pip install --upgrade pip
 	pip install --upgrade setuptools
-	ynh_exec_warn_less pip install wheel
+	ynh_exec_warn_less pip install wheel toml
 	# Workaround for error AttributeError: module 'lib' has no attribute 'X509_V_FLAG_CB_ISSUER_CHECK'
-	ynh_replace_string --match_string="pyOpenSSL~=20.0.1" --replace_string="pyOpenSSL~=21.0.0" --target_file="$final_path/api/requirements/base.txt"
+	ynh_replace_string --match_string="pyOpenSSL~=20.0.1" --replace_string="pyOpenSSL~=21.0.0" --target_file="$install_dir/api/requirements/base.txt"
 	ynh_exec_warn_less pip install -r api/requirements.txt
 popd
 
@@ -206,18 +131,18 @@ popd
 #=================================================
 ynh_script_progression --message="Updating a configuration file..." --weight=1
 
-ynh_add_config --template="../conf/env.prod" --destination="$final_path/config/.env"
+ynh_add_config --template="../conf/env.prod" --destination="$install_dir/config/.env"
 
-chmod 400 "$final_path/config/.env"
-chown $app:$app "$final_path/config/.env"
+chmod 400 "$install_dir/config/.env"
+chown $app:$app "$install_dir/config/.env"
 
 #=================================================
 # UPGRADE FUNKWHALE
 #=================================================
 ynh_script_progression --message="Upgrading Funkwhale..." --weight=1
 
-pushd $final_path
-	source $final_path/virtualenv/bin/activate
+pushd $install_dir
+	source $install_dir/virtualenv/bin/activate
 
 	echo "yes" | ynh_exec_warn_less python api/manage.py collectstatic --clear --noinput
 
@@ -227,9 +152,9 @@ pushd $final_path
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
 popd
 
-chmod 750 "$final_path"
-chmod -R o-rwx "$final_path"
-chown -R $app:www-data "$final_path"
+chmod 750 "$install_dir"
+chmod -R o-rwx "$install_dir"
+chown -R $app:www-data "$install_dir"
 
 #=================================================
 # SETUP SYSTEMD
@@ -271,13 +196,6 @@ ynh_script_progression --message="Reconfiguring Fail2Ban..." --weight=1
 
 # Create a dedicated Fail2Ban config
 ynh_add_fail2ban_config --logpath="/var/log/nginx/$domain-access.log" --failregex="<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" --max_retry=5
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-ynh_script_progression --message="Reloading NGINX web server..." --weight=1
-
-ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT
