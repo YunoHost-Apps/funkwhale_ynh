@@ -45,7 +45,6 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Creating a data directory..." --weight=1
 
-mkdir -p $data_dir/data
 mkdir -p $data_dir/{static,media,music}
 
 chmod 750 "$data_dir"

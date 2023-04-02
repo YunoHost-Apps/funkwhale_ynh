@@ -18,7 +18,7 @@ userdoc = "https://docs.funkwhale.audio/users/index.html"
 code = "https://dev.funkwhale.audio/funkwhale/funkwhale"
 
 [integration]
-yunohost = ">= 11.1.15"
+yunohost = ">= 11.1.16"
 architectures = "all"
 multi_instance = true
 ldap = false
@@ -64,6 +64,7 @@ ram.runtime = "50M"
     [resources.install_dir]
     
     [resources.data_dir]
+    subdirs = "data"
     group = "www-data:rx"
     
     [resources.permissions]
