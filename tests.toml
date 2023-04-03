@@ -1,0 +1,8 @@
+test_format = 1.0
+
+[default]
+
+    exclude = ["install.nourl"]
+
+    test_upgrade_from.7a50028.name = "Upgrade from 1.2.9"
+    test_upgrade_from.945e3d4.name = "Upgrade from 1.2.10~ynh1"

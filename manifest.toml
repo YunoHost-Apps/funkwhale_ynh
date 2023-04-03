@@ -1,0 +1,76 @@
+packaging_format = 2
+
+id = "funkwhale"
+name = "Funkwhale"
+description.en = "Convivial and modern music server"
+description.fr = "Serveur de musique moderne et convivial"
+
+version = "1.2.10~ynh3"
+
+maintainers = ["Ciarán Ainsworth"]
+
+[upstream]
+license = "AGPL-3.0-or-later"
+website = "https://funkwhale.audio/"
+demo = "https://demo.funkwhale.audio"
+admindoc = "https://docs.funkwhale.audio/admin/index.html"
+userdoc = "https://docs.funkwhale.audio/users/index.html"
+code = "https://dev.funkwhale.audio/funkwhale/funkwhale"
+
+[integration]
+yunohost = ">= 11.1.15"
+architectures = "all"
+multi_instance = true
+ldap = false
+sso = false
+disk = "50M"
+ram.build = "50M"
+ram.runtime = "50M"
+
+[install]
+    [install.domain]
+    type = "domain"
+    full_domain = true
+
+    [install.init_main_permission]
+    help.en = "If enabled, Funkwhale will be accessible by Funkwhale for Android and by users without a YunoHost account. This can be changed later in the webadmin."
+    help.fr = "Si cette case est cochée, Funkwhale sera accessible par Funkwhale for Android et par les utilisateurs n’ayant pas de compte YunoHost. Vous pourrez changer cela dans la webadmin."
+    type = "group"
+    default = "visitors"
+
+    [install.admin]
+    type = "user"
+
+[resources]
+    [resources.sources]
+        [resources.sources.api]
+        url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/1.2.10/download?job=build_api"
+        sha256 = "fc6f54d37993f74e057d1a59438e21b68a8cff1a7f9438415459ede7cf7f09d0"
+        in_subdir = true
+        extract   = true
+        format = "zip"
+
+        [resources.sources.front]
+        url = "https://dev.funkwhale.audio/funkwhale/funkwhale/builds/artifacts/1.2.10/download?job=build_front"
+        sha256 = "bcf0ba380295be58dfcfe4d88605cfce357859adf623c8236fb1182095c38bfd"
+        in_subdir = true
+        extract   = true
+        format = "zip"
+
+    [resources.ports]
+
+    [resources.system_user]
+
+    [resources.install_dir]
+    
+    [resources.data_dir]
+    group = "www-data:rx"
+    
+    [resources.permissions]
+    main.url = "/"
+
+    [resources.apt]
+    packages = "postgresql curl python3-pip python3-venv git unzip libldap2-dev libsasl2-dev gettext-base zlib1g-dev libffi-dev libssl-dev build-essential ffmpeg libjpeg-dev libmagic-dev libpq-dev python3-dev make zlib1g-dev libffi-dev libssl-dev"
+
+    [resources.database]
+    type = "postgresql"

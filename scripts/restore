@@ -11,82 +11,28 @@ source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# MANAGE SCRIPT FAILURE
-#=================================================
-
-ynh_clean_setup () {
-	true
-}
-# Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
-
-#=================================================
-# LOAD SETTINGS
-#=================================================
-ynh_script_progression --message="Loading installation settings..." --weight=1
-
-app=$YNH_APP_INSTANCE_NAME
-
-domain=$(ynh_app_setting_get --app=$app --key=domain)
-path_url=$(ynh_app_setting_get --app=$app --key=path)
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-db_user=$db_name
-datadir=$(ynh_app_setting_get --app=$app --key=datadir)
-
-#=================================================
-# CHECK IF THE APP CAN BE RESTORED
-#=================================================
-ynh_script_progression --message="Validating restoration parameters..." --weight=1
-
-test ! -d $final_path \
-	|| ynh_die --message="There is already a directory: $final_path "
-
-#=================================================
-# STANDARD RESTORATION STEPS
-#=================================================
-# RECREATE THE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Recreating the dedicated system user..." --weight=1
-
-# Create the dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir="$final_path"
-
-#=================================================
 # RESTORE THE APP MAIN DIR
 #=================================================
 ynh_script_progression --message="Restoring the app main directory..." --weight=1
 
-ynh_restore_file --origin_path="$final_path"
+ynh_restore_file --origin_path="$install_dir"
 
-chmod 750 "$final_path"
-chmod -R o-rwx "$final_path"
-chown -R $app:www-data "$final_path"
+chmod -R o-rwx "$install_dir"
+chown -R $app:www-data "$install_dir"
 
 #=================================================
 # RESTORE THE DATA DIRECTORY
 #=================================================
 ynh_script_progression --message="Restoring the data directory..." --weight=1
 
-ynh_restore_file --origin_path="$datadir" --not_mandatory
+ynh_restore_file --origin_path="$data_dir/" --not_mandatory
 
-mkdir -p $datadir
+mkdir -p $data_dir/data
+mkdir -p $data_dir/{static,media,music}
 
-mkdir -p $datadir/{static,media,music}
-
-chmod 750 "$datadir"
-chmod -R o-rwx "$datadir"
-chown -R $app:www-data "$datadir"
-
-#=================================================
-# SPECIFIC RESTORATION
-#=================================================
-# REINSTALL DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Reinstalling dependencies..." --weight=1
-
-# Define and install dependencies
-ynh_install_app_dependencies $pkg_dependencies
+chmod 750 "$data_dir/"
+chmod -R o-rwx "$data_dir/"
+chown -R $app:www-data "$data_dir/"
 
 #=================================================
 # RESTORE THE NGINX CONFIGURATION
@@ -100,9 +46,6 @@ ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 #=================================================
 ynh_script_progression --message="Restoring the PostgreSQL database..." --weight=1
 
-ynh_psql_test_if_first_run
-db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
-ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
 ynh_psql_execute_file_as_root --file="./db.sql" --database=$db_name
 
 #=================================================
