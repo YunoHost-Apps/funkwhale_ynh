@@ -29,7 +29,7 @@ ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="sy
 #=================================================
 # MOVE DATAS
 #=================================================
-
+<<commentName	test without this because outdated I think
 # If data_dir doesn't exist, create it
 if [ -z "$data_dir/" ]; then
 	# Do a full backup before moving datas
@@ -81,6 +81,7 @@ if [ -z "$data_dir/" ]; then
 	
 	upgrade_type="UPGRADE_APP"
 fi
+commentName
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
