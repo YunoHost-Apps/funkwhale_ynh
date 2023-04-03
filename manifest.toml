@@ -16,6 +16,7 @@ demo = "https://demo.funkwhale.audio"
 admindoc = "https://docs.funkwhale.audio/admin/index.html"
 userdoc = "https://docs.funkwhale.audio/users/index.html"
 code = "https://dev.funkwhale.audio/funkwhale/funkwhale"
+fund = "https://next.funkwhale.audio/donate/"
 
 [integration]
 yunohost = ">= 11.1.15"
