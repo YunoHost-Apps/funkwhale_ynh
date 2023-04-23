@@ -53,7 +53,7 @@ ram.runtime = "50M"
 
         [resources.sources.front]
         url = "https://dev.funkwhale.audio/funkwhale/funkwhale/builds/artifacts/1.2.10/download?job=build_front"
-        sha256 = "9fa6b373fd1baf0f4509eece67380c092dfb8889972db8018f9acc840284b011"
+        sha256 = "c8845317d1cc6aae7f46d1e69e22fa378c45b563e1ad1edd57d3db08af6f7a44"
         in_subdir = true
         extract   = true
         format = "zip"
