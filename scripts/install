@@ -88,7 +88,7 @@ ynh_script_progression --message="Installing Python dependencies..." --weight=1
 pushd $install_dir
 	python3 -m venv $install_dir/venv
 	source $install_dir/venv/bin/activate
-	ynh_exec_warn_less pip install --upgrade pip wheel
+	ynh_exec_warn_less pip install --upgrade pip wheel toml
 	ynh_exec_warn_less pip install --editable ./api
 popd
 
