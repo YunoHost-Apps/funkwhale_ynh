@@ -86,14 +86,10 @@ ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.serv
 ynh_script_progression --message="Installing Python dependencies..." --weight=1
 
 pushd $install_dir
-	python3 -m venv $install_dir/virtualenv
-	source $install_dir/virtualenv/bin/activate
-	pip install --upgrade pip
-	pip install --upgrade setuptools
-	ynh_exec_warn_less pip install wheel toml
-	# Workaround for error AttributeError: module 'lib' has no attribute 'X509_V_FLAG_CB_ISSUER_CHECK'
-	ynh_replace_string --match_string="pyOpenSSL~=20.0.1" --replace_string="pyOpenSSL~=21.0.0" --target_file="$install_dir/api/requirements/base.txt"
-	ynh_exec_warn_less pip install -r api/requirements.txt
+	python3 -m venv $install_dir/venv
+	source $install_dir/venv/bin/activate
+	ynh_exec_warn_less pip install --upgrade pip wheel
+	ynh_exec_warn_less pip install --editable ./api
 popd
 
 #=================================================
@@ -102,14 +98,14 @@ popd
 ynh_script_progression --message="Building funkwhale..." --weight=1
 
 pushd $install_dir
-	source $install_dir/virtualenv/bin/activate
+	source $install_dir/venv/bin/activate
 
 	# needed for enabling the 'unaccent' extension
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
-	ynh_exec_warn_less python api/manage.py migrate
+	ynh_exec_warn_less ynh_exec_as $app $install_dir/venv/bin/funkwhale-manage migrate
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
 	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | ynh_exec_warn_less python api/manage.py shell
-	echo "yes" | ynh_exec_warn_less python api/manage.py collectstatic
+	echo "yes" | ynh_exec_warn_less ynh_exec_as $app $install_dir/venv/bin/funkwhale-manage collectstatic
 popd
 
 chmod 750 "$install_dir"
