@@ -86,7 +86,7 @@ ynh_script_progression --message="Upgrading Funkwhale..." --weight=1
 pushd $install_dir
 	source $install_dir/venv/bin/activate
 
-	echo "yes" | ynh_exec_warn_less ynh_exec_as $app $install_dir/venv/bin/funkwhale-manage collectstatic --clear --noinput
+	echo "yes" | ynh_exec_warn_less $install_dir/venv/bin/funkwhale-manage collectstatic --clear --noinput
 
 	# needed for enabling the 'unaccent' extension
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
