@@ -39,7 +39,7 @@ ynh_add_config --template="../conf/env.prod" --destination="$install_dir/config/
 # MODIFY THE FEDERATION 
 #=================================================
 
-source $install_dir/virtualenv/bin/activate
+source $install_dir/venv/bin/activate
 ynh_exec_warn_less ynh_exec_as $app $install_dir/venv/bin/funkwhale-manage fix_federation_ids https://$old_domain https://$new_domain --no-dry-run --no-input
 
 #=================================================
