@@ -59,15 +59,13 @@ ynh_add_nginx_config
 ynh_script_progression --message="Installing Python dependencies..." --weight=1
 
 pushd $install_dir
-ynh_secure_remove --file="$install_dir/virtualenv"
-	python3 -m venv $install_dir/virtualenv
-	source $install_dir/virtualenv/bin/activate
-	pip install --upgrade pip
-	pip install --upgrade setuptools
-	ynh_exec_warn_less pip install wheel toml
-	# Workaround for error AttributeError: module 'lib' has no attribute 'X509_V_FLAG_CB_ISSUER_CHECK'
-	ynh_replace_string --match_string="pyOpenSSL~=20.0.1" --replace_string="pyOpenSSL~=21.0.0" --target_file="$install_dir/api/requirements/base.txt"
-	ynh_exec_warn_less pip install -r api/requirements.txt
+	ynh_secure_remove --file="$install_dir/virtualenv"
+	ynh_secure_remove --file="$install_dir/venv"
+	
+	python3 -m venv $install_dir/venv
+	source $install_dir/venv/bin/activate
+	ynh_exec_warn_less pip install --upgrade pip wheel toml
+	ynh_exec_warn_less pip install --editable ./api
 popd
 
 #=================================================
@@ -86,13 +84,13 @@ chown $app:$app "$install_dir/config/.env"
 ynh_script_progression --message="Upgrading Funkwhale..." --weight=1
 
 pushd $install_dir
-	source $install_dir/virtualenv/bin/activate
+	source $install_dir/venv/bin/activate
 
-	echo "yes" | ynh_exec_warn_less python api/manage.py collectstatic --clear --noinput
+	echo "yes" | ynh_exec_warn_less $install_dir/venv/bin/funkwhale-manage collectstatic --clear --noinput
 
 	# needed for enabling the 'unaccent' extension
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
-	ynh_exec_warn_less python api/manage.py migrate
+	ynh_exec_warn_less ynh_exec_as $app $install_dir/venv/bin/funkwhale-manage migrate
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
 popd
 

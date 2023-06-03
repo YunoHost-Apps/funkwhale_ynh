@@ -8,7 +8,7 @@ User=__APP__
 Group=__APP__
 WorkingDirectory=__INSTALL_DIR__/api
 EnvironmentFile=__INSTALL_DIR__/config/.env
-ExecStart=__INSTALL_DIR__/virtualenv/bin/celery -A funkwhale_api.taskapp beat -l INFO
+ExecStart=__INSTALL_DIR__/venv/bin/celery -A funkwhale_api.taskapp beat -l INFO
 
 # Sandboxing options to harden security
 # Depending on specificities of your service/app, you may need to tweak these
