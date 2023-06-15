@@ -8,7 +8,16 @@ User=__APP__
 Group=__APP__
 WorkingDirectory=__INSTALL_DIR__/api
 EnvironmentFile=__INSTALL_DIR__/config/.env
-ExecStart=__INSTALL_DIR__/venv/bin/gunicorn config.asgi:application -w ${FUNKWHALE_WEB_WORKERS} -k uvicorn.workers.UvicornWorker -b ${FUNKWHALE_API_IP}:${FUNKWHALE_API_PORT}
+
+Type=notify
+KillMode=mixed
+ExecStart=__INSTALL_DIR__/venv/bin/gunicorn \
+    config.asgi:application \
+    --workers ${FUNKWHALE_WEB_WORKERS} \
+    --worker-class uvicorn.workers.UvicornWorker \
+    --bind ${FUNKWHALE_API_IP}:${FUNKWHALE_API_PORT}
+ExecReload=/bin/kill -s HUP $MAINPID
+
 
 # Denying access to capabilities that should not be relevant for webapps
 # Doc: https://man7.org/linux/man-pages/man7/capabilities.7.html

@@ -33,6 +33,10 @@ ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="sy
 if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
 	ynh_script_progression --message="Upgrading source files..." --weight=1
+	
+	# Remove the old files
+	ynh_secure_remove --file="$install_dir/api"
+	ynh_secure_remove --file="$install_dir/api"
 
 	# Download, check integrity, uncompress and patch the source from app.src
 	ynh_setup_source --dest_dir="$install_dir/api" --source_id="api"
@@ -50,6 +54,15 @@ ynh_script_progression --message="Upgrading NGINX web server configuration..." -
 
 # Create a dedicated NGINX config
 ynh_add_nginx_config
+
+#=================================================
+# Assure correct permissions to $data_dir
+#=================================================
+ynh_script_progression --message="Assure correct permissions to $data_dir..." --weight=1
+
+chmod 750 "$data_dir"
+chmod -R o-rwx "$data_dir/"
+chown -R $app:www-data "$data_dir/"
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -90,6 +103,7 @@ pushd $install_dir
 
 	# needed for enabling the 'unaccent' extension
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
+
 	ynh_exec_warn_less ynh_exec_as $app $install_dir/venv/bin/funkwhale-manage migrate
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
 popd
