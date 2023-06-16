@@ -5,7 +5,6 @@ PartOf=__APP__.target
 
 [Service]
 User=__APP__
-Group=www-data
 WorkingDirectory=__INSTALL_DIR__/api
 EnvironmentFile=__INSTALL_DIR__/config/.env
 
