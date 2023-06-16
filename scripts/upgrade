@@ -64,7 +64,7 @@ chmod 750 "$data_dir"
 chmod -R o-rwx "$data_dir/"
 chown -R $app:www-data "$data_dir/"
 #following line is to be sure that the directory has appropriate owner rights (as above commands doesn’t seem to have an effect)
-chown -R $app:www-data "$data_dir/data/media/tracks"
+#chown -R $app:www-data "$data_dir/data/media/tracks"
 
 #=================================================
 # SPECIFIC UPGRADE
