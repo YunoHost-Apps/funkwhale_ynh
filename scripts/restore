@@ -28,7 +28,7 @@ ynh_script_progression --message="Restoring the data directory..." --weight=1
 ynh_restore_file --origin_path="$data_dir/" --not_mandatory
 
 mkdir -p $data_dir/data
-mkdir -p $data_dir/{static,media,music}
+mkdir -p $data_dir/data/{static,media,music}
 
 chmod 750 "$data_dir/"
 chmod -R o-rwx "$data_dir/"
