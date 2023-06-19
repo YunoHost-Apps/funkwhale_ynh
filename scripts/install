@@ -50,7 +50,7 @@ mkdir -p $data_dir/data/{static,media,music}
 
 chmod 750 "$data_dir"
 chmod -R o-rwx "$data_dir/"
-chown -R $app:www-data "$data_dir/"
+chown -R $app:$app "$data_dir/"
 
 #=================================================
 # ADD A CONFIGURATION
@@ -110,7 +110,7 @@ popd
 
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
-chown -R $app:www-data "$install_dir"
+chown -R $app:$app "$install_dir"
 
 #=================================================
 # GENERIC FINALIZATION
