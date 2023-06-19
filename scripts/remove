@@ -59,6 +59,17 @@ ynh_script_progression --message="Removing NGINX web server configuration..." --
 ynh_remove_nginx_config
 
 #=================================================
+# REMOVE LOGS
+#=================================================
+ynh_script_progression --message="Removing logs..."  --weight=5
+
+ynh_remove_logrotate
+
+# Remove the log files
+ynh_secure_remove --file="/var/log/$app"
+
+
+#=================================================
 # REMOVE FAIL2BAN CONFIGURATION
 #=================================================
 ynh_script_progression --message="Removing Fail2Ban configuration..." --weight=1
