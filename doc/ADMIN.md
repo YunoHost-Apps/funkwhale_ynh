@@ -6,6 +6,6 @@
 
 To add a collection of music files to a library in your YunoHost installation of Funkwhale, create a symlink to your collection titled "music" in `__DATA_DIR__/data`
 ```console
-foo@bar:~$sudo ln -s /your/music/collection __DATA_DIR__/data/music
+sudo ln -s /your/music/collection __DATA_DIR__/data/music
 ```
 The files can then be added to your library from the *uploading* tab in a music library under the heading **Import music from your server**.
