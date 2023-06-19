@@ -17,7 +17,7 @@ ExecStart=__INSTALL_DIR__/venv/bin/gunicorn \
     --worker-class uvicorn.workers.UvicornWorker \
     --bind ${FUNKWHALE_API_IP}:${FUNKWHALE_API_PORT}
     --timeout 120
-    --error-logfile /var/log/__APP__/__APP__.log
+    --error-logfile /var/log/__APP__/__APP__-server.log
 ExecReload=/bin/kill -s HUP $MAINPID
 
 
