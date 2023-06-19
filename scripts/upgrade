@@ -62,9 +62,7 @@ ynh_script_progression --message="Assure correct permissions to $data_dir..." --
 
 chmod 750 "$data_dir"
 chmod -R o-rwx "$data_dir/"
-chown -R $app:www-data "$data_dir/"
-#following line is to be sure that the directory has appropriate owner rights (as above commands doesn’t seem to have an effect)
-#chown -R $app:www-data "$data_dir/data/media/tracks"
+chown -R $app:$app "$data_dir/"
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -112,7 +110,7 @@ popd
 
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
-chown -R $app:www-data "$install_dir"
+chown -R $app:$app "$install_dir"
 
 #=================================================
 # SETUP SYSTEMD
