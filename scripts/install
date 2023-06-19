@@ -26,10 +26,6 @@ ynh_setup_source --dest_dir="$install_dir/front" --source_id="front"
 
 mkdir -p $install_dir/config
 
-chmod 750 "$install_dir"
-chmod -R o-rwx "$install_dir"
-chown -R $app:$app "$install_dir"
-
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
@@ -110,7 +106,7 @@ popd
 
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
-chown -R $app:$app "$install_dir"
+chown -R $app:www-data "$install_dir"
 
 #=================================================
 # LOGROTATE
