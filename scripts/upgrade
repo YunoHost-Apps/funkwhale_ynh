@@ -132,9 +132,9 @@ ynh_script_progression --message="Upgrading systemd configuration..." --weight=1
 ynh_add_config --template="../conf/funkwhale.target" --destination="/etc/systemd/system/$app.target"
 
 # Create a dedicated systemd config
-ynh_add_systemd_config --service="${app}-server" --template="funkwhale-server.service" --log="/var/log/__APP__/__APP__-server.log"
-ynh_add_systemd_config --service="${app}-worker" --template="funkwhale-worker.service" --log="/var/log/__APP__/__APP__-worker.log"
-ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.service" --log="/var/log/__APP__/__APP__-beat.log"
+ynh_add_systemd_config --service="${app}-server" --template="funkwhale-server.service"
+ynh_add_systemd_config --service="${app}-worker" --template="funkwhale-worker.service"
+ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.service"
 
 #=================================================
 # GENERIC FINALIZATION
@@ -143,9 +143,9 @@ ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.serv
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
-yunohost service add "${app}-beat"
-yunohost service add "${app}-server"
-yunohost service add "${app}-worker"
+yunohost service add "${app}-beat" --description="__APP__ celery beat process" --log="/var/log/__APP__/__APP__-beat.log"
+yunohost service add "${app}-server" --description="__APP__ application server" --log="/var/log/__APP__/__APP__-server.log"
+yunohost service add "${app}-worker" --description="__APP__ celery worker" --log="/var/log/__APP__/__APP__-worker.log"
 
 #=================================================
 # START SYSTEMD SERVICE
