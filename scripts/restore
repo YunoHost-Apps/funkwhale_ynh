@@ -49,6 +49,18 @@ ynh_script_progression --message="Restoring the PostgreSQL database..." --weight
 ynh_psql_execute_file_as_root --file="./db.sql" --database=$db_name
 
 #=================================================
+# LOGROTATE
+#=================================================
+ynh_script_progression --message="Configuring logrotate to manage application logfiles" --weight=1
+
+# Use logrotate to manage application logfile(s)
+ynh_use_logrotate --specific_user=$app
+touch /var/log/$app/${app}-server.log
+touch /var/log/$app/${app}-worker.log
+touch /var/log/$app/${app}-beat.log
+chown -R $app:$app /var/log/$app/
+
+#=================================================
 # RESTORE SYSTEMD
 #=================================================
 ynh_script_progression --message="Restoring the systemd configuration..." --weight=1
