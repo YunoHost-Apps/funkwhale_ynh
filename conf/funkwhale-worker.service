@@ -15,7 +15,6 @@ ExecStart=__INSTALL_DIR__/venv/bin/celery \
     worker \
     --loglevel INFO \
     --concurrency=${CELERYD_CONCURRENCY}
-    --error-logfile /var/log/__APP__/__APP__-worker.log
 
 # Sandboxing options to harden security
 # Depending on specificities of your service/app, you may need to tweak these

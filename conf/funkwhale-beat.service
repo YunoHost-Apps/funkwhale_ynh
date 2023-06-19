@@ -13,7 +13,6 @@ ExecStart=__INSTALL_DIR__/venv/bin/celery \
     --app funkwhale_api.taskapp \
     beat \
     --loglevel INFO
-    --error-logfile /var/log/__APP__/__APP__-beat.log
 
 # Sandboxing options to harden security
 # Depending on specificities of your service/app, you may need to tweak these
