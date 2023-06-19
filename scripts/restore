@@ -83,9 +83,9 @@ ynh_add_systemd_config --service="${app}-server" --template="funkwhale-server.se
 ynh_add_systemd_config --service="${app}-worker" --template="funkwhale-worker.service"
 ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.service"
 
-yunohost service add "${app}-beat" --description="__APP__ celery beat process" --log="/var/log/__APP__/__APP__-beat.log"
-yunohost service add "${app}-server" --description="__APP__ application server" --log="/var/log/__APP__/__APP__-server.log"
-yunohost service add "${app}-worker" --description="__APP__ celery worker" --log="/var/log/__APP__/__APP__-worker.log"
+yunohost service add "${app}-beat" --description="${app} celery beat process" --log="/var/log/$app/${app}-beat.log"
+yunohost service add "${app}-server" --description="${app} application server" --log="/var/log/$app/${app}-server.log"
+yunohost service add "${app}-worker" --description="${app} celery worker" --log="/var/log/$app/${app}-worker.log"
 
 #=================================================
 # START SYSTEMD SERVICE
