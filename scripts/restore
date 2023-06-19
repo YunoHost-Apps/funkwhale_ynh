@@ -79,9 +79,9 @@ systemctl enable "${app}-worker.service" --quiet
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
-yunohost service add "${app}-beat"
-yunohost service add "${app}-server"
-yunohost service add "${app}-worker"
+ynh_add_systemd_config --service="${app}-server" --template="funkwhale-server.service" --log="/var/log/__APP__/__APP__-server.log"
+ynh_add_systemd_config --service="${app}-worker" --template="funkwhale-worker.service" --log="/var/log/__APP__/__APP__-worker.log"
+ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.service" --log="/var/log/__APP__/__APP__-beat.log"
 
 #=================================================
 # START SYSTEMD SERVICE
