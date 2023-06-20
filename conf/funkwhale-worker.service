@@ -6,7 +6,6 @@ PartOf=__APP__.target
 [Service]
 User=__APP__
 Group=__APP__
-StandardOutput=append:/var/log/__APP__/__APP__-worker.log
 WorkingDirectory=__INSTALL_DIR__/api
 Environment="CELERYD_CONCURRENCY=0"
 EnvironmentFile=__INSTALL_DIR__/config/.env
