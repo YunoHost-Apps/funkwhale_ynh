@@ -47,9 +47,9 @@ ynh_exec_warn_less ynh_exec_as $app $install_dir/venv/bin/funkwhale-manage fix_f
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --weight=1
 
-ynh_systemd_action --service_name="$app-beat" --action="start" --log_path="/var/log/$app/$app.log"
-ynh_systemd_action --service_name="$app-server" --action="start" --log_path="/var/log/$app/$app.log"
-ynh_systemd_action --service_name="$app-worker" --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="$app-beat" --action="start" --log_path="/var/log/$app/${app}-beat.log"
+ynh_systemd_action --service_name="$app-server" --action="start" --log_path="/var/log/$app/${app}-server.log"
+ynh_systemd_action --service_name="$app-worker" --action="start" --log_path="/var/log/$app/${app}-worker.log"
 
 #=================================================
 # END OF SCRIPT
