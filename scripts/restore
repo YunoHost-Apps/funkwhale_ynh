@@ -32,7 +32,7 @@ mkdir -p $data_dir/data/{static,media,music}
 
 chmod 750 "$data_dir/"
 chmod -R o-rwx "$data_dir/"
-chown -R $app:$app "$data_dir/"
+chown -R $app:www-data "$data_dir/"
 
 #=================================================
 # RESTORE THE NGINX CONFIGURATION
