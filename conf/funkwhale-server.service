@@ -16,8 +16,8 @@ ExecStart=__INSTALL_DIR__/venv/bin/gunicorn \
     config.asgi:application \
     --workers ${FUNKWHALE_WEB_WORKERS} \
     --worker-class uvicorn.workers.UvicornWorker \
-    --bind ${FUNKWHALE_API_IP}:${FUNKWHALE_API_PORT}
-    --timeout 120
+    --bind ${FUNKWHALE_API_IP}:${FUNKWHALE_API_PORT} \
+    --timeout 120 \
     --error-logfile /var/log/__APP__/__APP__-worker.log
 ExecReload=/bin/kill -s HUP $MAINPID
 
