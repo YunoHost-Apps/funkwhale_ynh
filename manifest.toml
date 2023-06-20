@@ -5,7 +5,11 @@ name = "Funkwhale"
 description.en = "Convivial and modern music server"
 description.fr = "Serveur de musique moderne et convivial"
 
+
 version = "1.3.0~ynh4"
+
+
+
 
 maintainers = ["Thovi98"]
 

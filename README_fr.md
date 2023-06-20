@@ -18,7 +18,17 @@ Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) po
 
 Funkwhale est un projet communautaire qui vous permet d'écouter et de partager de la musique et de l'audio au sein d'un réseau ouvert et décentralisé. 
 
-**Version incluse :** 1.3.0~ynh4
+
+**Version incluse :** 1.3.0~ynh4
+
+
+
+
+
+
+
+
+
 
 **Démo :** https://demo.funkwhale.audio
 
