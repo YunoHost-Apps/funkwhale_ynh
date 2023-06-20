@@ -33,15 +33,15 @@ ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="sy
 if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
 	ynh_script_progression --message="Upgrading source files..." --weight=1
+	
+	# Remove the old files
+	ynh_secure_remove --file="$install_dir/api"
+	ynh_secure_remove --file="$install_dir/front"
 
 	# Download, check integrity, uncompress and patch the source from app.src
 	ynh_setup_source --dest_dir="$install_dir/api" --source_id="api"
 	ynh_setup_source --dest_dir="$install_dir/front" --source_id="front"
 fi
-
-chmod 750 "$install_dir"
-chmod -R o-rwx "$install_dir"
-chown -R $app:www-data "$install_dir"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -50,6 +50,15 @@ ynh_script_progression --message="Upgrading NGINX web server configuration..." -
 
 # Create a dedicated NGINX config
 ynh_add_nginx_config
+
+#=================================================
+# Assure correct permissions to $data_dir
+#=================================================
+ynh_script_progression --message="Assure correct permissions to $data_dir..." --weight=1
+
+chmod 750 "$data_dir"
+chmod -R o-rwx "$data_dir/"
+chown -R $app:$app "$data_dir/"
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -90,6 +99,7 @@ pushd $install_dir
 
 	# needed for enabling the 'unaccent' extension
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
+
 	ynh_exec_warn_less ynh_exec_as $app $install_dir/venv/bin/funkwhale-manage migrate
 	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
 popd
@@ -97,6 +107,18 @@ popd
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
 chown -R $app:www-data "$install_dir"
+
+#=================================================
+# LOGROTATE
+#=================================================
+ynh_script_progression --message="Configuring logrotate to manage application logfiles" --weight=1
+
+# Use logrotate to manage application logfile(s)
+ynh_use_logrotate --specific_user=$app
+touch /var/log/$app/${app}-server.log
+touch /var/log/$app/${app}-worker.log
+touch /var/log/$app/${app}-beat.log
+chown -R $app:$app /var/log/$app/
 
 #=================================================
 # SETUP SYSTEMD
@@ -117,9 +139,9 @@ ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.serv
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
-yunohost service add "${app}-beat"
-yunohost service add "${app}-server"
-yunohost service add "${app}-worker"
+yunohost service add "${app}-beat" --description="${app} celery beat process" --log="/var/log/$app/${app}-beat.log"
+yunohost service add "${app}-server" --description="${app} application server" --log="/var/log/$app/${app}-server.log"
+yunohost service add "${app}-worker" --description="${app} celery worker" --log="/var/log/$app/${app}-worker.log"
 
 #=================================================
 # START SYSTEMD SERVICE

@@ -28,11 +28,11 @@ ynh_script_progression --message="Restoring the data directory..." --weight=1
 ynh_restore_file --origin_path="$data_dir/" --not_mandatory
 
 mkdir -p $data_dir/data
-mkdir -p $data_dir/{static,media,music}
+mkdir -p $data_dir/data/{static,media,music}
 
 chmod 750 "$data_dir/"
 chmod -R o-rwx "$data_dir/"
-chown -R $app:www-data "$data_dir/"
+chown -R $app:$app "$data_dir/"
 
 #=================================================
 # RESTORE THE NGINX CONFIGURATION
@@ -47,6 +47,18 @@ ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 ynh_script_progression --message="Restoring the PostgreSQL database..." --weight=1
 
 ynh_psql_execute_file_as_root --file="./db.sql" --database=$db_name
+
+#=================================================
+# LOGROTATE
+#=================================================
+ynh_script_progression --message="Configuring logrotate to manage application logfiles" --weight=1
+
+# Use logrotate to manage application logfile(s)
+ynh_use_logrotate --specific_user=$app
+touch /var/log/$app/${app}-server.log
+touch /var/log/$app/${app}-worker.log
+touch /var/log/$app/${app}-beat.log
+chown -R $app:$app /var/log/$app/
 
 #=================================================
 # RESTORE SYSTEMD
@@ -67,9 +79,13 @@ systemctl enable "${app}-worker.service" --quiet
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
 
-yunohost service add "${app}-beat"
-yunohost service add "${app}-server"
-yunohost service add "${app}-worker"
+ynh_add_systemd_config --service="${app}-server" --template="funkwhale-server.service"
+ynh_add_systemd_config --service="${app}-worker" --template="funkwhale-worker.service"
+ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.service"
+
+yunohost service add "${app}-beat" --description="${app} celery beat process" --log="/var/log/$app/${app}-beat.log"
+yunohost service add "${app}-server" --description="${app} application server" --log="/var/log/$app/${app}-server.log"
+yunohost service add "${app}-worker" --description="${app} celery worker" --log="/var/log/$app/${app}-worker.log"
 
 #=================================================
 # START SYSTEMD SERVICE
