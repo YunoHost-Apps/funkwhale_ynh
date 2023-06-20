@@ -58,7 +58,7 @@ ynh_script_progression --message="Assure correct permissions to $data_dir..." --
 
 chmod 750 "$data_dir"
 chmod -R o-rwx "$data_dir/"
-chown -R $app:$app "$data_dir/"
+chown -R $app:www-data "$data_dir/"
 
 #=================================================
 # SPECIFIC UPGRADE
