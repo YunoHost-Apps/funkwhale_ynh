@@ -31,7 +31,6 @@ ram.runtime = "50M"
 [install]
     [install.domain]
     type = "domain"
-    full_domain = true
 
     [install.init_main_permission]
     help.en = "If enabled, Funkwhale will be accessible by Funkwhale for Android and by users without a YunoHost account. This can be changed later in the webadmin."
@@ -46,14 +45,14 @@ ram.runtime = "50M"
     [resources.sources]
         [resources.sources.api]
         url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/1.3.1/download?job=build_api"
-        sha256 = "c662458cc40e48a3cf2599bb937c4621249a543fe9d4a10e3878ef8eff9a424a"
+        sha256 = "22c6cf75397d860d39d4f014b2f0b5f09c3aab3fb6768c13f1aaa3ed831e4649"
         in_subdir = true
         extract   = true
         format = "zip"
 
         [resources.sources.front]
-        url = "https://dev.funkwhale.audio/funkwhale/funkwhale/builds/artifacts/1.3.1/download?job=build_front"
-        sha256 = "a5ac6749a36593d475c834506709b7a60422a2935eba9c2772253bb15116170f"
+        url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/1.3.1/download?job=build_front"
+        sha256 = "9c26b043fa88a8993b25a700376241239bec4a31c34725c63095d03f18a82a82"
         in_subdir = true
         extract   = true
         format = "zip"
@@ -65,7 +64,6 @@ ram.runtime = "50M"
     [resources.install_dir]
     
     [resources.data_dir]
-    group = "www-data:rx"
     
     [resources.permissions]
     main.url = "/"
