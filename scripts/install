@@ -81,6 +81,25 @@ ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.serv
 #=================================================
 ynh_script_progression --message="Installing Python dependencies..." --weight=1
 
+if [ $YNH_ARCH == "armhf" ] || [ $YNH_ARCH == "armel" ]
+then
+# Install rustup is not already installed
+# We need this to be able to install cryptgraphy
+export PATH="$PATH:$install_dir/.cargo/bin:$install_dir/.local/bin:/usr/local/sbin"
+if [ -e $install_dir/.rustup ]; then
+    sudo -u "$app" env PATH=$PATH rustup update
+else
+    sudo -u "$app" bash -c 'curl -sSf -L https://static.rust-lang.org/rustup.sh | sh -s -- -y --default-toolchain=stable --profile=minimal'
+fi
+
+# setup python venv ...
+
+pip install --upgrade setuptools
+sudo -u $app env PATH=$PATH pip3 install --upgrade 'cryptography>=3.3.2'
+ynh_replace_string --match_string="pyOpenSSL~=20.0.1" --replace_string="pyOpenSSL~=21.0.0" --target_file="$install_dir/api/requirements/base.txt"
+fi
+
+
 pushd $install_dir
 	python3 -m venv $install_dir/venv
 	source $install_dir/venv/bin/activate
