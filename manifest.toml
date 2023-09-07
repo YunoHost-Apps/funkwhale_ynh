@@ -5,7 +5,7 @@ name = "Funkwhale"
 description.en = "Convivial and modern music server"
 description.fr = "Serveur de musique moderne et convivial"
 
-version = "1.3.2~ynh1"
+version = "1.3.3~ynh1"
 
 maintainers = ["Thovi98"]
 
@@ -44,15 +44,15 @@ ram.runtime = "50M"
 [resources]
     [resources.sources]
         [resources.sources.api]
-        url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/1.3.2/download?job=build_api"
-        sha256 = "c821e5cc291eaec144d8b65410c3db0f0391b1fe888b924aca7703436ad9eaab"
+        url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/1.3.3/download?job=build_api"
+        sha256 = "768eb6706f0f80a59373a8fa30d6808917f8a3f007c391677661e7262a831fae"
         in_subdir = true
         extract   = true
         format = "zip"
 
         [resources.sources.front]
-        url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/1.3.2/download?job=build_front"
-        sha256 = "29fda241b303d1935df663071d5bb45a287db5e5b185eae166e17e3f6ae08b43"
+        url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/1.3.3/download?job=build_front"
+        sha256 = "23252a19ba75ea9e1d25948c004bed7ded396cb3a0b754ff99851776684cac39"
         in_subdir = true
         extract   = true
         format = "zip"
