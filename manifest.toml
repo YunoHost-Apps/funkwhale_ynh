@@ -19,7 +19,7 @@ code = "https://dev.funkwhale.audio/funkwhale/funkwhale"
 fund = "https://next.funkwhale.audio/donate/"
 
 [integration]
-yunohost = ">= 11.1.21"
+yunohost = ">= 11.2"
 architectures = "all"
 multi_instance = true
 ldap = true
@@ -69,7 +69,7 @@ ram.runtime = "50M"
     main.url = "/"
 
     [resources.apt]
-    packages = "build-essential curl ffmpeg libjpeg-dev libmagic-dev libpq-dev postgresql postgresql-client postgresql-contrib python3-dev libldap2-dev libsasl2-dev make unzip zlib1g-dev libffi-dev libssl-dev libxml2-dev libxslt1-dev libjpeg-dev redis-server python3-venv git"
+    packages = "build-essential, curl, ffmpeg, libjpeg-dev, libmagic-dev, libpq-dev, postgresql, postgresql-client, postgresql-contrib, python3-dev, libldap2-dev, libsasl2-dev, make, unzip, zlib1g-dev, libffi-dev, libssl-dev, libxml2-dev, libxslt1-dev, libjpeg-dev, python3-venv, git"
 
     [resources.database]
     type = "postgresql"
