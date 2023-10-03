@@ -6,6 +6,6 @@ test_format = 1.0
 
     test_upgrade_from.7a50028.name = "1.2.9"
     test_upgrade_from.ae7b6c5.name = "1.2.10"
-    test_uprgade_from.9058c1b.name = "1.3.1"
-    test_uprgade_from.fefe575.name = "1.3.2"
+    test_upgrade_from.9058c1b.name = "1.3.1"
+    test_upgrade_from.fefe575.name = "1.3.2"
 
