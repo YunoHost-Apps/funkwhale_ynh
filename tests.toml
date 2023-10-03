@@ -2,7 +2,7 @@ test_format = 1.0
 
 [default]
 
-    exclude = ["install.nourl"]
+   # exclude = ["install.nourl"]
 
     test_upgrade_from.7a50028.name = "1.2.9"
     test_upgrade_from.ae7b6c5.name = "1.2.10"
