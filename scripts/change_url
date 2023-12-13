@@ -25,14 +25,15 @@ ynh_systemd_action --service_name="$app-worker" --action=stop --log_path="/var/l
 #=================================================
 ynh_script_progression --message="Updating NGINX web server configuration..." --weight=1
 
+domain=$new_domain
 ynh_change_url_nginx_config
+ynh_add_config --template="funkwhale_proxy.conf" --destination="/etc/nginx/conf.d/$domain.d/funkwhale_proxy.conf"
 
 #=================================================
 # MODIFY THE CONFIG FILE
 #=================================================
 ynh_script_progression --message="Modifying a config file..." --weight=1
 
-domain=$new_domain
 ynh_add_config --template="../conf/env.prod" --destination="$install_dir/config/.env"
 
 #=================================================
