@@ -45,7 +45,7 @@ ram.runtime = "50M"
     [resources.sources]
         [resources.sources.api]
         url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/1.4.0/download?job=build_api"
-        sha256 = "8a05e3cab5c698cb89a23e1cd8b95c0e0ce2a2bea1580e1ec59364a07a870cd5"
+        sha256 = "e1c3d49da0e03545ff96f584d7c437fa333d7836b1a70c54b31ba5db3e1a2ae1"
         in_subdir = true
         extract   = true
         format = "zip"
