@@ -32,6 +32,7 @@ mkdir -p $install_dir/config
 ynh_script_progression --message="Configuring NGINX web server..." --weight=1
 
 # Create a dedicated NGINX config
+ynh_add_config --template="funkwhale_proxy.conf" --destination="/etc/nginx/conf.d/$domain.d/funkwhale_proxy.conf"
 ynh_add_nginx_config
 
 #=================================================

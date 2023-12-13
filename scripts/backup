@@ -31,7 +31,7 @@ ynh_backup --src_path="$data_dir" --is_big
 # BACKUP THE NGINX CONFIGURATION
 #=================================================
 
-ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
+ynh_backup --src_path="/etc/nginx/conf.d/$domain.d"
 
 #=================================================
 # BACKUP FAIL2BAN CONFIGURATION
