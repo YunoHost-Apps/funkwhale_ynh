@@ -56,8 +56,8 @@ ynh_secure_remove --file="/etc/systemd/system/$app.target"
 ynh_script_progression --message="Removing NGINX web server configuration..." --weight=1
 
 # Remove the dedicated NGINX config
-ynh_remove_nginx_config
 ynh_secure_remove --file="/etc/nginx/conf.d/$domain.d/funkwhale_proxy.conf"
+ynh_remove_nginx_config
 
 #=================================================
 # REMOVE LOGS
