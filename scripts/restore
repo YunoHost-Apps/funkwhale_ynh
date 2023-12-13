@@ -39,7 +39,7 @@ chown -R $app:www-data "$data_dir/"
 #=================================================
 ynh_script_progression --message="Restoring the NGINX web server configuration..." --weight=1
 
-ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
+ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d"
 
 #=================================================
 # RESTORE THE POSTGRESQL DATABASE
