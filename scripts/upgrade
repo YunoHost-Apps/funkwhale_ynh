@@ -22,9 +22,9 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..." --weight=1
 
-ynh_systemd_action --action="stop" --service_name="${app}-beat" --log_path="systemd" --line_match="Stopped"
-ynh_systemd_action --action="stop" --service_name="${app}-server" --log_path="systemd" --line_match="Stopped"
-ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="systemd" --line_match="Stopped"
+ynh_systemd_action --action="stop" --service_name="${app}-beat" --log_path="systemd"
+ynh_systemd_action --action="stop" --service_name="${app}-server" --log_path="systemd"
+ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="systemd"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -162,7 +162,7 @@ yunohost service add "${app}-worker" --description="${app} celery worker" --log=
 ynh_script_progression --message="Starting a systemd service..." --weight=1
 
 # Start a systemd service
-ynh_systemd_action --service_name="${app}-beat" --action="start" --log_path="systemd" --line_match="Started"
+ynh_systemd_action --service_name="${app}-beat" --action="start" --log_path="systemd"
 ynh_systemd_action --service_name="${app}-server" --action="start" --log_path="systemd" --line_match="Application startup complete"
 ynh_systemd_action --service_name="${app}-worker" --action="start" --log_path="systemd" --line_match="ready"
 

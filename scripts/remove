@@ -39,9 +39,9 @@ fi
 #=================================================
 ynh_script_progression --message="Stopping and removing the systemd service..." --weight=1
 
-ynh_systemd_action --service_name="${app}-beat" --action="stop" --log_path="systemd" --line_match="Stopped $app"
-ynh_systemd_action --service_name="${app}-server" --action="stop" --log_path="systemd" --line_match="Stopped $app"
-ynh_systemd_action --service_name="${app}-worker" --action="stop" --log_path="systemd" --line_match="Stopped $app"
+ynh_systemd_action --service_name="${app}-beat" --action="stop" --log_path="systemd"
+ynh_systemd_action --service_name="${app}-server" --action="stop" --log_path="systemd"
+ynh_systemd_action --service_name="${app}-worker" --action="stop" --log_path="systemd"
 
 # Remove the dedicated systemd config
 ynh_remove_systemd_config --service="${app}-beat"
