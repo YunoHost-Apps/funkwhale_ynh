@@ -61,8 +61,8 @@ ram.runtime = "50M"
         format = "zip"
 
         autoupdate.strategy = "latest_gitlab_release"
-        autoupdate.asset.api = "api.*"
-        autoupdate.asset.front = "front.*"
+       # autoupdate.asset.api = "api.*"
+       # autoupdate.asset.front = "front.*"
 
     [resources.ports]
 
