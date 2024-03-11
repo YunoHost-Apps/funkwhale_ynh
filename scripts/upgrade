@@ -39,8 +39,8 @@ then
 	ynh_secure_remove --file="$install_dir/front"
 
 	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$install_dir/api" --source_id="api"
-	ynh_setup_source --dest_dir="$install_dir/front" --source_id="front"
+	ynh_setup_source --dest_dir="$install_dir/api" --source_id="api" --full_replace=1
+	ynh_setup_source --dest_dir="$install_dir/front" --source_id="front" --full_replace=1
 fi
 
 #=================================================
