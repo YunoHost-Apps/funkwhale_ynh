@@ -3,6 +3,8 @@ packaging_format = 2
 id = "funkwhale"
 name = "Funkwhale"
 description.en = "Convivial and modern music server"
+description.gl = "Servidor moderno e cordial de música"
+description.ca = "Servidor de música modern i convivial"
 description.fr = "Serveur de musique moderne et convivial"
 
 version = "1.4.0~ynh1"
@@ -37,6 +39,8 @@ ram.runtime = "50M"
 
     [install.init_main_permission]
     help.en = "If enabled, Funkwhale will be accessible by Funkwhale for Android and by users without a YunoHost account. This can be changed later in the webadmin."
+    help.gl = "Se o activas, Funkwhale vai ser accesible para Funkwhale para Android e por usuarias sen unha conta YunoHost. Podes cambiar esto máis tarde nos axustes de administración."
+    help.ca = "Si ho habiliteu, Funkwhale serà accessible amb Funkwhale per Android i per usuaris sense un compte a YunoHost. Es pot canviar més tard en la web d'administració."
     help.fr = "Si cette case est cochée, Funkwhale sera accessible par Funkwhale for Android et par les utilisateurs n’ayant pas de compte YunoHost. Vous pourrez changer cela dans la webadmin."
     type = "group"
     default = "visitors"

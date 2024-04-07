@@ -33,14 +33,10 @@ ynh_systemd_action --action="stop" --service_name="${app}-worker" --log_path="sy
 if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
 	ynh_script_progression --message="Upgrading source files..." --weight=1
-	
-	# Remove the old files
-	ynh_secure_remove --file="$install_dir/api"
-	ynh_secure_remove --file="$install_dir/front"
 
 	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$install_dir/api" --source_id="api"
-	ynh_setup_source --dest_dir="$install_dir/front" --source_id="front"
+	ynh_setup_source --dest_dir="$install_dir/api" --source_id="api" --full_replace=1
+	ynh_setup_source --dest_dir="$install_dir/front" --source_id="front" --full_replace=1
 fi
 
 #=================================================
