@@ -3,7 +3,7 @@ packaging_format = 2
 id = "funkwhale"
 name = "Funkwhale"
 description.en = "Convivial and modern music server"
-description.gl = "Servidor moderno e cordial de música"
+description.gl = "Servidor de música moderno e amigable"
 description.ca = "Servidor de música modern i convivial"
 description.fr = "Serveur de musique moderne et convivial"
 
