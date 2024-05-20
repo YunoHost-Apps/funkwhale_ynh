@@ -3,7 +3,7 @@
 请勿手动编辑。
 -->
 
-# YunoHost 的 Funkwhale
+# YunoHost 上的 Funkwhale
 
 [![集成程度](https://dash.yunohost.org/integration/funkwhale.svg)](https://dash.yunohost.org/appci/app/funkwhale) ![工作状态](https://ci-apps.yunohost.org/ci/badges/funkwhale.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/funkwhale.maintain.svg)
 
