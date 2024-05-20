@@ -21,7 +21,7 @@ code = "https://dev.funkwhale.audio/funkwhale/funkwhale"
 fund = "https://next.funkwhale.audio/donate/"
 
 [integration]
-yunohost = ">= 11.2"
+yunohost = ">= 11.2.12"
 architectures = "all"
 multi_instance = true
 
@@ -69,9 +69,9 @@ ram.runtime = "50M"
     [resources.system_user]
 
     [resources.install_dir]
-    
+
     [resources.data_dir]
-    
+
     [resources.permissions]
     main.url = "/"
 
