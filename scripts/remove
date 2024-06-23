@@ -66,10 +66,6 @@ ynh_script_progression --message="Removing logs..."  --weight=5
 
 ynh_remove_logrotate
 
-# Remove the log files
-ynh_secure_remove --file="/var/log/$app"
-
-
 #=================================================
 # REMOVE FAIL2BAN CONFIGURATION
 #=================================================
