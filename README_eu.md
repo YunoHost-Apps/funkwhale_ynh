@@ -5,7 +5,7 @@ EZ editatu eskuz.
 
 # Funkwhale YunoHost-erako
 
-[![Integrazio maila](https://dash.yunohost.org/integration/funkwhale.svg)](https://dash.yunohost.org/appci/app/funkwhale) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/funkwhale.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/funkwhale.maintain.svg)
+[![Integrazio maila](https://dash.yunohost.org/integration/funkwhale.svg)](https://ci-apps.yunohost.org/ci/apps/funkwhale/) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/funkwhale.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/funkwhale.maintain.svg)
 
 [![Instalatu Funkwhale YunoHost-ekin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=funkwhale)
 
