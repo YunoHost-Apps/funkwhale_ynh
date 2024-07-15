@@ -76,7 +76,7 @@ ram.runtime = "50M"
     main.url = "/"
 
     [resources.apt]
-    packages = "build-essential, curl, ffmpeg, libjpeg-dev, libmagic-dev, libpq-dev, postgresql, postgresql-client, postgresql-contrib, python3-dev, libldap2-dev, libsasl2-dev, make, unzip, zlib1g-dev, libffi-dev, libssl-dev, libxml2-dev, libxslt1-dev, libjpeg-dev, python3-venv, git"
+    packages = "build-essential, curl, ffmpeg, libjpeg-dev, libmagic-dev, libpq-dev, postgresql, postgresql-client, postgresql-contrib, python3-dev, libldap2-dev, libsasl2-dev, make, unzip, zlib1g-dev, libffi-dev, libssl-dev, libxml2-dev, libxslt1-dev, libjpeg-dev, python3-venv, git, redis-server"
 
     [resources.database]
     type = "postgresql"
