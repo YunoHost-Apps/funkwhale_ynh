@@ -1,59 +1,54 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC STARTING
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# STANDARD MODIFICATIONS
-#=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Stopping a systemd service..." --weight=1
+ynh_script_progression "Stopping $app's systemd service..."
 
-ynh_systemd_action --service_name="$app-beat" --action=stop --log_path="/var/log/$app/$app.log"
-ynh_systemd_action --service_name="$app-server" --action=stop --log_path="/var/log/$app/$app.log"
-ynh_systemd_action --service_name="$app-worker" --action=stop --log_path="/var/log/$app/$app.log"
+ynh_systemctl --service="$app-beat" --action=stop
+
+ynh_systemctl --service="$app-server" --action=stop
+
+ynh_systemctl --service="$app-worker" --action=stop
 
 #=================================================
 # MODIFY URL IN NGINX CONF
 #=================================================
-ynh_script_progression --message="Updating NGINX web server configuration..." --weight=1
+ynh_script_progression "Updating NGINX web server configuration..."
 
 domain=$new_domain
-ynh_add_config --template="funkwhale_proxy.conf" --destination="/etc/nginx/conf.d/$domain.d/funkwhale_proxy.conf"
-ynh_change_url_nginx_config
+ynh_config_add --template="funkwhale_proxy.conf" --destination="/etc/nginx/conf.d/$domain.d/funkwhale_proxy.conf"
+ynh_config_change_url_nginx
 
 #=================================================
 # MODIFY THE CONFIG FILE
 #=================================================
-ynh_script_progression --message="Modifying a config file..." --weight=1
+ynh_script_progression "Updating configuration..."
 
-ynh_add_config --template="../conf/env.prod" --destination="$install_dir/config/.env"
+ynh_config_add --template="env.prod" --destination="$install_dir/config/.env"
 
 #=================================================
-# MODIFY THE FEDERATION 
+# MODIFY THE FEDERATION
+
 #=================================================
 
 source $install_dir/venv/bin/activate
-ynh_exec_warn_less ynh_exec_as $app $install_dir/venv/bin/funkwhale-manage fix_federation_ids https://$old_domain https://$new_domain --no-dry-run --no-input
+ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/funkwhale-manage fix_federation_ids https://$old_domain https://$new_domain --no-dry-run --no-input
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..." --weight=1
+ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemd_action --service_name="$app-beat" --action="start" --log_path="/var/log/$app/${app}-beat.log"
-ynh_systemd_action --service_name="$app-server" --action="start" --log_path="/var/log/$app/${app}-server.log"
-ynh_systemd_action --service_name="$app-worker" --action="start" --log_path="/var/log/$app/${app}-worker.log"
+ynh_systemctl --service="$app-beat" --action="start" --log_path="/var/log/$app/${app}-beat.log"
+ynh_systemctl --service="$app-server" --action="start" --log_path="/var/log/$app/${app}-server.log"
+ynh_systemctl --service="$app-worker" --action="start" --log_path="/var/log/$app/${app}-worker.log"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Change of URL completed for $app" --last
+ynh_script_progression "Change of URL completed for $app"

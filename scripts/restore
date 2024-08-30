@@ -1,11 +1,5 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC START
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 # Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
 source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
@@ -13,62 +7,62 @@ source /usr/share/yunohost/helpers
 #=================================================
 # RESTORE THE APP MAIN DIR
 #=================================================
-ynh_script_progression --message="Restoring the app main directory..." --weight=1
+ynh_script_progression "Restoring the app main directory..."
 
-ynh_restore_file --origin_path="$install_dir"
+ynh_restore "$install_dir"
 
-chmod -R o-rwx "$install_dir"
-chown -R $app:www-data "$install_dir"
-
+#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod -R o-rwx "$install_dir"
+#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app:www-data "$install_dir"
 #=================================================
 # RESTORE THE DATA DIRECTORY
 #=================================================
-ynh_script_progression --message="Restoring the data directory..." --weight=1
+ynh_script_progression "Restoring the data directory..."
 
-ynh_restore_file --origin_path="$data_dir/" --not_mandatory
+ynh_restore "$data_dir/" || true
 
 mkdir -p $data_dir/data
 mkdir -p $data_dir/data/{static,media,music}
 
-chmod 750 "$data_dir/"
+#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 750 "$data_dir/"
 chmod -R o-rwx "$data_dir/"
 chown -R $app:www-data "$data_dir/"
 
 #=================================================
 # RESTORE THE NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Restoring the NGINX web server configuration..." --weight=1
+ynh_script_progression "Restoring the NGINX web server configuration..."
 
-ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d"
+ynh_restore "/etc/nginx/conf.d/$domain.d"
 
 #=================================================
 # RESTORE THE POSTGRESQL DATABASE
 #=================================================
-ynh_script_progression --message="Restoring the PostgreSQL database..." --weight=1
+ynh_script_progression "Restoring the PostgreSQL database..."
 
-ynh_psql_execute_file_as_root --file="./db.sql" --database=$db_name
+ynh_psql_db_shell  < "./db.sql""
 
 #=================================================
 # LOGROTATE
 #=================================================
-ynh_script_progression --message="Configuring logrotate to manage application logfiles" --weight=1
+ynh_script_progression "Configuring logrotate to manage application logfiles"
 
 # Use logrotate to manage application logfile(s)
-ynh_use_logrotate --specific_user=$app
+ynh_config_add_logrotate
+
 touch /var/log/$app/${app}-server.log
 touch /var/log/$app/${app}-worker.log
 touch /var/log/$app/${app}-beat.log
-chown -R $app:$app /var/log/$app/
+#REMOVEME? Assuming ynh_config_add_logrotate is called, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app:$app /var/log/$app/
 
 #=================================================
 # RESTORE SYSTEMD
 #=================================================
-ynh_script_progression --message="Restoring the systemd configuration..." --weight=1
+ynh_script_progression "Restoring $app's systemd service..."
 
-ynh_restore_file --origin_path="/etc/systemd/system/${app}-beat.service"
-ynh_restore_file --origin_path="/etc/systemd/system/${app}-server.service"
-ynh_restore_file --origin_path="/etc/systemd/system/${app}-worker.service"
-ynh_restore_file --origin_path="/etc/systemd/system/$app.target"
+ynh_restore "/etc/systemd/system/${app}-beat.service"
+ynh_restore "/etc/systemd/system/${app}-server.service"
+ynh_restore "/etc/systemd/system/${app}-worker.service"
+ynh_restore "/etc/systemd/system/$app.target"
 
 systemctl enable "${app}-beat.service" --quiet
 systemctl enable "${app}-server.service" --quiet
@@ -77,11 +71,11 @@ systemctl enable "${app}-worker.service" --quiet
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
+ynh_script_progression "Integrating service in YunoHost..."
 
-ynh_add_systemd_config --service="${app}-server" --template="funkwhale-server.service"
-ynh_add_systemd_config --service="${app}-worker" --template="funkwhale-worker.service"
-ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.service"
+ynh_config_add_systemd --service="${app}-server" --template="funkwhale-server.service"
+ynh_config_add_systemd --service="${app}-worker" --template="funkwhale-worker.service"
+ynh_config_add_systemd --service="${app}-beat"   --template="funkwhale-beat.service"
 
 yunohost service add "${app}-beat" --description="${app} celery beat process" --log="/var/log/$app/${app}-beat.log"
 yunohost service add "${app}-server" --description="${app} application server" --log="/var/log/$app/${app}-server.log"
@@ -90,23 +84,21 @@ yunohost service add "${app}-worker" --description="${app} celery worker" --log=
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..." --weight=1
+ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemd_action --service_name="${app}-beat" --action="start" --log_path="systemd"
-ynh_systemd_action --service_name="${app}-server" --action="start" --log_path="systemd" --line_match="Application startup complete"
-ynh_systemd_action --service_name="${app}-worker" --action="start" --log_path="systemd" --line_match="ready"
+ynh_systemctl --service="${app}-beat" --action="start" --log_path="systemd"
+ynh_systemctl --service="${app}-server" --action="start" --log_path="systemd" --wait_until="Application startup complete"
+ynh_systemctl --service="${app}-worker" --action="start" --log_path="systemd" --wait_until="ready"
 
-#=================================================
-# GENERIC FINALIZATION
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server..." --weight=1
+ynh_script_progression "Reloading NGINX web server..."
 
-ynh_systemd_action --service_name=nginx --action=reload
+ynh_systemctl --service=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Restoration completed for $app" --last
+ynh_script_progression "Restoration completed for $app"
