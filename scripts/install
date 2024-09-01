@@ -1,11 +1,5 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC START
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
@@ -18,9 +12,8 @@ admin_mail=$(ynh_user_get_info --username="$admin" --key="mail")
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Setting up source files..." --weight=1
+ynh_script_progression "Setting up source files..."
 
-# Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$install_dir/api" --source_id="api"
 ynh_setup_source --dest_dir="$install_dir/front" --source_id="front"
 
@@ -29,18 +22,15 @@ mkdir -p $install_dir/config
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring NGINX web server..." --weight=1
+ynh_script_progression "Configuring NGINX web server..."
 
-# Create a dedicated NGINX config
-ynh_add_config --template="funkwhale_proxy.conf" --destination="/etc/nginx/conf.d/$domain.d/funkwhale_proxy.conf"
-ynh_add_nginx_config
+ynh_config_add --template="funkwhale_proxy.conf" --destination="/etc/nginx/conf.d/$domain.d/funkwhale_proxy.conf"
+ynh_config_add_nginx
 
-#=================================================
-# SPECIFIC SETUP
 #=================================================
 # CREATE DATA DIRECTORY
 #=================================================
-ynh_script_progression --message="Creating a data directory..." --weight=1
+ynh_script_progression "Creating a data directory..."
 
 mkdir -p $data_dir/data
 mkdir -p $data_dir/data/{static,media,music}
@@ -52,35 +42,32 @@ chown -R $app:www-data "$data_dir/"
 #=================================================
 # ADD A CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding a configuration file..." --weight=1
+ynh_script_progression "Adding $app's configuration..."
 
 key=$(ynh_string_random --length=45 | base64)
 redis_db=$(ynh_redis_get_free_db)
 
-ynh_app_setting_set --app=$app --key=key --value=$key
-ynh_app_setting_set --app=$app --key=redis_db --value=$redis_db
+ynh_app_setting_set --key=key --value=$key
+ynh_app_setting_set --key=redis_db --value=$redis_db
 
-ynh_add_config --template="../conf/env.prod" --destination="$install_dir/config/.env"
-
-chmod 400 "$install_dir/config/.env"
-chown $app:$app "$install_dir/config/.env"
+ynh_config_add --template="env.prod" --destination="$install_dir/config/.env"
 
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-ynh_script_progression --message="Configuring a systemd service..." --weight=1
+ynh_script_progression "Configuring $app's systemd service..."
 
-ynh_add_config --template="../conf/funkwhale.target" --destination="/etc/systemd/system/$app.target"
+ynh_config_add --template="funkwhale.target" --destination="/etc/systemd/system/$app.target"
 
 # Create a dedicated systemd config
-ynh_add_systemd_config --service="${app}-server" --template="funkwhale-server.service"
-ynh_add_systemd_config --service="${app}-worker" --template="funkwhale-worker.service"
-ynh_add_systemd_config --service="${app}-beat"   --template="funkwhale-beat.service"
+ynh_config_add_systemd --service="${app}-server" --template="funkwhale-server.service"
+ynh_config_add_systemd --service="${app}-worker" --template="funkwhale-worker.service"
+ynh_config_add_systemd --service="${app}-beat"   --template="funkwhale-beat.service"
 
 #=================================================
 # INSTALL PYTHON DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Installing Python dependencies..." --weight=1
+ynh_script_progression "Installing Python dependencies..."
 
 if [ $YNH_ARCH == "armhf" ] || [ $YNH_ARCH == "armel" ]
 then
@@ -88,58 +75,52 @@ then
 # We need this to be able to install cryptgraphy
 export PATH="$PATH:$install_dir/.cargo/bin:$install_dir/.local/bin:/usr/local/sbin"
     if [ -e $install_dir/.rustup ]; then
-    sudo -u "$app" env PATH=$PATH rustup update
+    ynh_exec_as_app PATH=$PATH rustup update
     else
-    sudo -u "$app" bash -c 'curl -sSf -L https://static.rust-lang.org/rustup.sh | sh -s -- -y --default-toolchain=stable --profile=minimal'
+    ynh_exec_as_app bash -c 'curl -sSf -L https://static.rust-lang.org/rustup.sh | sh -s -- -y --default-toolchain=stable --profile=minimal'
     fi
 fi
-
 
 pushd $install_dir
 	python3 -m venv $install_dir/venv
 	source $install_dir/venv/bin/activate
-	ynh_exec_warn_less pip install --upgrade pip wheel toml
-	ynh_exec_warn_less pip install --editable ./api
+	ynh_hide_warnings pip install --upgrade pip wheel toml
+	ynh_hide_warnings pip install --editable ./api
 popd
 
 #=================================================
 # BUILDING FUNKWHALE
 #=================================================
-ynh_script_progression --message="Building funkwhale..." --weight=1
+ynh_script_progression "Building funkwhale..."
 
 pushd $install_dir
 	source $install_dir/venv/bin/activate
 
 	# needed for enabling the 'unaccent' extension
-	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
-	ynh_exec_warn_less ynh_exec_as $app $install_dir/venv/bin/funkwhale-manage migrate
-	ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
-	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | ynh_exec_warn_less python api/manage.py shell
-	echo "yes" | ynh_exec_warn_less ynh_exec_as $app $install_dir/venv/bin/funkwhale-manage collectstatic
-popd
+	ynh_psql_db_shell <<< "ALTER USER $db_user WITH SUPERUSER;"
 
-chmod 750 "$install_dir"
-chmod -R o-rwx "$install_dir"
-chown -R $app:www-data "$install_dir"
+	ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/funkwhale-manage migrate
+	ynh_psql_db_shell <<< "ALTER USER $db_user WITH NOSUPERUSER;"
+
+	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | ynh_hide_warnings python api/manage.py shell
+	echo "yes" | ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/funkwhale-manage collectstatic
+popd
 
 #=================================================
 # LOGROTATE
 #=================================================
-ynh_script_progression --message="Configuring logrotate to manage application logfiles" --weight=1
+ynh_script_progression "Configuring logrotate to manage application logfiles"
 
-# Use logrotate to manage application logfile(s)
-ynh_use_logrotate --specific_user=$app
+ynh_config_add_logrotate
+
 touch /var/log/$app/${app}-server.log
 touch /var/log/$app/${app}-worker.log
 touch /var/log/$app/${app}-beat.log
-chown -R $app:$app /var/log/$app/
 
-#=================================================
-# GENERIC FINALIZATION
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-ynh_script_progression --message="Integrating service in YunoHost..." --weight=1
+ynh_script_progression "Integrating service in YunoHost..."
 
 yunohost service add "${app}-beat" --description="${app} celery beat process" --log="/var/log/$app/${app}-beat.log"
 yunohost service add "${app}-server" --description="${app} application server" --log="/var/log/$app/${app}-server.log"
@@ -148,23 +129,21 @@ yunohost service add "${app}-worker" --description="${app} celery worker" --log=
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..." --weight=1
+ynh_script_progression "Starting $app's systemd service..."
 
-# Start a systemd service
-ynh_systemd_action --service_name="${app}-beat" --action="start" --log_path="systemd"
-ynh_systemd_action --service_name="${app}-server" --action="start" --log_path="systemd" --line_match="Application startup complete"
-ynh_systemd_action --service_name="${app}-worker" --action="start" --log_path="systemd" --line_match="ready"
+ynh_systemctl --service="${app}-beat" --action="start" --log_path="systemd"
+ynh_systemctl --service="${app}-server" --action="start" --log_path="systemd" --wait_until="Application startup complete"
+ynh_systemctl --service="${app}-worker" --action="start" --log_path="systemd" --wait_until="ready"
 
 #=================================================
 # SETUP FAIL2BAN
 #=================================================
-ynh_script_progression --message="Configuring Fail2Ban..." --weight=1
+ynh_script_progression "Configuring Fail2Ban..."
 
-# Create a dedicated Fail2Ban config
-ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-access.log" --failregex="<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$" --max_retry=5
+ynh_config_add_fail2ban --logpath="/var/log/nginx/${domain}-access.log" --failregex="<HOST>.* \"POST /api/v1/token/ HTTP/1.1\" 400 68.*$"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Installation of $app completed" --last
+ynh_script_progression "Installation of $app completed"
