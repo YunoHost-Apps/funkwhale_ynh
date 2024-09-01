@@ -1,11 +1,5 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC START
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
@@ -15,77 +9,57 @@ source /usr/share/yunohost/helpers
 # REMOVE SERVICE INTEGRATION IN YUNOHOST
 #=================================================
 
-# Remove the service from the list of services known by YunoHost (added from `yunohost service add`)
-if ynh_exec_warn_less yunohost service status "${app}-server" >/dev/null
+if ynh_hide_warnings yunohost service status "${app}-server" >/dev/null
 then
-	ynh_script_progression --message="Removing ${app}-server service integration..."
+	ynh_script_progression "Removing ${app}-server service integration..."
 	yunohost service remove "${app}-server"
 fi
 
-if ynh_exec_warn_less yunohost service status "${app}-worker" >/dev/null
+if ynh_hide_warnings yunohost service status "${app}-worker" >/dev/null
 then
-	ynh_script_progression --message="Removing ${app}-worker service integration..."
+	ynh_script_progression "Removing ${app}-worker service integration..."
 	yunohost service remove "${app}-worker"
 fi
 
-if ynh_exec_warn_less yunohost service status "${app}-beat" >/dev/null
+if ynh_hide_warnings yunohost service status "${app}-beat" >/dev/null
 then
-	ynh_script_progression --message="Removing ${app}-beat service integration..."
+	ynh_script_progression "Removing ${app}-beat service integration..."
 	yunohost service remove "${app}-beat"
 fi
 
 #=================================================
 # STOP AND REMOVE SERVICE
 #=================================================
-ynh_script_progression --message="Stopping and removing the systemd service..." --weight=1
+ynh_script_progression "Stopping and removing the systemd service..."
 
-ynh_systemd_action --service_name="${app}-beat" --action="stop" --log_path="systemd"
-ynh_systemd_action --service_name="${app}-server" --action="stop" --log_path="systemd"
-ynh_systemd_action --service_name="${app}-worker" --action="stop" --log_path="systemd"
+ynh_systemctl --service="${app}-beat" --action="stop" --log_path="systemd"
+ynh_systemctl --service="${app}-server" --action="stop" --log_path="systemd"
+ynh_systemctl --service="${app}-worker" --action="stop" --log_path="systemd"
 
 # Remove the dedicated systemd config
-ynh_remove_systemd_config --service="${app}-beat"
-ynh_remove_systemd_config --service="${app}-server"
-ynh_remove_systemd_config --service="${app}-worker"
+ynh_config_remove_systemd"${app}-beat"
+ynh_config_remove_systemd"${app}-server"
+ynh_config_remove_systemd"${app}-worker"
 
-ynh_secure_remove --file="/etc/systemd/system/$app.target"
+ynh_safe_rm "/etc/systemd/system/$app.target"
 
 #=================================================
 # REMOVE NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Removing NGINX web server configuration..." --weight=1
+ynh_script_progression "Removing NGINX web server configuration..."
 
 # Remove the dedicated NGINX config
-ynh_secure_remove --file="/etc/nginx/conf.d/$domain.d/funkwhale_proxy.conf"
-ynh_remove_nginx_config
+ynh_safe_rm "/etc/nginx/conf.d/$domain.d/funkwhale_proxy.conf"
+ynh_config_remove_nginx
 
-#=================================================
-# REMOVE LOGS
-#=================================================
-ynh_script_progression --message="Removing logs..."  --weight=5
+ynh_config_remove_logrotate
 
-ynh_remove_logrotate
+ynh_config_remove_fail2ban
 
-#=================================================
-# REMOVE FAIL2BAN CONFIGURATION
-#=================================================
-ynh_script_progression --message="Removing Fail2Ban configuration..." --weight=1
-
-# Remove the dedicated Fail2Ban config
-ynh_remove_fail2ban_config
-
-#=================================================
-# SPECIFIC REMOVE
-#=================================================
-# REMOVE THE REDIS DATABASE
-#=================================================
-ynh_script_progression --message="Removing the Redis database..." --weight=1
-
-# Remove a database if it exists, along with the associated user
 ynh_redis_remove_db $redis_db
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Removal of $app completed" --last
+ynh_script_progression "Removal of $app completed"

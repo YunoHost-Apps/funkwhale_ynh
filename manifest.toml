@@ -7,7 +7,7 @@ description.gl = "Servidor de música moderno e amigable"
 description.ca = "Servidor de música modern i convivial"
 description.fr = "Serveur de musique moderne et convivial"
 
-version = "1.4.0~ynh1"
+version = "1.4.0~ynh2"
 
 maintainers = ["Thovi98"]
 
@@ -21,7 +21,8 @@ code = "https://dev.funkwhale.audio/funkwhale/funkwhale"
 fund = "https://next.funkwhale.audio/donate/"
 
 [integration]
-yunohost = ">= 11.2.12"
+yunohost = ">= 11.2.29"
+helpers_version = "2.1"
 architectures = "all"
 multi_instance = true
 
@@ -69,6 +70,7 @@ ram.runtime = "50M"
     [resources.system_user]
 
     [resources.install_dir]
+    group = "www-data:r-x"
 
     [resources.data_dir]
 
