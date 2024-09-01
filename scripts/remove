@@ -53,29 +53,10 @@ ynh_script_progression "Removing NGINX web server configuration..."
 ynh_safe_rm "/etc/nginx/conf.d/$domain.d/funkwhale_proxy.conf"
 ynh_config_remove_nginx
 
-#=================================================
-# REMOVE LOGS
-#=================================================
-ynh_script_progression "Removing logs..."
-
 ynh_config_remove_logrotate
 
-#=================================================
-# REMOVE FAIL2BAN CONFIGURATION
-#=================================================
-ynh_script_progression "Removing Fail2Ban configuration..."
-
-# Remove the dedicated Fail2Ban config
 ynh_config_remove_fail2ban
 
-#=================================================
-# SPECIFIC REMOVE
-#=================================================
-# REMOVE THE REDIS DATABASE
-#=================================================
-ynh_script_progression "Removing the Redis database..."
-
-# Remove a database if it exists, along with the associated user
 ynh_redis_remove_db $redis_db
 
 #=================================================

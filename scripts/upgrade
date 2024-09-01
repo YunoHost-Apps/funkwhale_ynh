@@ -15,16 +15,10 @@ ynh_systemctl --action="stop" --service="${app}-worker" --log_path="systemd"
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
+ynh_script_progression "Upgrading source files..."
 
-# FIXME: this is still supported but the recommendation is now to *always* re-setup the app sources wether or not the upstream sources changed
-if ynh_app_upstream_version_changed
-then
-	ynh_script_progression "Upgrading source files..."
-
-	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$install_dir/api" --source_id="api" --full_replace
-	ynh_setup_source --dest_dir="$install_dir/front" --source_id="front" --full_replace
-fi
+ynh_setup_source --dest_dir="$install_dir/api" --source_id="api" --full_replace
+ynh_setup_source --dest_dir="$install_dir/front" --source_id="front" --full_replace
 
 #=================================================
 # NGINX CONFIGURATION
@@ -99,9 +93,6 @@ pushd $install_dir
 
 popd
 
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 750 "$install_dir"
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod -R o-rwx "$install_dir"
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app:www-data "$install_dir"
 #=================================================
 # LOGROTATE
 #=================================================
@@ -113,7 +104,6 @@ ynh_config_add_logrotate
 touch /var/log/$app/${app}-server.log
 touch /var/log/$app/${app}-worker.log
 touch /var/log/$app/${app}-beat.log
-#REMOVEME? Assuming ynh_config_add_logrotate is called, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app:$app /var/log/$app/
 
 #=================================================
 # SETUP SYSTEMD

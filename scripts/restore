@@ -11,8 +11,6 @@ ynh_script_progression "Restoring the app main directory..."
 
 ynh_restore "$install_dir"
 
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod -R o-rwx "$install_dir"
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app:www-data "$install_dir"
 #=================================================
 # RESTORE THE DATA DIRECTORY
 #=================================================
@@ -23,7 +21,6 @@ ynh_restore "$data_dir/" || true
 mkdir -p $data_dir/data
 mkdir -p $data_dir/data/{static,media,music}
 
-#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 750 "$data_dir/"
 chmod -R o-rwx "$data_dir/"
 chown -R $app:www-data "$data_dir/"
 
@@ -39,7 +36,7 @@ ynh_restore "/etc/nginx/conf.d/$domain.d"
 #=================================================
 ynh_script_progression "Restoring the PostgreSQL database..."
 
-ynh_psql_db_shell  < "./db.sql""
+ynh_psql_db_shell  < "./db.sql"
 
 #=================================================
 # LOGROTATE
@@ -52,7 +49,6 @@ ynh_config_add_logrotate
 touch /var/log/$app/${app}-server.log
 touch /var/log/$app/${app}-worker.log
 touch /var/log/$app/${app}-beat.log
-#REMOVEME? Assuming ynh_config_add_logrotate is called, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R $app:$app /var/log/$app/
 
 #=================================================
 # RESTORE SYSTEMD
