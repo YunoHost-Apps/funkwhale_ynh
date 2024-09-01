@@ -24,12 +24,9 @@ mkdir -p $install_dir/config
 #=================================================
 ynh_script_progression "Configuring NGINX web server..."
 
-# Create a dedicated NGINX config
 ynh_config_add --template="funkwhale_proxy.conf" --destination="/etc/nginx/conf.d/$domain.d/funkwhale_proxy.conf"
 ynh_config_add_nginx
 
-#=================================================
-# SPECIFIC SETUP
 #=================================================
 # CREATE DATA DIRECTORY
 #=================================================
@@ -114,7 +111,6 @@ popd
 #=================================================
 ynh_script_progression "Configuring logrotate to manage application logfiles"
 
-# Use logrotate to manage application logfile(s)
 ynh_config_add_logrotate
 
 touch /var/log/$app/${app}-server.log
@@ -135,7 +131,6 @@ yunohost service add "${app}-worker" --description="${app} celery worker" --log=
 #=================================================
 ynh_script_progression "Starting $app's systemd service..."
 
-# Start a systemd service
 ynh_systemctl --service="${app}-beat" --action="start" --log_path="systemd"
 ynh_systemctl --service="${app}-server" --action="start" --log_path="systemd" --wait_until="Application startup complete"
 ynh_systemctl --service="${app}-worker" --action="start" --log_path="systemd" --wait_until="ready"
