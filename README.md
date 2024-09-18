@@ -29,7 +29,7 @@ Funkwhale is a community-driven project that lets you listen and share music and
 ## Documentation and resources
 
 - Official app website: <https://funkwhale.audio/>
-- Official user documentation: <https://docs.funkwhale.audio/users/index.html>
+- Official user documentation: <https://docs.funkwhale.audio/user/index.html>
 - Official admin documentation: <https://docs.funkwhale.audio/admin/index.html>
 - Upstream app code repository: <https://dev.funkwhale.audio/funkwhale/funkwhale>
 - YunoHost Store: <https://apps.yunohost.org/app/funkwhale>
