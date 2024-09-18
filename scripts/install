@@ -102,13 +102,10 @@ pushd $install_dir
 	ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/funkwhale-manage migrate
 	ynh_psql_db_shell <<< "ALTER USER $db_user WITH NOSUPERUSER;"
 
+
 	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | ynh_hide_warnings python api/manage.py shell
 	echo "yes" | ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/funkwhale-manage collectstatic
 popd
-
-chmod 750 "$install_dir"
-chmod -R o-rwx "$install_dir"
-chown -R $app:www-data "$install_dir"
 
 #=================================================
 # LOGROTATE
