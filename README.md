@@ -18,7 +18,7 @@ It shall NOT be edited by hand.
 
 Funkwhale is a community-driven project that lets you listen and share music and audio within a decentralized, open network. 
 
-**Shipped version:** 1.4.0~ynh2
+**Shipped version:** 1.4.0~ynh3
 
 **Demo:** <https://demo.funkwhale.audio>
 
