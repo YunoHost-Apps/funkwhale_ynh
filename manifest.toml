@@ -7,7 +7,7 @@ description.gl = "Servidor de música moderno e amigable"
 description.ca = "Servidor de música modern i convivial"
 description.fr = "Serveur de musique moderne et convivial"
 
-version = "1.4.0~ynh2"
+version = "1.4.0~ynh3"
 
 maintainers = ["Thovi98"]
 
@@ -16,7 +16,7 @@ license = "AGPL-3.0-or-later"
 website = "https://funkwhale.audio/"
 demo = "https://demo.funkwhale.audio"
 admindoc = "https://docs.funkwhale.audio/admin/index.html"
-userdoc = "https://docs.funkwhale.audio/users/index.html"
+userdoc = "https://docs.funkwhale.audio/user/index.html"
 code = "https://dev.funkwhale.audio/funkwhale/funkwhale"
 fund = "https://next.funkwhale.audio/donate/"
 

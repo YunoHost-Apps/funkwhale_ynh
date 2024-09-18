@@ -37,9 +37,9 @@ ynh_systemctl --service="${app}-server" --action="stop" --log_path="systemd"
 ynh_systemctl --service="${app}-worker" --action="stop" --log_path="systemd"
 
 # Remove the dedicated systemd config
-ynh_config_remove_systemd"${app}-beat"
-ynh_config_remove_systemd"${app}-server"
-ynh_config_remove_systemd"${app}-worker"
+ynh_config_remove_systemd "${app}-beat"
+ynh_config_remove_systemd "${app}-server"
+ynh_config_remove_systemd "${app}-worker"
 
 ynh_safe_rm "/etc/systemd/system/$app.target"
 

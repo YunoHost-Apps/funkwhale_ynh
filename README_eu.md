@@ -18,7 +18,7 @@ EZ editatu eskuz.
 
 Funkwhale is a community-driven project that lets you listen and share music and audio within a decentralized, open network. 
 
-**Paketatutako bertsioa:** 1.4.0~ynh2
+**Paketatutako bertsioa:** 1.4.0~ynh3
 
 **Demoa:** <https://demo.funkwhale.audio>
 
@@ -29,7 +29,7 @@ Funkwhale is a community-driven project that lets you listen and share music and
 ## Dokumentazioa eta baliabideak
 
 - Aplikazioaren webgune ofiziala: <https://funkwhale.audio/>
-- Erabiltzaileen dokumentazio ofiziala: <https://docs.funkwhale.audio/users/index.html>
+- Erabiltzaileen dokumentazio ofiziala: <https://docs.funkwhale.audio/user/index.html>
 - Administratzaileen dokumentazio ofiziala: <https://docs.funkwhale.audio/admin/index.html>
 - Jatorrizko aplikazioaren kode-gordailua: <https://dev.funkwhale.audio/funkwhale/funkwhale>
 - YunoHost Denda: <https://apps.yunohost.org/app/funkwhale>

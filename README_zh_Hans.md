@@ -18,7 +18,7 @@
 
 Funkwhale is a community-driven project that lets you listen and share music and audio within a decentralized, open network. 
 
-**分发版本：** 1.4.0~ynh2
+**分发版本：** 1.4.0~ynh3
 
 **演示：** <https://demo.funkwhale.audio>
 
@@ -29,7 +29,7 @@ Funkwhale is a community-driven project that lets you listen and share music and
 ## 文档与资源
 
 - 官方应用网站： <https://funkwhale.audio/>
-- 官方用户文档： <https://docs.funkwhale.audio/users/index.html>
+- 官方用户文档： <https://docs.funkwhale.audio/user/index.html>
 - 官方管理文档： <https://docs.funkwhale.audio/admin/index.html>
 - 上游应用代码库： <https://dev.funkwhale.audio/funkwhale/funkwhale>
 - YunoHost 商店： <https://apps.yunohost.org/app/funkwhale>

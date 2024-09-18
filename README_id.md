@@ -18,7 +18,7 @@ Ini TIDAK boleh diedit dengan tangan.
 
 Funkwhale is a community-driven project that lets you listen and share music and audio within a decentralized, open network. 
 
-**Versi terkirim:** 1.4.0~ynh2
+**Versi terkirim:** 1.4.0~ynh3
 
 **Demo:** <https://demo.funkwhale.audio>
 
@@ -29,7 +29,7 @@ Funkwhale is a community-driven project that lets you listen and share music and
 ## Dokumentasi dan sumber daya
 
 - Website aplikasi resmi: <https://funkwhale.audio/>
-- Dokumentasi pengguna resmi: <https://docs.funkwhale.audio/users/index.html>
+- Dokumentasi pengguna resmi: <https://docs.funkwhale.audio/user/index.html>
 - Dokumentasi admin resmi: <https://docs.funkwhale.audio/admin/index.html>
 - Depot kode aplikasi hulu: <https://dev.funkwhale.audio/funkwhale/funkwhale>
 - Gudang YunoHost: <https://apps.yunohost.org/app/funkwhale>
