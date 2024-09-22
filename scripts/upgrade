@@ -112,7 +112,6 @@ ynh_script_progression "Upgrading systemd configuration..."
 
 ynh_config_add --template="funkwhale.target" --destination="/etc/systemd/system/$app.target"
 
-# Create a dedicated systemd config
 ynh_config_add_systemd --service="${app}-server" --template="funkwhale-server.service"
 ynh_config_add_systemd --service="${app}-worker" --template="funkwhale-worker.service"
 ynh_config_add_systemd --service="${app}-beat"   --template="funkwhale-beat.service"
