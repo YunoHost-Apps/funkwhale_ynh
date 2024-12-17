@@ -5,7 +5,9 @@ Hij mag NIET handmatig aangepast worden.
 
 # Funkwhale voor Yunohost
 
-[![Integratieniveau](https://dash.yunohost.org/integration/funkwhale.svg)](https://ci-apps.yunohost.org/ci/apps/funkwhale/) ![Mate van functioneren](https://ci-apps.yunohost.org/ci/badges/funkwhale.status.svg) ![Onderhoudsstatus](https://ci-apps.yunohost.org/ci/badges/funkwhale.maintain.svg)
+[![Integratieniveau](https://apps.yunohost.org/badge/integration/funkwhale)](https://ci-apps.yunohost.org/ci/apps/funkwhale/)
+![Mate van functioneren](https://apps.yunohost.org/badge/state/funkwhale)
+![Onderhoudsstatus](https://apps.yunohost.org/badge/maintained/funkwhale)
 
 [![Funkwhale met Yunohost installeren](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=funkwhale)
 

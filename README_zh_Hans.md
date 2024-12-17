@@ -5,7 +5,9 @@
 
 # YunoHost 上的 Funkwhale
 
-[![集成程度](https://dash.yunohost.org/integration/funkwhale.svg)](https://ci-apps.yunohost.org/ci/apps/funkwhale/) ![工作状态](https://ci-apps.yunohost.org/ci/badges/funkwhale.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/funkwhale.maintain.svg)
+[![集成程度](https://apps.yunohost.org/badge/integration/funkwhale)](https://ci-apps.yunohost.org/ci/apps/funkwhale/)
+![工作状态](https://apps.yunohost.org/badge/state/funkwhale)
+![维护状态](https://apps.yunohost.org/badge/maintained/funkwhale)
 
 [![使用 YunoHost 安装 Funkwhale](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=funkwhale)
 
