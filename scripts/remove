@@ -4,26 +4,18 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# STANDARD REMOVE
-#=================================================
 # REMOVE SERVICE INTEGRATION IN YUNOHOST
 #=================================================
 
-if ynh_hide_warnings yunohost service status "${app}-server" >/dev/null
-then
-	ynh_script_progression "Removing ${app}-server service integration..."
+if ynh_hide_warnings yunohost service status "${app}-server" >/dev/null; then
 	yunohost service remove "${app}-server"
 fi
 
-if ynh_hide_warnings yunohost service status "${app}-worker" >/dev/null
-then
-	ynh_script_progression "Removing ${app}-worker service integration..."
+if ynh_hide_warnings yunohost service status "${app}-worker" >/dev/null; then
 	yunohost service remove "${app}-worker"
 fi
 
-if ynh_hide_warnings yunohost service status "${app}-beat" >/dev/null
-then
-	ynh_script_progression "Removing ${app}-beat service integration..."
+if ynh_hide_warnings yunohost service status "${app}-beat" >/dev/null; then
 	yunohost service remove "${app}-beat"
 fi
 
@@ -36,7 +28,6 @@ ynh_systemctl --service="${app}-beat" --action="stop" --log_path="systemd"
 ynh_systemctl --service="${app}-server" --action="stop" --log_path="systemd"
 ynh_systemctl --service="${app}-worker" --action="stop" --log_path="systemd"
 
-# Remove the dedicated systemd config
 ynh_config_remove_systemd "${app}-beat"
 ynh_config_remove_systemd "${app}-server"
 ynh_config_remove_systemd "${app}-worker"
@@ -48,7 +39,6 @@ ynh_safe_rm "/etc/systemd/system/$app.target"
 #=================================================
 ynh_script_progression "Removing NGINX web server configuration..."
 
-# Remove the dedicated NGINX config
 ynh_safe_rm "/etc/nginx/conf.d/$domain.d/funkwhale_proxy.conf"
 ynh_config_remove_nginx
 

@@ -5,7 +5,9 @@
 
 # Funkwhale для YunoHost
 
-[![Уровень интеграции](https://dash.yunohost.org/integration/funkwhale.svg)](https://ci-apps.yunohost.org/ci/apps/funkwhale/) ![Состояние работы](https://ci-apps.yunohost.org/ci/badges/funkwhale.status.svg) ![Состояние сопровождения](https://ci-apps.yunohost.org/ci/badges/funkwhale.maintain.svg)
+[![Уровень интеграции](https://apps.yunohost.org/badge/integration/funkwhale)](https://ci-apps.yunohost.org/ci/apps/funkwhale/)
+![Состояние работы](https://apps.yunohost.org/badge/state/funkwhale)
+![Состояние сопровождения](https://apps.yunohost.org/badge/maintained/funkwhale)
 
 [![Установите Funkwhale с YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=funkwhale)
 

@@ -32,7 +32,6 @@ ynh_config_add --template="env.prod" --destination="$install_dir/config/.env"
 
 #=================================================
 # MODIFY THE FEDERATION
-
 #=================================================
 
 source $install_dir/venv/bin/activate

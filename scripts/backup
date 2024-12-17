@@ -23,18 +23,8 @@ ynh_backup "$data_dir"
 
 ynh_backup "/etc/nginx/conf.d/$domain.d"
 
-#=================================================
-# BACKUP FAIL2BAN CONFIGURATION
-#=================================================
-
 ynh_backup "/etc/fail2ban/jail.d/$app.conf"
 ynh_backup "/etc/fail2ban/filter.d/$app.conf"
-
-#=================================================
-# SPECIFIC BACKUP
-#=================================================
-# BACKUP SYSTEMD
-#=================================================
 
 ynh_backup "/etc/systemd/system/${app}-beat.service"
 ynh_backup "/etc/systemd/system/${app}-server.service"

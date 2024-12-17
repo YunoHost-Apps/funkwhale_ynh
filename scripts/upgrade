@@ -62,6 +62,7 @@ pushd $install_dir
 	source $install_dir/venv/bin/activate
 	ynh_hide_warnings pip install --upgrade pip wheel toml
 	ynh_hide_warnings pip install --editable ./api
+	deactivate
 popd
 
 #=================================================
@@ -87,6 +88,7 @@ pushd $install_dir
 	ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/funkwhale-manage migrate
 	ynh_psql_db_shell <<< "ALTER USER $db_user WITH NOSUPERUSER;"
 
+	deactivate
 popd
 
 chmod 750 "$install_dir"
@@ -112,7 +114,6 @@ ynh_script_progression "Upgrading systemd configuration..."
 
 ynh_config_add --template="funkwhale.target" --destination="/etc/systemd/system/$app.target"
 
-# Create a dedicated systemd config
 ynh_config_add_systemd --service="${app}-server" --template="funkwhale-server.service"
 ynh_config_add_systemd --service="${app}-worker" --template="funkwhale-worker.service"
 ynh_config_add_systemd --service="${app}-beat"   --template="funkwhale-beat.service"

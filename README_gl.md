@@ -5,7 +5,9 @@ NON debe editarse manualmente.
 
 # Funkwhale para YunoHost
 
-[![Nivel de integración](https://dash.yunohost.org/integration/funkwhale.svg)](https://ci-apps.yunohost.org/ci/apps/funkwhale/) ![Estado de funcionamento](https://ci-apps.yunohost.org/ci/badges/funkwhale.status.svg) ![Estado de mantemento](https://ci-apps.yunohost.org/ci/badges/funkwhale.maintain.svg)
+[![Nivel de integración](https://apps.yunohost.org/badge/integration/funkwhale)](https://ci-apps.yunohost.org/ci/apps/funkwhale/)
+![Estado de funcionamento](https://apps.yunohost.org/badge/state/funkwhale)
+![Estado de mantemento](https://apps.yunohost.org/badge/maintained/funkwhale)
 
 [![Instalar Funkwhale con YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=funkwhale)
 
