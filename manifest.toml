@@ -7,7 +7,7 @@ description.gl = "Servidor de música moderno e amigable"
 description.ca = "Servidor de música modern i convivial"
 description.fr = "Serveur de musique moderne et convivial"
 
-version = "1.4.0~ynh4"
+version = "1.4.0~ynh5"
 
 maintainers = ["Thovi98"]
 
@@ -76,6 +76,11 @@ ram.runtime = "50M"
 
     [resources.permissions]
     main.url = "/"
+
+    api.url = "/api"
+    api.allowed = "visitors"
+    api.show_tile = false
+    api.protected = true
 
     [resources.apt]
     packages = "build-essential, curl, ffmpeg, libjpeg-dev, libmagic-dev, libpq-dev, postgresql, postgresql-client, postgresql-contrib, python3-dev, libldap2-dev, libsasl2-dev, make, unzip, zlib1g-dev, libffi-dev, libssl-dev, libxml2-dev, libxslt1-dev, libjpeg-dev, python3-venv, git, redis-server"
