@@ -7,7 +7,7 @@ description.gl = "Servidor de música moderno e amigable"
 description.ca = "Servidor de música modern i convivial"
 description.fr = "Serveur de musique moderne et convivial"
 
-version = "1.4.0~ynh5"
+version = "1.4.1~ynh1"
 
 maintainers = ["Thovi98"]
 
@@ -52,18 +52,23 @@ ram.runtime = "50M"
 [resources]
     [resources.sources]
         [resources.sources.api]
-        url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/1.4.0/download?job=build_api"
-        sha256 = "719c5cd0feb3716993d63bd09c05468615c0682c985c29f3be8076c2caa0e60f"
+        url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/1.4.1/download?job=build_api"
+        sha256 = "795faf2f233fbc9e77a3a6eed224c1413b5ed4edda390f363afc0c022479ec73"
         in_subdir = true
         extract   = true
         format = "zip"
 
         [resources.sources.front]
-        url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/1.4.0/download?job=build_front"
-        sha256 = "6df32113ca355e8181a463b2a83ef3eabf574a3faac16feb9d37a1f7844d0191"
+        url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/1.4.1/download?job=build_front"
+        sha256 = "f6d654a6f8d4cfbb1c59d86959d942529d49a1cdff0c77014645327c769105e0"
         in_subdir = true
         extract   = true
         format = "zip"
+
+
+        autoupdate.strategy = "latest_gitlab_release"
+        autoupdate.asset.api = "api.*"
+        autoupdate.asset.front = "front.*"
 
     [resources.ports]
 
