@@ -85,7 +85,7 @@ pushd $install_dir
 	python3 -m venv $install_dir/venv
     #FIXME: setuptools 69.x is a downgrade meant to keep django-allauth installing
 	#remove once upsteam updates to 0.50+
-	ynh_hide_warnings $install_dir/venv/bin/pip install --upgrade pip wheel toml setuptools=69.5.1
+	ynh_hide_warnings $install_dir/venv/bin/pip install --upgrade pip wheel toml setuptools==69.5.1
 	ynh_hide_warnings $install_dir/venv/bin/pip install --editable ./api
 popd
 
