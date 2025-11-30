@@ -83,10 +83,10 @@ fi
 
 pushd $install_dir
 	python3 -m venv $install_dir/venv
-    #FIXME: setuptools 61.x is a downgrade meant to keep django-allauth installing
+    #FIXME: setuptools 62.x is a downgrade meant to keep django-allauth installing
 	#remove once upsteam updates to 0.50+
-	ynh_hide_warnings $install_dir/venv/bin/pip install --upgrade pip wheel toml setuptools==61.0.0
-	ynh_hide_warnings $install_dir/venv/bin/pip install --editable ./api
+	ynh_hide_warnings $install_dir/venv/bin/pip install --upgrade pip wheel toml setuptools==62.0.0 poetry-core==1.8.1
+	ynh_hide_warnings $install_dir/venv/bin/pip install --editable ./api --no-build-isolation
 popd
 
 #=================================================
