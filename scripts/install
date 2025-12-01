@@ -83,10 +83,10 @@ fi
 
 pushd $install_dir
 	python3 -m venv $install_dir/venv
-	source $install_dir/venv/bin/activate
-	ynh_hide_warnings pip install --upgrade pip wheel toml
-	ynh_hide_warnings pip install --editable ./api
-	deactivate
+    #FIXME: setuptools 62.x is a downgrade meant to keep django-allauth installing
+	#remove once upsteam updates to 0.50+
+	ynh_hide_warnings $install_dir/venv/bin/pip install --upgrade pip wheel toml setuptools==62.0.0 poetry-core==1.8.1
+	ynh_hide_warnings $install_dir/venv/bin/pip install --editable ./api --no-build-isolation
 popd
 
 #=================================================
@@ -95,18 +95,14 @@ popd
 ynh_script_progression "Building funkwhale..."
 
 pushd $install_dir
-	source $install_dir/venv/bin/activate
-
 	# needed for enabling the 'unaccent' extension
 	ynh_psql_db_shell <<< "ALTER USER $db_user WITH SUPERUSER;"
 
 	ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/funkwhale-manage migrate
 	ynh_psql_db_shell <<< "ALTER USER $db_user WITH NOSUPERUSER;"
 
-	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | ynh_hide_warnings python api/manage.py shell
+	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | ynh_hide_warnings $install_dir/venv/bin/python api/manage.py shell
 	echo "yes" | ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/funkwhale-manage collectstatic
-	
-	deactivate
 popd
 
 chmod 750 "$install_dir"
