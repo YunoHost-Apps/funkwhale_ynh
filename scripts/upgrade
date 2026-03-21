@@ -20,12 +20,16 @@ ynh_script_progression "Upgrading source files..."
 ynh_setup_source --dest_dir="$install_dir/api" --source_id="api" --full_replace
 ynh_setup_source --dest_dir="$install_dir/front" --source_id="front" --full_replace
 
+if ynh_app_upgrading_from_version_before 2.0.0~ynh1
+then
+	ynh_safe_rm "/etc/nginx/conf.d/$domain.d/funkwhale_proxy.conf"
+fi
+
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
 ynh_script_progression "Upgrading NGINX web server configuration..."
 
-ynh_config_add --template="funkwhale_proxy.conf" --destination="/etc/nginx/conf.d/$domain.d/funkwhale_proxy.conf"
 ynh_config_add_nginx
 
 #=================================================
@@ -95,6 +99,11 @@ chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
 chown -R $app:www-data "$install_dir"
 
+
+if ynh_app_upgrading_from_version_before 2.0.0~ynh1
+then
+	ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/funkwhale-manage fw media generate-thumbnails
+fi
 
 #=================================================
 # LOGROTATE
