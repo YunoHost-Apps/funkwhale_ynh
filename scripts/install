@@ -9,6 +9,12 @@ source /usr/share/yunohost/helpers
 
 admin_mail=$(ynh_user_get_info --username="$admin" --key="mail")
 
+key=$(ynh_string_random --length=45 | base64)
+redis_db=$(ynh_redis_get_free_db)
+
+ynh_app_setting_set --key=key --value=$key
+ynh_app_setting_set --key=redis_db --value=$redis_db
+
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
@@ -24,7 +30,6 @@ mkdir -p $install_dir/config
 #=================================================
 ynh_script_progression "Configuring NGINX web server..."
 
-ynh_config_add --template="funkwhale_proxy.conf" --destination="/etc/nginx/conf.d/$domain.d/funkwhale_proxy.conf"
 ynh_config_add_nginx
 
 #=================================================
@@ -43,12 +48,6 @@ chown -R $app:www-data "$data_dir/"
 # ADD A CONFIGURATION
 #=================================================
 ynh_script_progression "Adding $app's configuration..."
-
-key=$(ynh_string_random --length=45 | base64)
-redis_db=$(ynh_redis_get_free_db)
-
-ynh_app_setting_set --key=key --value=$key
-ynh_app_setting_set --key=redis_db --value=$redis_db
 
 ynh_config_add --template="env.prod" --destination="$install_dir/config/.env"
 
@@ -82,11 +81,9 @@ export PATH="$PATH:$install_dir/.cargo/bin:$install_dir/.local/bin:/usr/local/sb
 fi
 
 pushd $install_dir
-	python3 -m venv $install_dir/venv
-    #FIXME: setuptools 62.x is a downgrade meant to keep django-allauth installing
-	#remove once upsteam updates to 0.50+
-	ynh_hide_warnings $install_dir/venv/bin/pip install --upgrade pip wheel toml setuptools==62.0.0 poetry-core==1.8.1
-	ynh_hide_warnings $install_dir/venv/bin/pip install --editable ./api --no-build-isolation
+	ynh_exec_as_app python3 -m venv $install_dir/venv
+	ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/pip install --upgrade pip wheel toml setuptools poetry-core
+	ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/pip install --editable ./api --no-build-isolation
 popd
 
 #=================================================

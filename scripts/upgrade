@@ -1,7 +1,8 @@
 #!/bin/bash
 
-
 source /usr/share/yunohost/helpers
+
+admin_mail=$(ynh_user_get_info --username="$admin" --key="mail")
 
 #=================================================
 # STOP SYSTEMD SERVICE
@@ -20,12 +21,16 @@ ynh_script_progression "Upgrading source files..."
 ynh_setup_source --dest_dir="$install_dir/api" --source_id="api" --full_replace
 ynh_setup_source --dest_dir="$install_dir/front" --source_id="front" --full_replace
 
+if ynh_app_upgrading_from_version_before 2.0.1~ynh1
+then
+	ynh_safe_rm "/etc/nginx/conf.d/$domain.d/funkwhale_proxy.conf"
+fi
+
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
 ynh_script_progression "Upgrading NGINX web server configuration..."
 
-ynh_config_add --template="funkwhale_proxy.conf" --destination="/etc/nginx/conf.d/$domain.d/funkwhale_proxy.conf"
 ynh_config_add_nginx
 
 #=================================================
@@ -58,11 +63,9 @@ pushd $install_dir
 	ynh_safe_rm "$install_dir/virtualenv"
 	ynh_safe_rm "$install_dir/venv"
 
-	python3 -m venv $install_dir/venv
-    #FIXME: setuptools 62.x is a downgrade meant to keep django-allauth installing
-	#remove once upsteam updates to 0.50+
-	ynh_hide_warnings $install_dir/venv/bin/pip install --upgrade pip wheel toml setuptools==62.0.0 poetry-core==1.8.1
-	ynh_hide_warnings $install_dir/venv/bin/pip install --editable ./api --no-build-isolation
+	ynh_exec_as_app python3 -m venv $install_dir/venv
+	ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/pip install --upgrade pip wheel toml setuptools poetry-core
+	ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/pip install --editable ./api --no-build-isolation
 popd
 
 #=================================================
@@ -78,23 +81,25 @@ ynh_config_add --template="env.prod" --destination="$install_dir/config/.env"
 ynh_script_progression "Upgrading Funkwhale..."
 
 pushd $install_dir
-	source $install_dir/venv/bin/activate
-
-	echo "yes" | ynh_hide_warnings $install_dir/venv/bin/funkwhale-manage collectstatic --clear --noinput
-
 	# needed for enabling the 'unaccent' extension
 	ynh_psql_db_shell <<< "ALTER USER $db_user WITH SUPERUSER;"
 
 	ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/funkwhale-manage migrate
 	ynh_psql_db_shell <<< "ALTER USER $db_user WITH NOSUPERUSER;"
 
-	deactivate
+	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | ynh_hide_warnings $install_dir/venv/bin/python api/manage.py shell
+	echo "yes" | ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/funkwhale-manage collectstatic
 popd
 
 chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
 chown -R $app:www-data "$install_dir"
 
+
+if ynh_app_upgrading_from_version_before 2.0.1~ynh1
+then
+	ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/funkwhale-manage fw media generate-thumbnails
+fi
 
 #=================================================
 # LOGROTATE
