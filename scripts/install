@@ -16,6 +16,16 @@ ynh_app_setting_set --key=key --value=$key
 ynh_app_setting_set --key=redis_db --value=$redis_db
 
 #=================================================
+# PREPARE A POSTGRESQL DATABASE
+#=================================================
+ynh_script_progression "Configuring the PostgreSQL database..."
+
+ynh_psql_db_shell <<< "ALTER USER $db_user WITH SUPERUSER;"
+ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS unaccent;"
+ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS citext;"
+ynh_psql_db_shell <<< "ALTER USER $db_user WITH NOSUPERUSER;"
+
+#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression "Setting up source files..."
@@ -92,11 +102,7 @@ popd
 ynh_script_progression "Building funkwhale..."
 
 pushd $install_dir
-	# needed for enabling the 'unaccent' extension
-	ynh_psql_db_shell <<< "ALTER USER $db_user WITH SUPERUSER;"
-
 	ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/funkwhale-manage migrate
-	ynh_psql_db_shell <<< "ALTER USER $db_user WITH NOSUPERUSER;"
 
 	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | ynh_hide_warnings $install_dir/venv/bin/python api/manage.py shell
 	echo "yes" | ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/funkwhale-manage collectstatic
