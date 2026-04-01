@@ -19,8 +19,8 @@ ynh_systemctl --action="stop" --service="${app}-worker" --log_path="systemd"
 ynh_script_progression "Configuring the PostgreSQL database..."
 
 ynh_psql_db_shell <<< "ALTER USER $db_user WITH SUPERUSER;"
-ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS unaccent;"
-ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS citext;"
+ynh_hide_warnings ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS unaccent;"
+ynh_hide_warnings ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS citext;"
 ynh_psql_db_shell <<< "ALTER USER $db_user WITH NOSUPERUSER;"
 
 #=================================================
