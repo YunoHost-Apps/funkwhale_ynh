@@ -21,6 +21,7 @@ ynh_app_setting_set --key=redis_db --value=$redis_db
 ynh_script_progression "Configuring the PostgreSQL database..."
 
 ynh_psql_db_shell <<< "ALTER USER $db_user WITH SUPERUSER;"
+ynh_psql_db_shell <<< "GRANT ALL PRIVILEGES ON DATABASE $db_name TO $db_user;"
 ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS unaccent;"
 ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS citext;"
 ynh_psql_db_shell <<< "ALTER USER $db_user WITH NOSUPERUSER;"
