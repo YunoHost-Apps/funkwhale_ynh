@@ -7,7 +7,7 @@ description.gl = "Servidor de música moderno e amigable"
 description.ca = "Servidor de música modern i convivial"
 description.fr = "Serveur de musique moderne et convivial"
 
-version = "2.0.1~ynh2"
+version = "2.0.1~ynh3"
 
 maintainers = ["Thovi98"]
 
