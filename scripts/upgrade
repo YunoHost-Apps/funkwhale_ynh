@@ -76,6 +76,7 @@ pushd $install_dir
 	ynh_exec_as_app python3 -m venv $install_dir/venv
 	ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/pip install --upgrade pip wheel toml setuptools poetry-core
 	ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/pip install --editable ./api --no-build-isolation
+        ynh_setup_source --dest_dir="$install_dir/venv/lib/python3.11/site-packages" --source_id="atom"
 popd
 
 #=================================================

@@ -67,6 +67,11 @@ ram.runtime = "50M"
         extract   = true
         format = "zip"
 
+        [resources.sources.atom]
+        url = "https://github.com/orhtej2/numpy-binary/releases/download/v2.4.4/numpy-2.4.4.tar.gz"
+        sha256 = "8061e3a27cc59af2e4f65033a77364c394fa5f6ca4562ea410dd8751607818d6"
+        in_subdir = false
+
     [resources.ports]
 
     [resources.system_user]
