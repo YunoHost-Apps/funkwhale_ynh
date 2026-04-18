@@ -68,8 +68,8 @@ ram.runtime = "50M"
         format = "zip"
 
         [resources.sources.atom]
-        url = "https://github.com/orhtej2/numpy-binary/releases/download/v2.4.4/numpy-2.4.4.tar.gz"
-        sha256 = "8061e3a27cc59af2e4f65033a77364c394fa5f6ca4562ea410dd8751607818d6"
+        url = "https://github.com/orhtej2/numpy-binary/releases/download/v2.4.4/numpy-athlon-2.4.4.tar.gz"
+        sha256 = "90780982dd513eb86511fdfb07b07efd8f7e32c4181667aee48aa8c4acb349a8"
         in_subdir = false
 
     [resources.ports]
