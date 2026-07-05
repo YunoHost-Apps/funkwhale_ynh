@@ -52,16 +52,16 @@ ram.runtime = "50M"
     [resources.sources]
         [resources.sources.api]
         # url = "http://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/2.0.6/download?job=build_api"
-        url = "https://github.com/YunoHost-Apps/funkwhale_ynh/releases/download/2.0.6/api_stable.zip"
-        sha256 = "4a9abe9972c33677cb5756d17ab152ba9a89d11942f6ae6c47713d43849919c3"
+        url = "https://github.com/YunoHost-Apps/funkwhale_ynh/releases/download/2.0.6/api_2.0.6.zip"
+        sha256 = "8f3c69da89aeeddd6daae073a65400bb8f69dbbfd7ffe86bcf223d310f7c9c10"
         in_subdir = true
         extract   = true
         format = "zip"
 
         [resources.sources.front]
         # url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/2.0.6/download?job=build_front"
-        url = "https://github.com/YunoHost-Apps/funkwhale_ynh/releases/download/2.0.6/front_stable.zip"
-        sha256 = "ca3f40278535ff6c1ceeda1314b73f1100fb67581f289059c8c181cecb49abbd"
+        url = "https://github.com/YunoHost-Apps/funkwhale_ynh/releases/download/2.0.6/front_2.0.6.zip"
+        sha256 = "98e012000e777502a8136a7fe395815c6130716882542fcd00e9e897a6d447da"
         in_subdir = true
         extract   = true
         format = "zip"
