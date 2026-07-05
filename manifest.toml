@@ -7,7 +7,7 @@ description.gl = "Servidor de música moderno e amigable"
 description.ca = "Servidor de música modern i convivial"
 description.fr = "Serveur de musique moderne et convivial"
 
-version = "2.0.1~ynh6"
+version = "2.0.6~ynh6"
 
 maintainers = ["Thovi98"]
 
@@ -21,13 +21,12 @@ code = "https://dev.funkwhale.audio/funkwhale/funkwhale"
 fund = "https://next.funkwhale.audio/donate/"
 
 [integration]
-yunohost = ">= 12.1.38"
+yunohost = ">= 12.1.39"
 helpers_version = "2.1"
 architectures = "all"
 multi_instance = true
 
 ldap = true
-
 sso = true
 
 disk = "50M"
@@ -52,17 +51,17 @@ ram.runtime = "50M"
 [resources]
     [resources.sources]
         [resources.sources.api]
-        # url = "http://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/2.0.1/download?job=build_api"
-        url = "https://github.com/YunoHost-Apps/funkwhale_ynh/releases/download/2.0.1/api_stable.zip"
-        sha256 = "7f2492a3d4132543343a93585fbe0c7bf9b6c5121c6fef40fd091608b42485ae"
+        # url = "http://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/2.0.6/download?job=build_api"
+        url = "https://github.com/YunoHost-Apps/funkwhale_ynh/releases/download/2.0.6/api_2.0.6.zip"
+        sha256 = "8f3c69da89aeeddd6daae073a65400bb8f69dbbfd7ffe86bcf223d310f7c9c10"
         in_subdir = true
         extract   = true
         format = "zip"
 
         [resources.sources.front]
-        # url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/2.0.1/download?job=build_front"
-        url = "https://github.com/YunoHost-Apps/funkwhale_ynh/releases/download/2.0.1/front_stable.zip"
-        sha256 = "5b48dfdff4fb3c28170f8ef7067cee22b278f93d3682c4dd4f9472e8cfad9561"
+        # url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/2.0.6/download?job=build_front"
+        url = "https://github.com/YunoHost-Apps/funkwhale_ynh/releases/download/2.0.6/front_2.0.6.zip"
+        sha256 = "98e012000e777502a8136a7fe395815c6130716882542fcd00e9e897a6d447da"
         in_subdir = true
         extract   = true
         format = "zip"
