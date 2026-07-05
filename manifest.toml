@@ -66,6 +66,24 @@ ram.runtime = "50M"
         extract   = true
         format = "zip"
 
+        [resources.sources.x64_bookworm]
+        url = "https://github.com/orhtej2/numpy-binary/releases/download/v2.4.6/numpy-v2.4.6-ubuntu-22.04-py3.11.tar.gz"
+        sha256 = "fc4392b376cf998a8ad4570108d17e3ecb5519f6b48493e30b0a02fb5e8ecb7a"
+        prefetch = false
+        in_subdir = false
+        autoupdate.strategy = "latest_github_release"
+        autoupdate.upstream = "https://github.com/orhtej2/numpy-binary"
+        autoupdate.asset = "numpy-\\d+\\.\\d+\\.\\d+-python3.11\\.tar\\.gz$"
+
+        [resources.sources.x64_trixie]
+        url = "https://github.com/orhtej2/numpy-binary/releases/download/v2.4.6/numpy-v2.4.6-ubuntu-24.04-py3.13.tar.gz"
+        sha256 = "8fb02d3ab777867008f60dd1ee9e2027f18098bd9e18e6942cf614f33999f74c"
+        prefetch = false
+        in_subdir = false
+        autoupdate.strategy = "latest_github_release"
+        autoupdate.upstream = "https://github.com/orhtej2/numpy-binary"
+        autoupdate.asset = "numpy-\\d+\\.\\d+\\.\\d+-python3.13\\.tar\\.gz$"
+
     [resources.ports]
 
     [resources.system_user]
