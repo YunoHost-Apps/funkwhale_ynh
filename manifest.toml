@@ -7,7 +7,7 @@ description.gl = "Servidor de música moderno e amigable"
 description.ca = "Servidor de música modern i convivial"
 description.fr = "Serveur de musique moderne et convivial"
 
-version = "2.0.6~ynh6"
+version = "2.0.11~ynh1"
 
 maintainers = ["Thovi98"]
 
@@ -51,17 +51,17 @@ ram.runtime = "50M"
 [resources]
     [resources.sources]
         [resources.sources.api]
-        # url = "http://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/2.0.6/download?job=build_api"
-        url = "https://github.com/YunoHost-Apps/funkwhale_ynh/releases/download/2.0.6/api_2.0.6.zip"
-        sha256 = "8f3c69da89aeeddd6daae073a65400bb8f69dbbfd7ffe86bcf223d310f7c9c10"
+        # url = "http://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/2.0.11/download?job=build_api"
+        url = "https://github.com/YunoHost-Apps/funkwhale_ynh/releases/download/2.0.11/api_stable.zip"
+        sha256 = "2ebf111b7fc7d6d6bc509214bbff4aa54fa496bef9113337d9a93ceee9686a55"
         in_subdir = true
         extract   = true
         format = "zip"
 
         [resources.sources.front]
-        # url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/2.0.6/download?job=build_front"
-        url = "https://github.com/YunoHost-Apps/funkwhale_ynh/releases/download/2.0.6/front_2.0.6.zip"
-        sha256 = "98e012000e777502a8136a7fe395815c6130716882542fcd00e9e897a6d447da"
+        # url = "https://dev.funkwhale.audio/funkwhale/funkwhale/-/jobs/artifacts/2.0.11/download?job=build_front"
+        url = "https://github.com/YunoHost-Apps/funkwhale_ynh/releases/download/2.0.11/front_stable.zip"
+        sha256 = "35c2fc52bd5942a9a45443f8e684194f151fb00935ea9d7a8f37c0ab3545634d"
         in_subdir = true
         extract   = true
         format = "zip"
