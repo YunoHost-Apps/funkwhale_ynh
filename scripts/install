@@ -92,9 +92,11 @@ export PATH="$PATH:$install_dir/.cargo/bin:$install_dir/.local/bin:/usr/local/sb
 fi
 
 pushd $install_dir
-	ynh_exec_as_app python3 -m venv $install_dir/venv
-	ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/pip install --upgrade pip wheel toml setuptools poetry-core
-	ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/pip install --editable ./api --no-build-isolation
+	ynh_exec_as_app python3 -m venv "$install_dir/.venv"
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/.venv/bin/pip" install --upgrade uv
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/.venv/bin/uv" venv --python 3.13 --seed --clear
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/.venv/bin/pip" install --upgrade pip wheel toml setuptools poetry-core
+    ynh_hide_warnings ynh_exec_as_app "$install_dir/.venv/bin/pip" install --editable ./api --no-build-isolation
 popd
 
 #=================================================
@@ -103,10 +105,10 @@ popd
 ynh_script_progression "Building funkwhale..."
 
 pushd $install_dir
-	ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/funkwhale-manage migrate
+	ynh_hide_warnings ynh_exec_as_app $install_dir/.venv/bin/funkwhale-manage migrate
 
-	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | ynh_hide_warnings $install_dir/venv/bin/python api/manage.py shell
-	echo "yes" | ynh_hide_warnings ynh_exec_as_app $install_dir/venv/bin/funkwhale-manage collectstatic --no-input
+	echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('$admin', '$admin_mail', 'funkwhale') " | ynh_hide_warnings $install_dir/.venv/bin/python api/manage.py shell
+	echo "yes" | ynh_hide_warnings ynh_exec_as_app $install_dir/.venv/bin/funkwhale-manage collectstatic --no-input
 popd
 
 chmod 750 "$install_dir"

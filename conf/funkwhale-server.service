@@ -11,7 +11,7 @@ EnvironmentFile=__INSTALL_DIR__/config/.env
 
 Type=notify
 KillMode=mixed
-ExecStart=__INSTALL_DIR__/venv/bin/gunicorn \
+ExecStart=__INSTALL_DIR__/.venv/bin/gunicorn \
     config.asgi:application \
     --workers ${FUNKWHALE_WEB_WORKERS} \
     --worker-class uvicorn.workers.UvicornWorker \
