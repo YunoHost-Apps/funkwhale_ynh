@@ -66,10 +66,14 @@ ram.runtime = "50M"
         extract   = true
         format = "zip"
 
-        [resources.sources.atom]
-        url = "https://github.com/orhtej2/numpy-binary/releases/download/v2.4.4/numpy-2.4.4.tar.gz"
-        sha256 = "8061e3a27cc59af2e4f65033a77364c394fa5f6ca4562ea410dd8751607818d6"
+        [resources.sources.x64_trixie]
+        url = "https://github.com/orhtej2/numpy-binary/releases/download/v2.5.4/numpy-v2.5.4-ubuntu-24.04-py3.13.tar.gz"
+        sha256 = "e5b363c4f3cfddfe217bd8bcf656146febde516daeaecdcadc47ae19c15f4461"
+        prefetch = false
         in_subdir = false
+        autoupdate.strategy = "latest_github_release"
+        autoupdate.upstream = "https://github.com/orhtej2/numpy-binary"
+        autoupdate.asset = "numpy-v\\d+\\.\\d+\\.\\d+-ubuntu-24.04-py3.13\\.tar\\.gz$"
 
     [resources.ports]
 
