@@ -2,6 +2,7 @@
 
 
 source /usr/share/yunohost/helpers
+source _common.sh
 
 #=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
@@ -97,6 +98,8 @@ pushd $install_dir
     ynh_hide_warnings ynh_exec_as_app "$install_dir/.venv/bin/uv" venv --python 3.13 --seed --clear
     ynh_hide_warnings ynh_exec_as_app "$install_dir/.venv/bin/pip" install --upgrade pip wheel toml setuptools poetry-core
     ynh_hide_warnings ynh_exec_as_app "$install_dir/.venv/bin/pip" install --editable ./api --no-build-isolation
+
+    fixupx64numpy
 popd
 
 #=================================================
